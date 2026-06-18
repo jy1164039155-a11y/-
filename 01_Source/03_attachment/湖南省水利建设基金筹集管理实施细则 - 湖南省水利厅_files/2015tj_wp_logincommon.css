@@ -1,0 +1,132 @@
+/*=登录弹窗=*/
+.h-login {
+	display:none;
+	position:fixed;
+	_position: absolute;
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+ _height: expression(document.body.clientHeight);
+	background:url(2015_h_login_bg.png);
+	z-index:10001;
+}
+.login-box {
+	position:absolute;
+	top:50%;
+	left:50%;
+	margin:-250px 0 0 -330px;
+	width:660px;
+	height:500px;
+}
+.login-tit {
+	height:60px;
+	padding-left:80px;
+	background:url(2015_h_login_bg01.png) no-repeat;
+}
+.login-tit strong {
+	display:inline-block;
+	float:left;
+	font:30px/60px "微软雅黑";
+	color:#fff;
+}
+.login-tit span {
+	display:inline-block;
+	float:right;
+	width:60px;
+	height:60px;
+	background:url(2015_h_login_closed.png) no-repeat 50% center;
+	cursor:pointer;
+}
+.login-bg {
+	padding:0 0 12px 0;
+	background:url(2015_h_login_bg02.png) no-repeat left bottom;
+}
+.login-con {
+	padding:60px 150px 48px 150px;
+	background:#eee
+}
+.login-ul li {
+	height:50px;
+	margin-bottom:9px;
+	overflow:hidden;
+}
+.login-ul li .txt {
+	border:medium none;
+	padding:10px 20px 10px 87px;
+	width:253px;
+	height:30px;
+	font:18px/30px "微软雅黑";
+	color:#999;
+	outline:none;
+}
+.login-ul li.u-name .txt {
+	background:url(2015_h_login_txt1.png) no-repeat;
+}
+.login-ul li.u-password .txt {
+	background:url(2015_h_login_txt2.png) no-repeat;
+}
+.login-ul li.u-btn {
+	padding-top:5px;
+	margin-bottom:0;
+	height:50px;
+}
+.login-ul li.u-btn a {
+	margin-left:25px;
+	text-decoration:underline;
+	font:18px/50px "微软雅黑";
+	color:#688aaf;
+}
+.login-ul li.u-btn a:hover {
+	color:#f60;
+}
+.login-ul li.u-btn a.a-login {
+	display:inline-block;
+	margin-left:0;
+	width:150px;
+	height:50px;
+	background:url(2015_h_login_btn.png) no-repeat;
+	text-align:center;
+	text-decoration:none;
+	font:18px/50px "微软雅黑";
+	color:#fff;
+}
+.login-ul li.u-btn a.a-login:hover {
+	background-position:0 -50px;
+	color:#fff;
+}
+.login-other {
+	margin-top:30px;
+	padding-top:2px;
+	background:url(2015_h_login_line.png) repeat-x 0 0;
+}
+.login-other dt {
+	height:36px;
+	font:14px/36px "微软雅黑";
+	color:#333;
+}
+.login-other dd {
+	margin-top:14px;
+}
+.login-other dd a {
+	display:inline-block;
+	margin-right:28px;
+	padding-top:35px;
+	width:68px;
+	height:30px;
+	text-align:center;
+	font:12px/30px "微软雅黑";
+	color:#666;
+}
+.login-other dd a.a1 {
+	background:url(2015_h_login_ico1.png) no-repeat;
+}
+.login-other dd a.a2 {
+	background:url(2015_h_login_ico2.png) no-repeat;
+}
+.login-other dd a.a3 {
+	background:url(2015_h_login_ico3.png) no-repeat;
+}
+.login-other dd a:hover {
+	color:#f60;
+}

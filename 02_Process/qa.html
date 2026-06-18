@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评估报告生成平台 QA 系统演示手册 & 交互沙盒</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Tailwind Elements Base Styling -->
+  <style>
+    @keyframes pulse-blue {
+      0%, 100% { background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.5); }
+      50% { background-color: rgba(59, 130, 246, 0.4); border-color: rgba(59, 130, 246, 1); box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); }
+    }
+    .pulse-target {
+      animation: pulse-blue 1.5s ease-in-out 3;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200 overflow-hidden flex flex-col">
+
+  <!-- 顶部导航栏 -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between shadow-sm shrink-0 z-10">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.25 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10m4 10.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">评估报告生成平台</h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400">QA 演示系统、进度说明与交互手册</p>
+      </div>
+    </div>
+    
+    <!-- 快捷动作与主题切换 -->
+    <div class="flex items-center space-x-4">
+      <div class="hidden md:flex items-center bg-slate-100 dark:bg-slate-700 p-1 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300">
+        <span class="px-2 py-1 rounded bg-white dark:bg-slate-600 shadow-sm text-brand-600 dark:text-brand-400">演示状态：Ready</span>
+        <span class="px-2 py-1">当前版本：V1.0.4</span>
+      </div>
+      
+      <!-- 主题切换 -->
+      <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors" title="切换底色主题">
+        <!-- 太阳图标 -->
+        <svg id="sunIcon" class="w-5 h-5 text-amber-500 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 14.122a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zm1.414-10.6a1 1 0 010 1.415l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
+        <!-- 月亮图标 -->
+        <svg id="moonIcon" class="w-5 h-5 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 主体工作区 -->
+  <div class="flex flex-1 overflow-hidden">
+    
+    <!-- 左侧菜单 -->
+    <aside class="w-64 bg-slate-100 dark:bg-slate-800/50 border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0">
+      <div class="p-4">
+        <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">QA 会议导航</p>
+        <nav class="space-y-1" id="sidebarNav">
+          <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors bg-brand-500 text-white shadow-sm">
+            <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+            <span>一键概览与流程</span>
+          </button>
+          
+          <button onclick="switchTab('agenda')" id="nav-agenda" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+            <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>互动会议流程</span>
+          </button>
+
+          <button onclick="switchTab('capability')" id="nav-capability" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+            <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            <span>系统能力地图</span>
+          </button>
+
+          <button onclick="switchTab('sandbox')" id="nav-sandbox" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 relative">
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5 shrink-0 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span class="font-bold text-brand-600 dark:text-brand-400">🔥 交互演示沙盒</span>
+            </div>
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+          </button>
+
+          <button onclick="switchTab('fields')" id="nav-fields" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+            <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+            <span>147个字段字典</span>
+          </button>
+
+          <button onclick="switchTab('deploy')" id="nav-deploy" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+            <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <span>离线部署及核对表</span>
+          </button>
+
+          <button onclick="switchTab('feedback')" id="nav-feedback" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+            <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+            <span>现场意见反馈表</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- 会议快捷卡片 -->
+      <div class="mt-auto p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/20">
+        <div class="p-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-700">
+          <p class="text-xs font-semibold text-slate-500">快速提示：</p>
+          <p class="text-xs text-slate-400 mt-1">在演示时，可故意清空“基准地价批准机关”，向同事展示页面智能跳转功能。</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主展示区 -->
+    <main class="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900" id="mainContent">
+      
+      <!--================ Tab 1: Overview & Flow ================-->
+      <section id="tab-overview" class="tab-content space-y-6">
+        <div class="p-6 bg-gradient-to-r from-brand-600 to-brand-700 text-white rounded-2xl shadow-lg relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 opacity-10 text-white pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M13 14.75V19h-2v-4.25H4v-2h7v-3.5H9v-2h2V3h2v4.25h2v2h-2v3.5h7v2h-7z"/></svg>
+          </div>
+          <div class="max-w-3xl">
+            <span class="bg-brand-500/50 text-white text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider">系统全景</span>
+            <h2 class="text-3xl font-extrabold mt-2">评估报告生成平台</h2>
+            <p class="text-brand-100 mt-2 text-base leading-relaxed">
+              本地/局域网部署的土地估价报告协同系统。将 Excel 测算、规划与权属材料、人工校验与估价准则统一汇聚，解决写报告中最耗时、最繁琐和最易错的“拼凑与校验”环节。
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2 text-sm">
+              <span class="bg-white/15 px-3 py-1 rounded-lg">🔧 Excel 测算表导入</span>
+              <span class="bg-white/15 px-3 py-1 rounded-lg">🔍 智能热区定位</span>
+              <span class="bg-white/15 px-3 py-1 rounded-lg">📝 自动条文编写</span>
+              <span class="bg-white/15 px-3 py-1 rounded-lg">🛡️ 数据来源防误篡改</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 系统边界与核心问题 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <h3 class="text-base font-bold mb-2">系统负责：自动填充与加工</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              测算表自动解析并追溯字段来源，OCR证据池动态匹配，权属/确价测算段落智能生成与拼装，字体字号统配后处理。
+            </p>
+          </div>
+          <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <h3 class="text-base font-bold mb-2">系统边界：估价师承担责任</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              系统不承担：估价路线的方法决策、佐证材料来源真实性审查以及最终估价金额判定。一切需要评估师最终确权。
+            </p>
+          </div>
+          <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <h3 class="text-base font-bold mb-2">开场互动建议</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              一问：“现在做一份报告，各位最耗时间或最容易犯错的是哪一个字段？”二问：“哪些证照和依据文件最常因手打而对不上？”
+            </p>
+          </div>
+        </div>
+
+        <!-- 数据处理流程图 -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <h3 class="text-base font-bold mb-4">报告生成流程与数据链路</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
+            
+            <!-- 阶段 1 -->
+            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest block mb-1">01 输入阶段 (Input)</span>
+                <h4 class="font-bold text-slate-900 dark:text-white mb-2">多源证据导入</h4>
+                <ul class="text-xs text-slate-500 space-y-1">
+                  <li>• Excel 测算表拖拽解析</li>
+                  <li>• 不动产证/规划条件/基准地价OCR</li>
+                  <li>• 人工补充表单录入</li>
+                </ul>
+              </div>
+              <div class="mt-4 text-xs text-slate-400">
+                通过字段来源标识(Excel/OCR/人工)进行差异色块记录
+              </div>
+            </div>
+
+            <!-- 阶段 2 -->
+            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest block mb-1">02 处理阶段 (Process)</span>
+                <h4 class="font-bold text-slate-900 dark:text-white mb-2">逻辑加工与排版</h4>
+                <ul class="text-xs text-slate-500 space-y-1">
+                  <li>• 依据清单匹配与正文生成</li>
+                  <li>• 确价方法适用性校验 & 警告</li>
+                  <li>• 报告热区可跳转标记（请填写高亮）</li>
+                </ul>
+              </div>
+              <div class="mt-4 text-xs text-slate-400">
+                脏数据保护：人工改过的值将不再被同步覆盖
+              </div>
+            </div>
+
+            <!-- 阶段 3 -->
+            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest block mb-1">03 输出阶段 (Output)</span>
+                <h4 class="font-bold text-slate-900 dark:text-white mb-2">一键发布与规档</h4>
+                <ul class="text-xs text-slate-500 space-y-1">
+                  <li>• PDF 网页多段实时预览</li>
+                  <li>• 统配字体字号排版后处理</li>
+                  <li>• Word 原生文档下载 & 本地归档</li>
+                </ul>
+              </div>
+              <div class="mt-4 text-xs text-slate-400">
+                03_Result 目录：自动按项目名归档并清理冗余
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!--================ Tab 2: Interactive Agenda ================-->
+      <section id="tab-agenda" class="tab-content hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold">QA 会议互动路线图</h2>
+            <p class="text-sm text-slate-500">建议在投影中全屏展示此环节，可随时使用计时器控制节奏。</p>
+          </div>
+          <!-- 计时器组件 -->
+          <div class="flex items-center space-x-3 bg-white dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <span class="text-xs text-slate-400 font-mono">议程倒计时:</span>
+            <span id="agendaTimer" class="font-mono font-bold text-brand-600 dark:text-brand-400 text-lg">95:00</span>
+            <button id="timerCtrlBtn" onclick="toggleAgendaTimer()" class="bg-brand-500 hover:bg-brand-600 text-white text-xs px-2.5 py-1 rounded transition-colors">开启</button>
+          </div>
+        </div>
+
+        <!-- 议程卡片 -->
+        <div class="space-y-4">
+          <!-- 流程 1 -->
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-start space-x-4">
+            <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg flex flex-col items-center justify-center text-xs shrink-0 font-bold">
+              <span>5</span>
+              <span>分钟</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-slate-900 dark:text-white">1. 开场引入与刺痛点提问</h4>
+                <span class="bg-brand-100 text-brand-800 text-xs px-2 py-0.5 rounded-full dark:bg-brand-900/30 dark:text-brand-300">建立QA关注点</span>
+              </div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                问：“现在做一份报告最耗时/最容易错的是哪一步？” 引入痛点：人工誊抄错误、附件依据名字对不上、格式容易乱。
+              </p>
+              <div class="bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded mt-2 text-xs text-brand-600 dark:text-brand-400 font-medium">
+                📢 推荐口播：今天重点不是验收，而是业务校准。看三个点：字段够不够用？自动话术改不改？哪里需要留给人工判断？
+              </div>
+            </div>
+          </div>
+
+          <!-- 流程 2 -->
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-start space-x-4">
+            <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg flex flex-col items-center justify-center text-xs shrink-0 font-bold">
+              <span>10</span>
+              <span>分钟</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-slate-900 dark:text-white">2. 系统全景地图宣讲</h4>
+                <span class="bg-brand-100 text-brand-800 text-xs px-2 py-0.5 rounded-full dark:bg-brand-900/30 dark:text-brand-300">构建整体认知</span>
+              </div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                展示输入、处理、输出三段式数据交互流，建立“系统仅自动填装、人做核心审查”的思想共识。
+              </p>
+            </div>
+          </div>
+
+          <!-- 流程 3 -->
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-start space-x-4">
+            <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg flex flex-col items-center justify-center text-xs shrink-0 font-bold">
+              <span>35</span>
+              <span>分钟</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-slate-900 dark:text-white">3. 核心字段与表单盘点</h4>
+                <span class="bg-brand-100 text-brand-800 text-xs px-2 py-0.5 rounded-full dark:bg-brand-900/30 dark:text-brand-300">解释业务影响</span>
+              </div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                按第一部分至第四部分逐字段串讲。可重点挑出“容积率范围值”、“设定土地用途简称”、“基准地价批准文号”说明在报告模版中的注入路径。
+              </p>
+            </div>
+          </div>
+
+          <!-- 流程 4 -->
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-start space-x-4">
+            <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg flex flex-col items-center justify-center text-xs shrink-0 font-bold text-brand-600">
+              <span>20</span>
+              <span>分钟</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-slate-900 dark:text-white">★ 4. 实操高光：核心功能演示</h4>
+                <span class="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full dark:bg-red-900/30 dark:text-red-300 font-bold">高价值点</span>
+              </div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Excel 一键导入填报、OCR证据池增量注入、智能热区点击自动定位到具体表单字段、基准地价超期警示演示。
+              </p>
+              <div class="mt-2 flex gap-2">
+                <button onclick="switchTab('sandbox')" class="bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 text-xs px-3 py-1.5 rounded-lg font-semibold transition-all">立即切换到「交互沙盒」体验现场</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 流程 5 -->
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-start space-x-4">
+            <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg flex flex-col items-center justify-center text-xs shrink-0 font-bold">
+              <span>15</span>
+              <span>分钟</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-slate-900 dark:text-white">5. 现场试错与临界测试</h4>
+                <span class="bg-brand-100 text-brand-800 text-xs px-2 py-0.5 rounded-full dark:bg-brand-900/30 dark:text-brand-300">暴露可用性</span>
+              </div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                故意删除或留空基准地价批准机关，在预览报告中演示“点击橙色请填写”直接反向唤起并定位到配置项。
+              </p>
+            </div>
+          </div>
+
+          <!-- 流程 6 -->
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-start space-x-4">
+            <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg flex flex-col items-center justify-center text-xs shrink-0 font-bold">
+              <span>15</span>
+              <span>分钟</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-slate-900 dark:text-white">6. 需求归纳与总结</h4>
+                <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full dark:bg-emerald-900/30 dark:text-emerald-300">需求定性</span>
+              </div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                根据现场讨论情况，直接填写记录。将业务意见分为“必须修/应该做/可优化”并确立优先级。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--================ Tab 3: Capability Map ================-->
+      <section id="tab-capability" class="tab-content hidden space-y-6">
+        <h2 class="text-xl font-bold">当前系统能力状态图</h2>
+        <p class="text-sm text-slate-500">点击对应功能块，可在侧边查看演示及 QA 过程中的重点提示：</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="capabilitiesGrid">
+          <!-- 动态生成卡片，此处仅作模板示例 -->
+        </div>
+
+        <!-- 详细信息卡 -->
+        <div id="capabilityDetail" class="hidden bg-brand-50 dark:bg-slate-800 border border-brand-200 dark:border-slate-700 p-5 rounded-xl">
+          <h4 class="font-bold text-brand-900 dark:text-brand-400" id="capDetailTitle">功能详情</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed" id="capDetailDesc"></p>
+          <div class="mt-3 text-xs bg-white dark:bg-slate-900 p-3 rounded border border-slate-200 dark:border-slate-700">
+            <span class="font-bold text-brand-600">QA 宣讲要点：</span>
+            <p class="mt-1 text-slate-500" id="capDetailQa"></p>
+          </div>
+        </div>
+      </section>
+
+      <!--================ Tab 4: Interactive Sandbox (HOT) ================-->
+      <section id="tab-sandbox" class="tab-content hidden space-y-6">
+        <div class="bg-gradient-to-r from-teal-500 to-brand-600 p-5 rounded-xl text-white shadow-md">
+          <h2 class="text-xl font-bold flex items-center gap-2">
+            <span>🔥 演示沙盒 (Simulation Sandbox)</span>
+          </h2>
+          <p class="text-xs text-teal-50 mt-1 opacity-95">
+            这里模拟了生成平台真实界面的交互。点击【一键导入Excel】或【OCR解析注入】感受数据流动的快感，或直接在右侧预览报告中点击 <span class="bg-amber-500 text-white font-bold px-1 rounded">请填写</span> 的橙色热区，体验亮蓝反向追溯与定位功能！
+          </p>
+        </div>
+
+        <!-- 模拟操作栏 -->
+        <div class="flex flex-wrap gap-2">
+          <button onclick="simulateExcelImport()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            第一步：模拟一键导入 Excel
+          </button>
+          <button onclick="simulateOcrInjection()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+            第二步：模拟 OCR 解析证据池
+          </button>
+          <button onclick="resetSandbox()" class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-slate-300 transition-all">
+            重置模拟数据
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- 左侧：表单模拟器 -->
+          <div class="lg:col-span-5 bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
+              <span class="font-bold text-sm text-brand-600 dark:text-brand-400">📝 评估基础表单模拟（数据输入）</span>
+              <span class="text-[10px] text-slate-400">支持动态回填</span>
+            </div>
+            
+            <!-- 表单字段组 -->
+            <div class="space-y-4">
+              <!-- 委托人 -->
+              <div id="fieldGroup-client_name" class="p-2.5 rounded-lg border border-transparent transition-all">
+                <label class="text-xs font-semibold flex items-center justify-between">
+                  <span>委托人名称 <code class="text-slate-400 font-mono text-[10px]">client_name</code></span>
+                  <span id="source-client_name" class="text-[10px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-500">默认初始化</span>
+                </label>
+                <input id="input-client_name" oninput="syncSandboxData()" type="text" class="w-full mt-1.5 p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded text-sm focus:outline-none focus:ring-1 focus:ring-brand-500" value="泰康人寿保险股份有限公司">
+              </div>
+
+              <!-- 坐落 -->
+              <div id="fieldGroup-land_location" class="p-2.5 rounded-lg border border-transparent transition-all">
+                <label class="text-xs font-semibold flex items-center justify-between">
+                  <span>估价对象位置简称 <code class="text-slate-400 font-mono text-[10px]">land_location</code></span>
+                  <span id="source-land_location" class="text-[10px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-500">默认初始化</span>
+                </label>
+                <input id="input-land_location" oninput="syncSandboxData()" type="text" class="w-full mt-1.5 p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded text-sm focus:outline-none focus:ring-1 focus:ring-brand-500" value="高新区A区-05号工业地块">
+              </div>
+
+              <!-- 不动产权证号 -->
+              <div id="fieldGroup-real_estate_cert_no" class="p-2.5 rounded-lg border border-transparent transition-all">
+                <label class="text-xs font-semibold flex items-center justify-between">
+                  <span>不动产权证号 <code class="text-slate-400 font-mono text-[10px]">real_estate_cert_no</code></span>
+                  <span id="source-real_estate_cert_no" class="text-[10px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-500">默认初始化</span>
+                </label>
+                <input id="input-real_estate_cert_no" oninput="syncSandboxData()" type="text" class="w-full mt-1.5 p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded text-sm focus:outline-none focus:ring-1 focus:ring-brand-500" value="">
+              </div>
+
+              <!-- 基准地价文件名称 -->
+              <div id="fieldGroup-base_price_doc_name" class="p-2.5 rounded-lg border border-transparent transition-all">
+                <label class="text-xs font-semibold flex items-center justify-between">
+                  <span>基准地价文件名称 <code class="text-slate-400 font-mono text-[10px]">base_price_doc_name</code></span>
+                  <span id="source-base_price_doc_name" class="text-[10px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-500">默认初始化</span>
+                </label>
+                <input id="input-base_price_doc_name" oninput="syncSandboxData()" type="text" class="w-full mt-1.5 p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded text-sm focus:outline-none focus:ring-1 focus:ring-brand-500" value="">
+              </div>
+
+              <!-- 批准机关 (跳转重点) -->
+              <div id="fieldGroup-base_price_doc_authority" class="p-2.5 rounded-lg border border-transparent transition-all">
+                <label class="text-xs font-semibold flex items-center justify-between">
+                  <span>基准地价批准机关 <code class="text-slate-400 font-mono text-[10px]">base_price_doc_authority</code></span>
+                  <span id="source-base_price_doc_authority" class="text-[10px] px-1.5 py-0.2 bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 rounded">请手动填写或由OCR注入</span>
+                </label>
+                <input id="input-base_price_doc_authority" oninput="syncSandboxData()" type="text" class="w-full mt-1.5 p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded text-sm focus:outline-none focus:ring-1 focus:ring-brand-500" value="" placeholder="现场故意清空以演示点击高亮...">
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：报告正文动态渲染与智能热区 -->
+          <div class="lg:col-span-7 bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm relative">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700 mb-4">
+              <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                <span class="text-xs text-slate-400 font-mono ml-2">报告实时渲染视图 (Word Preview)</span>
+              </div>
+              <button onclick="compileAndDownload()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-1.5 rounded transition-all">一键编译下载 Word</button>
+            </div>
+
+            <!-- 正文框 -->
+            <div class="border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-6 rounded-lg font-serif leading-relaxed text-slate-800 dark:text-slate-200 text-sm max-h-[450px] overflow-y-auto">
+              <h3 class="text-center font-bold text-lg mb-6 text-slate-950 dark:text-white">土地权属及利用状况核查说明</h3>
+              
+              <!-- 动态拼装的一段正文 -->
+              <p class="mb-4 indent-8">
+                受受托人委托，本机构对位于 
+                <span id="preview-land_location" class="border-b border-dashed border-slate-400 font-bold px-1 text-brand-600 dark:text-brand-400 cursor-pointer" onclick="scrollToField('land_location')" title="点击定位此字段">
+                  [高新区A区-05号工业地块]
+                </span>
+                的宗地进行现场勘察。根据委托方
+                <span id="preview-client_name" class="border-b border-dashed border-slate-400 font-bold px-1 text-brand-600 dark:text-brand-400 cursor-pointer" onclick="scrollToField('client_name')" title="点击定位此字段">
+                  [泰康人寿保险股份有限公司]
+                </span>
+                提供的相关文件，该项目现场利用情况符合规划要求。
+              </p>
+
+              <p class="mb-4 indent-8">
+                本宗地土地权属证明资料如下：宗地登记不动的产权证书编号为 
+                <span id="preview-real_estate_cert_no" onclick="scrollToField('real_estate_cert_no')" class="cursor-pointer font-bold px-1 text-brand-600 dark:text-brand-400" title="点击定位此字段">
+                  [川(2026)成都市不动产权第XXXX号]
+                </span>。
+                经审验，上述证件信息合法有效，权属清晰无限制他项权利记录。
+              </p>
+
+              <p class="mb-4 indent-8">
+                关于确价基准评估：该地块处于基准地价覆盖范围内，主要选用基准地价系数修正法，估价引用政策文件依据为 
+                <span id="preview-base_price_doc_name" onclick="scrollToField('base_price_doc_name')" class="cursor-pointer font-bold px-1 text-brand-600 dark:text-brand-400" title="点击定位此字段">
+                  [XX市基准地价更新标准手册]
+                </span>。
+                该文件的审批发布机关为
+                <span id="preview-base_price_doc_authority" onclick="scrollToField('base_price_doc_authority')" class="cursor-pointer font-bold px-1 text-brand-600 dark:text-brand-400" title="点击定位此字段">
+                  [请填写基准地价批准机关]
+                </span>，
+                以此文件对该地段地价、级别和修正系数进行全流程计算。
+              </p>
+            </div>
+            
+            <div class="mt-4 flex items-center justify-between text-xs text-slate-400">
+              <p>💡 **体验：** 在上面报告文本里点击任何带方括号的文字，左侧对应的输入栏都会亮起高光，完成“热区跳转”！</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!--================ Tab 5: Fields Dictionary ================-->
+      <section id="tab-fields" class="tab-content hidden space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold">147 个系统字段词典</h2>
+            <p class="text-sm text-slate-500">
+              供同事在 QA 现场核对字段名称、底层代码变量以及其在报告中的作用位置。
+              <span class="text-xs bg-slate-100 dark:bg-slate-800 text-brand-600 font-mono px-2 py-1 rounded ml-2">
+                当前已加载: <span id="fieldsLoadedCount" class="font-bold">0</span> / 147
+              </span>
+            </p>
+          </div>
+          <!-- 搜索框与筛选 -->
+          <div class="flex flex-wrap items-center gap-3">
+            <select id="fieldGroupFilter" onchange="filterFields()" class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs">
+              <option value="all">所有部分</option>
+              <option value="part1">第一部分：报告基础</option>
+              <option value="part2">第二部分：规划条件</option>
+              <option value="part3">第三部分：土地权属</option>
+              <option value="part4">第四部分：确价测算</option>
+              <option value="part5">派生/内部辅助</option>
+            </select>
+            <input id="fieldSearch" oninput="filterFields()" type="text" placeholder="输入变量代码名或中文含义模糊搜索..." class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs w-64">
+          </div>
+        </div>
+
+        <!-- 字段表格 -->
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
+          <div class="overflow-x-auto max-h-[500px]">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-400">
+                  <th class="p-3">中文名称</th>
+                  <th class="p-3">系统代码名 (变量)</th>
+                  <th class="p-3">代表意义与作用</th>
+                  <th class="p-3">QA 宣讲聚焦关注</th>
+                  <th class="p-3 text-center">操作</th>
+                </tr>
+              </thead>
+              <tbody id="fieldsTableBody" class="text-xs divide-y divide-slate-100 dark:divide-slate-700">
+                <!-- 由 JS 动态渲染 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!--================ Tab 6: Deploy & Checklist ================-->
+      <section id="tab-deploy" class="tab-content hidden space-y-6">
+        <h2 class="text-xl font-bold">局域网与无网临时演示方案</h2>
+        <p class="text-sm text-slate-500">如果需要到会议室、或者非本机的同事电脑上进行临时启动和QA演示，可任选以下方案。</p>
+
+        <!-- 部署方案切换选项 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <button onclick="switchDeployTab('optA')" id="deployBtn-optA" class="p-3 text-left rounded-lg border border-brand-500 bg-brand-50 dark:bg-brand-950/20 text-brand-700 dark:text-brand-300 transition-all">
+            <span class="block text-xs font-bold">方案 A (本机首选)</span>
+            <span class="text-[10px] mt-1 block">将项目整体拷到演示电脑运行</span>
+          </button>
+          <button onclick="switchDeployTab('optB')" id="deployBtn-optB" class="p-3 text-left rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+            <span class="block text-xs font-bold">方案 B (局域网共享)</span>
+            <span class="text-[10px] mt-1 block">单机开服务，同事设备多路连入</span>
+          </button>
+          <button onclick="switchDeployTab('optC')" id="deployBtn-optC" class="p-3 text-left rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+            <span class="block text-xs font-bold">方案 C (热更改版)</span>
+            <span class="text-[10px] mt-1 block">现场修改代码并即时渲染</span>
+          </button>
+          <button onclick="switchDeployTab('optNoNet')" id="deployBtn-optNoNet" class="p-3 text-left rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+            <span class="block text-xs font-bold">离线依赖准备</span>
+            <span class="text-[10px] mt-1 block">针对完全无网环境预下载包</span>
+          </button>
+        </div>
+
+        <!-- 方案详情展示区 -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700" id="deployContentArea">
+          <!-- 动态加载方案指令 -->
+        </div>
+
+        <!-- 演示前核对清单 -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-base text-slate-900 dark:text-white">演示前自检清单 (Pre-demo Checklist)</h3>
+            <span id="checklistProgress" class="text-xs bg-brand-100 text-brand-800 px-2 py-0.5 rounded-full">通过率 0/7</span>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="checklistContainer">
+            <!-- 由 JS 渲染 -->
+          </div>
+        </div>
+      </section>
+
+      <!--================ Tab 7: Feedback Tracker ================-->
+      <section id="tab-feedback" class="tab-content hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold">QA 会议记录与意见收集</h2>
+            <p class="text-sm text-slate-500">不要让同事觉得这是一张白纸，边讨论边将问题录入，建立“需求落地感”。</p>
+          </div>
+          <button onclick="exportFeedback()" class="bg-slate-800 hover:bg-slate-900 text-white dark:bg-slate-200 dark:hover:bg-slate-100 dark:text-slate-950 text-xs font-bold px-3 py-2 rounded-lg transition-all">一键生成 QA 报告文档</button>
+        </div>
+
+        <!-- 录入组件 -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div class="md:col-span-3">
+            <label class="block text-xs font-bold mb-1.5">分类级别</label>
+            <select id="fb-type" class="w-full p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500">
+              <option value="必须修">🛠️ 必须修 (影响报告生成及基础错误)</option>
+              <option value="应该做">⭐ 应该做 (高频需要，可临时人工顶替)</option>
+              <option value="可优化">📈 可优化 (系统交互与感官舒适度)</option>
+              <option value="待确认">❓ 待确认 (需决策层定话术规范/口径)</option>
+            </select>
+          </div>
+          <div class="md:col-span-3">
+            <label class="block text-xs font-bold mb-1.5">涉及模块/字段</label>
+            <input id="fb-module" type="text" placeholder="例如：第四部分总价 / 基准地价超期" class="w-full p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500">
+          </div>
+          <div class="md:col-span-4">
+            <label class="block text-xs font-bold mb-1.5">反馈内容及改进方向</label>
+            <input id="fb-content" type="text" placeholder="记录现场同事的原话与具体业务期望..." class="w-full p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500">
+          </div>
+          <div class="md:col-span-2 flex items-end">
+            <button onclick="addFeedbackItem()" class="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2.5 rounded-lg transition-all shadow-sm">添加至需求清单</button>
+          </div>
+        </div>
+
+        <!-- 需求清单展示区 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+          <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+            <span class="font-bold text-sm">📋 现场收集到的意见（动态存储）</span>
+            <span class="text-xs text-slate-400">可在表中直接移除</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-900 text-slate-500">
+                <tr class="border-b border-slate-200 dark:border-slate-700">
+                  <th class="p-3">类型</th>
+                  <th class="p-3">涉及模块/字段</th>
+                  <th class="p-3">详细改进需求</th>
+                  <th class="p-3 text-center">操作</th>
+                </tr>
+              </thead>
+              <tbody id="feedbackTableBody" class="divide-y divide-slate-100 dark:divide-slate-700">
+                <!-- 动态数据 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 会议总结导出模态框 -->
+  <div id="exportModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl p-6 flex flex-col max-h-[85vh]">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
+        <h3 class="font-bold text-base">📄 评估平台 QA 阶段性汇报成果</h3>
+        <button onclick="toggleModal('exportModal', false)" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto py-4 space-y-4 text-xs font-mono" id="exportModalContent">
+        <!-- 动态生成排版文档 -->
+      </div>
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-end space-x-2">
+        <button onclick="copyGeneratedDocs()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded text-xs font-semibold">复制到剪贴板</button>
+        <button onclick="toggleModal('exportModal', false)" class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded text-xs font-semibold">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 自定义弹窗 -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-lg text-xs transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center space-x-2">
+    <span id="toastMsg">操作成功</span>
+  </div>
+
+  <!-- 全局逻辑 JS -->
+  <script>
+    // ---------------- 全局状态 ----------------
+    let isDarkMode = false;
+    let activeTab = 'overview';
+    let deployTab = 'optA';
+    
+    // 147 全量系统字段词典配置
+    const fieldsData = [
+      // 第一部分：报告基础 (19个字段)
+      { group: 'part1', name: '委托人名称', code: 'client_name', desc: '委托方主体名称，进入封面、摘要、项目名称和委托方信息。', qa: '默认值是否符合本次项目，Excel/OCR 回填是否准确。' },
+      { group: 'part1', name: '出让/评估目的模式', code: 'transfer_purpose_mode', desc: '选择常用目的，如拟挂牌出让；控制 transfer_purpose 的默认值。', qa: '常用目的选项是否够用。' },
+      { group: 'part1', name: '自定义出让目的', code: 'transfer_purpose', desc: '当目的不是内置选项时手填，参与项目名称和估价目的表述。', qa: '是否需要更多标准目的模板。' },
+      { group: 'part1', name: '估价项目名称后缀', code: 'project_name_suffix', desc: '项目名称尾部标准法定词组。', qa: '默认后缀是否符合公司口径，修改是否应受控。' },
+      { group: 'part1', name: '估价项目名称', code: 'project_name', desc: '报告核心项目名称，由委托方、目的、坐落、宗地数量、用途、后缀自动拼接，也可人工改。', qa: '自动拼接是否通顺，是否需要锁定/版本记录。' },
+      { group: 'part1', name: '受托估价机构', code: 'appraisal_org', desc: '估价机构名称，进入封面和报告主体。', qa: '是否需要配置多机构选项。' },
+      { group: 'part1', name: '土地使用者', code: 'land_user', desc: '估价对象相关使用者/权利主体，进入摘要和权属描述。', qa: '权证/OCR 提取是否准确。' },
+      { group: 'part1', name: '评估报告编号', code: 'report_no', desc: '正式估价报告编号。', qa: '编号规则是否需要自动生成。' },
+      { group: 'part1', name: '技术报告编号', code: 'technical_report_no', desc: '技术报告编号，通常与报告编号对应。', qa: '是否需要与报告编号联动。' },
+      { group: 'part1', name: '报告出具日期', code: 'report_date', desc: '报告签发日期，影响有效期等派生字段。', qa: '日期格式是否统一。' },
+      { group: 'part1', name: '估价期日', code: 'valuation_date', desc: '价格时点，影响正文、结果表、基准地价超期判断。', qa: '是全流程关键字段，必须重点核对。' },
+      { group: 'part1', name: '现场勘查与工作日期范围', code: 'valuation_work_date', desc: '报告中的现场勘查和估价工作期间。', qa: '是否需要自动按估价期日推算。' },
+      { group: 'part1', name: '委托方信用代码', code: 'client_org_code', desc: '委托方统一社会信用代码。', qa: '是否需要证照 OCR 支持。' },
+      { group: 'part1', name: '委托方负责人', code: 'client_principal', desc: '委托方负责人。', qa: '是否需要在报告中显示。' },
+      { group: 'part1', name: '委托方机构性质', code: 'client_org_type', desc: '委托方类型，如政府机关、平台公司、企事业单位等。', qa: '默认应为“政府机关”；下拉底色和文字需清晰。' },
+      { group: 'part1', name: '委托方机构地址', code: 'client_address', desc: '委托方地址。', qa: '是否常固定，是否可做机构档案。' },
+      { group: 'part1', name: '委托方联系人', code: 'client_contact', desc: '委托联系人。', qa: '是否属于必要出具字段。' },
+      { group: 'part1', name: '委托方联系电话', code: 'client_phone', desc: '委托联系电话。', qa: '是否需要隐藏或脱敏。' },
+      { group: 'part1', name: '委托方邮编', code: 'client_postcode', desc: '委托方邮政编码。', qa: '是否还需要保留该字段。' },
+
+      // 第二部分：规划条件 (28个字段)
+      { group: 'part2', name: '估价对象位置(简称)', code: 'land_location', desc: '坐落简称，影响项目名、摘要、正文和下载文件名。', qa: '是否应从权证/规划条件自动抽取。' },
+      { group: 'part2', name: '地块编号', code: 'land_plot_number', desc: '规划或出让地块编号，参与坐落全称拼接。', qa: '空值时正文是否自然。' },
+      { group: 'part2', name: '估价对象位置全称', code: 'land_location_full', desc: '由坐落简称和地块编号组合，进入正式正文。', qa: '自动拼接规则是否符合报告习惯。' },
+      { group: 'part2', name: '估价所属县市简称', code: 'county_name', desc: '区县简称，用于地方政策、市场描述或项目名。', qa: '是否需要从坐落自动识别。' },
+      { group: 'part2', name: '宗地数量', code: 'parcel_count', desc: '如“一宗”“两宗”，参与项目名和对象描述。', qa: '是否支持多宗地明细。' },
+      { group: 'part2', name: '分摊使用权面积(㎡)', code: 'land_area', desc: '土地面积，是结果总价、摘要和表格的关键数值。', qa: '必须核对单位和数字格式。' },
+      { group: 'part2', name: '建筑总面积(㎡)', code: 'building_area', desc: '建筑面积，影响权属/利用现状和部分方法判断。', qa: '权证面积和测算表面积是否一致。' },
+      { group: 'part2', name: '容积率类型', code: 'plot_ratio_mode', desc: '判断容积率是范围值还是固定值。', qa: '范围值/固定值切换是否符合规划条件。' },
+      { group: 'part2', name: '容积率上限/固定值', code: 'plot_ratio', desc: '容积率主要数值，进入结果正文和方法参数。', qa: '数字格式、是否带单位。' },
+      { group: 'part2', name: '规划容积率下限', code: 'plot_ratio_min', desc: '范围容积率下限。', qa: '空值时 plot_ratio_display 是否合理。' },
+      { group: 'part2', name: '报告展示容积率', code: 'plot_ratio_display', desc: '最终报告展示用容积率文本，如 0.7-4.23。', qa: '自动生成后是否允许人工微调。' },
+      { group: 'part2', name: '规划建筑密度下限', code: 'building_density_min', desc: '规划建筑密度下限。', qa: '是否需要参与正文或仅进入表格。' },
+      { group: 'part2', name: '规划建筑密度上限', code: 'building_density_max', desc: '规划建筑密度上限。', qa: '是否需要范围展示字段。' },
+      { group: 'part2', name: '规划绿地率', code: 'greening_rate', desc: '规划绿地率。', qa: '符号如 ≤ 是否统一。' },
+      { group: 'part2', name: '规划建筑限高', code: 'building_height_limit', desc: '建筑限高。', qa: '是否需要从规划条件自动抽取。' },
+      { group: 'part2', name: '设定土地使用权类型', code: 'right_type', desc: '如出让、划拨等，影响估价权利类型和正文。', qa: '是否需要标准枚举。' },
+      { group: 'part2', name: '设定土地用途', code: 'land_usage', desc: '估价设定用途，影响话术类型、方法适用性和结果正文。', qa: '是关键字段，需重点核对。' },
+      { group: 'part2', name: '设定土地用途简称', code: 'land_usage_short', desc: '报告中常用的用途简称。', qa: '是否自动从全称派生正确。' },
+      { group: 'part2', name: '登记土地用途全称', code: 'land_usage_full', desc: '权证或历史登记用途完整表述。', qa: '与设定用途不一致时是否提醒。' },
+      { group: 'part2', name: '宗地四至状况', code: 'land_boundary_desc', desc: '东南西北四至描述，进入对象位置/实物状况。', qa: '是否需要拆成四个方向字段。' },
+      { group: 'part2', name: '规划条件批准机关', code: 'planning_approval_authority', desc: '规划条件或批准文件的出具机关。', qa: 'OCR 是否能抽取，缺失时热区是否跳转。' },
+      { group: 'part2', name: '估价设定利用条件（现状/规划）', code: 'valuation_condition_type', desc: '决定按现状还是规划条件估价。', qa: '这是方法和正文的重要判断。' },
+      { group: 'part2', name: '实际土地开发程度', code: 'land_development_actual', desc: '当前实际开发程度。', qa: '与设定开发程度不一致时是否提示。' },
+      { group: 'part2', name: '设定土地开发程度', code: 'land_development_set', desc: '本次估价设定开发程度。', qa: '影响基础设施段落和结果正文。' },
+      { group: 'part2', name: '原登记/历史权利性质', code: 'registered_right_type', desc: '原历史登记权利性质，如行政划拨。', qa: '对划拨转出让场景很关键。' },
+      { group: 'part2', name: '设定土地权利状态描述', code: 'assumed_right_status', desc: '本次估价设定的权利完整性和限制条件。', qa: '他项权利存在时是否自动变化。' },
+      { group: 'part2', name: '原始权属登记的依据文书', code: 'registered_proof_docs', desc: '历史权属登记依据。', qa: '是否常见于档案资料，是否需 OCR。' },
+      { group: 'part2', name: '委托方提供资料清单', code: 'entrusted_source_docs', desc: '委托方提供的原始资料集合。', qa: '是否应与依据清单合并或分开。' },
+
+      // 第三部分：土地权属 (38个字段)
+      { group: 'part3', name: '基准地价批准文号', code: 'base_price_doc_no', desc: '基准地价文件文号，可被第三/第四部分共同引用。', qa: '应优先在基准地价侧边栏维护。' },
+      { group: 'part3', name: '基准地价文件名称', code: 'base_price_doc_name', desc: '基准地价文件名称。', qa: '缺失时正文会出现可点击“请填写”。' },
+      { group: 'part3', name: '基准地价颁布实施日期', code: 'base_price_publish_date', desc: '基准地价实施日期。', qa: '用于判断时效和引用。' },
+      { group: 'part3', name: '基准地价估价基准日', code: 'base_price_base_date', desc: '基准地价自身价格基准日。', qa: '与估价期日共同计算已满年限。' },
+      { group: 'part3', name: '基准地价批准机关', code: 'base_price_doc_authority', desc: '基准地价批准/发布机关。', qa: '热区应跳到基准地价资料侧边栏。' },
+      { group: 'part3', name: '权属情形', code: 'ownership_scenario_type', desc: '控制权属正文生成场景，如首次出让、历史未登记、已登记完整等。', qa: '这是第三部分最核心的场景开关。' },
+      { group: 'part3', name: '用途话术类型', code: 'asset_use_category', desc: '控制住宅、商服、工业、公共管理等用途话术。', qa: '是否覆盖公司常见用地类型。' },
+      { group: 'part3', name: '其他用途名称', code: 'asset_use_category_other', desc: '用途为“其他”时的自定义名称。', qa: '是否进入正文自然。' },
+      { group: 'part3', name: '存在他项权利限制', code: 'has_other_rights_limit', desc: '标记是否存在抵押、查封等限制。', qa: '勾选后正文和风险提示是否同步。' },
+      { group: 'part3', name: '他项权利限制具体说明', code: 'other_rights_limit_desc', desc: '具体限制内容。', qa: '是否需要结构化限制类型。' },
+      { group: 'part3', name: '权属与规划依据文件清单', code: 'basis_docs_list', desc: '第三部分依据清单，支持附件名注入。', qa: '资料顺序、去重、标点是否符合报告。' },
+      { group: 'part3', name: '依据文件清单(渲染)', code: 'basis_docs_rendered', desc: '系统把清单转成正文引用文本。', qa: '通常不手填，但要解释它为何存在。' },
+      { group: 'part3', name: '依据文件清单话术句式', code: 'basis_docs_phrase', desc: '“根据 XXX 等资料”这类句式。', qa: '影响权属正文开头。' },
+      { group: 'part3', name: '政府批复文件名称', code: 'gov_approval_name', desc: '农转用/征收/供地类政府批复名称。', qa: '首次出让或历史来源场景常用。' },
+      { group: 'part3', name: '政府批复文号', code: 'gov_approval_no', desc: '政府批复文号。', qa: 'OCR 抽取准确性。' },
+      { group: 'part3', name: '政府批复日期', code: 'gov_approval_date', desc: '政府批复日期。', qa: '日期格式统一。' },
+      { group: 'part3', name: '批准机关', code: 'approval_authority', desc: '批准机关名称。', qa: '与政府批复文件是否重复。' },
+      { group: 'part3', name: '批准农转用日期', code: 'approval_transfer_date', desc: '农转用批准日期。', qa: '是否应由批复日期派生。' },
+      { group: 'part3', name: '土地用途依据', code: 'land_usage_basis', desc: '用途认定依据。', qa: '是否需要自动引用规划条件。' },
+      { group: 'part3', name: '使用权面积依据', code: 'land_area_basis', desc: '面积来源依据。', qa: '面积争议时非常关键。' },
+      { group: 'part3', name: '房屋所有权证名称', code: 'house_cert_name', desc: '房屋权证文件名称。', qa: '旧证场景常见。' },
+      { group: 'part3', name: '房屋所有权证编号', code: 'house_cert_no', desc: '房屋权证编号。', qa: 'OCR 提取是否稳定。' },
+      { group: 'part3', name: '面积依据文件名', code: 'area_docs_desc_name', desc: '面积依据的资料名称。', qa: '历史未登记场景需要重点核对。' },
+      { group: 'part3', name: '房证登记建筑面积', code: 'registered_house_area', desc: '房证登记建筑面积。', qa: '与 building_area 差异是否提示。' },
+      { group: 'part3', name: '权属证明文件名', code: 'proof_doc_name', desc: '权属证明资料名称。', qa: '是否进入依据清单。' },
+      { group: 'part3', name: '权属证明日期', code: 'proof_doc_date', desc: '权属证明资料日期。', qa: '日期是否应显示在正文。' },
+      { group: 'part3', name: '购房年份', code: 'buy_year', desc: '历史购房年份。', qa: '历史未登记场景辅助说明。' },
+      { group: 'part3', name: '房间详细位置坐落', code: 'room_detail_location', desc: '房屋/房间坐落明细。', qa: '是否与土地坐落冲突。' },
+      { group: 'part3', name: '土地使用权证名称', code: 'land_cert_name', desc: '土地使用权证文件名称。', qa: '已登记完整场景常用。' },
+      { group: 'part3', name: '土地使用权证编号', code: 'land_cert_no', desc: '土地使用权证编号。', qa: 'OCR 识别规则是否需要增强。' },
+      { group: 'part3', name: '土地使用权类型描述', code: 'land_use_type', desc: '登记权利类型描述。', qa: '与设定权利类型差异是否提示。' },
+      { group: 'part3', name: '权利证书号', code: 'right_cert_no', desc: '权利证书号，兼容旧证/房证等。', qa: '是否与不动产权证书编号合并。' },
+      { group: 'part3', name: '不动产权证书编号', code: 'real_estate_cert_no', desc: '不动产权证书编号。', qa: '新证场景关键字段。' },
+      { group: 'part3', name: '权利人', code: 'owner_name', desc: '登记权利人。', qa: '与土地使用者/委托方关系需解释。' },
+      { group: 'part3', name: '登记时间', code: 'registration_time', desc: '权利登记时间。', qa: '权属演变正文可能使用。' },
+      { group: 'part3', name: '地籍图号', code: 'cadastral_map_no', desc: '地籍图号。', qa: '是否仍需在报告中展示。' },
+      { group: 'part3', name: '宗地号', code: 'parcel_no', desc: '宗地号。', qa: '是否支持多宗地。' },
+      { group: 'part3', name: '附记', code: 'memo', desc: '证书附记内容。', qa: '他项限制、用途备注等可能从这里来。' },
+
+      // 第四部分：确价测算 (54个字段)
+      { group: 'part4', name: '可比交易案例数量', code: 'comparable_case_count', desc: '市场比较法资料充分性判断。', qa: '案例数量阈值是否合理。' },
+      { group: 'part4', name: '案例可比性', code: 'case_similarity_level', desc: '市场比较法案例质量判断。', qa: '高/中/低是否够用。' },
+      { group: 'part4', name: '案例交易时间是否合理', code: 'case_time_valid', desc: '判断案例时效性。', qa: '是否需要自动按日期判断。' },
+      { group: 'part4', name: '同类用地市场活跃程度', code: 'market_activity_level', desc: '判断市场比较法适用性。', qa: '预警规则是否符合当地市场。' },
+      { group: 'part4', name: '具备稳定收益或租金资料', code: 'has_stable_income_data', desc: '收益还原法资料条件。', qa: '资料不足时是否自动提示不宜采用。' },
+      { group: 'part4', name: '土地纯收益可从混合收益中合理剥离', code: 'income_can_be_separated', desc: '收益还原法关键前提。', qa: '是否需要更多解释选项。' },
+      { group: 'part4', name: '租赁市场活跃程度', code: 'rent_market_activity_level', desc: '收益法市场支撑。', qa: '是否与 market_activity_level 联动。' },
+      { group: 'part4', name: '还原率来源可靠', code: 'cap_rate_source_available', desc: '收益法参数可靠性。', qa: '是否应要求说明来源。' },
+      { group: 'part4', name: '具备明确开发或再开发方案', code: 'has_development_plan', desc: '剩余法适用前提。', qa: '是否需要上传方案文件。' },
+      { group: 'part4', name: '开发完成后价值可合理预测', code: 'development_value_measurable', desc: '剩余法结果可靠性。', qa: '是否需要估值依据字段。' },
+      { group: 'part4', name: '追加建设成本资料可采', code: 'construction_cost_available', desc: '剩余法成本参数条件。', qa: '是否需要成本明细表。' },
+      { group: 'part4', name: '销售或租赁预测资料可靠', code: 'sales_or_rent_forecast_reliable', desc: '剩余法收益预测条件。', qa: '是否需要预测来源说明。' },
+      { group: 'part4', name: '具备土地取得成本资料', code: 'has_land_acquisition_cost_docs', desc: '成本逼近法资料条件。', qa: '资料不足时预警是否准确。' },
+      { group: 'part4', name: '具备土地开发成本资料', code: 'has_development_cost_docs', desc: '成本逼近法开发成本资料条件。', qa: '是否从测算表自动判断。' },
+      { group: 'part4', name: '成本参数可靠', code: 'cost_data_reliable', desc: '成本逼近法参数可靠性。', qa: '是否需要强制说明。' },
+      { group: 'part4', name: '成本与市场价值脱节风险', code: 'cost_market_gap_risk', desc: '成本法结果风险等级。', qa: '高风险时是否降低权重。' },
+      { group: 'part4', name: '处于基准地价覆盖范围', code: 'base_price_in_coverage', desc: '基准地价法适用条件。', qa: '是否与坐落/级别资料联动。' },
+      { group: 'part4', name: '有对应基准地价用途体系', code: 'base_price_has_applicable_use', desc: '判断基准地价用途体系是否匹配。', qa: '是否需要用途映射表。' },
+      { group: 'part4', name: '基准地价是否可能过期', code: 'base_price_is_expired', desc: '基准地价法时效性判断。', qa: '与侧边栏超期状态保持同步。' },
+      { group: 'part4', name: '基准地价更新管理依据', code: 'base_price_rule_doc_name', desc: '说明基准地价更新周期的依据文件。', qa: '默认依据是否符合地区政策。' },
+      { group: 'part4', name: '基准地价更新依据文号', code: 'base_price_rule_doc_no', desc: '更新管理依据文号。', qa: '文号格式是否规范。' },
+      { group: 'part4', name: '全面更新周期年限', code: 'base_price_update_cycle_years_text', desc: '如“三年”，用于超期判断话术。', qa: '是否不同地区可配置。' },
+      { group: 'part4', name: '停用阈值年限', code: 'base_price_disable_threshold_years_text', desc: '如“六年”，用于严重超期风险。', qa: '是否符合政策。' },
+      { group: 'part4', name: '采用成本逼近法', code: 'use_cost_approx', desc: '控制是否启用成本逼近法。', qa: '勾选后底稿表格和正文是否出现。' },
+      { group: 'part4', name: '采用市场比较法', code: 'use_market_comp', desc: '控制是否启用市场比较法。', qa: '未勾选时相关表格是否清除。' },
+      { group: 'part4', name: '采用收益还原法', code: 'use_income_cap', desc: '控制是否启用收益还原法。', qa: '资料不足时是否预警。' },
+      { group: 'part4', name: '采用基准地价系数修正法', code: 'use_benchmark_corr', desc: '控制是否启用基准地价法。', qa: '基准地价资料缺失时提示是否充分。' },
+      { group: 'part4', name: '采用剩余法', code: 'use_residual', desc: '控制是否启用剩余法。', qa: '开发方案缺失时是否预警。' },
+      { group: 'part4', name: '成本逼近法单价', code: 'cost_approx_price', desc: '成本逼近法测算单价。', qa: '与测算表回填是否一致。' },
+      { group: 'part4', name: '市场比较法单价', code: 'market_comp_price', desc: '市场比较法测算单价。', qa: '是否参与公式和正文展示。' },
+      { group: 'part4', name: '收益还原法单价', code: 'income_cap_price', desc: '收益还原法测算单价。', qa: '未采用时是否不进入正文。' },
+      { group: 'part4', name: '基准地价系数修正单价', code: 'benchmark_corr_price', desc: '基准地价法测算单价。', qa: '与基准地价资料是否联动。' },
+      { group: 'part4', name: '剩余法单价', code: 'residual_price', desc: '剩余法测算单价。', qa: '主导方法时权重是否合理。' },
+      { group: 'part4', name: '最终评估地面单价', code: 'final_unit_price', desc: '最终确定地面单价，进入摘要、结果表和正文。', qa: '已修复映射，QA 时重点核对最终 Word。' },
+      { group: 'part4', name: '最终评估土地总价', code: 'final_total_price', desc: '最终土地总价，进入摘要、结果表和正文。', qa: '已修复映射，需核对大小写和单位。' },
+      { group: 'part4', name: '最终土地总价大写', code: 'final_total_price_upper', desc: '人民币大写总价。', qa: '是否需要自动从总价转换。' },
+      { group: 'part4', name: '正文显示方法单价', code: 'show_price_in_text', desc: '控制正文中是否展示各方法单价。', qa: '默认是否应打开。' },
+      { group: 'part4', name: '说明未采用方法', code: 'explain_unselected_methods', desc: '是否在正文说明未采用方法原因。', qa: '估价报告口径是否要求说明。' },
+      { group: 'part4', name: '基准地价是否超期', code: 'is_base_price_expired', desc: '兼容字段，与 base_price_is_expired 同步。', qa: '同义字段是否后续合并。' },
+      { group: 'part4', name: '确价加权逻辑', code: 'weight_logic_type', desc: '控制简单平均、主导方法、指定权重等逻辑。', qa: '权重规则是否符合业务。' },
+      { group: 'part4', name: '主导测算方法', code: 'dominant_method_name', desc: '主导方法名称。', qa: '主导逻辑时必须核对。' },
+      { group: 'part4', name: '确价公式表达', code: 'formula_display_text', desc: '最终报告展示的公式文本。', qa: '公式是否自动随权重更新。' },
+      { group: 'part4', name: '方法适用性方案', code: 'land_level_type', desc: '控制方法适用性长段话术模板。', qa: '是否需要更多方案。' },
+      { group: 'part4', name: '确价理由方案', code: 'method_combination_type', desc: '控制确价理由模板。', qa: '方法组合是否覆盖常见场景。' },
+      { group: 'part4', name: '基础设施方案', code: 'infrastructure_type', desc: '控制基础设施开发程度话术模板。', qa: '五通/三通等枚举是否够用。' },
+      { group: 'part4', name: '采用方法理由阐述', code: 'weight_rationale_text', desc: '补充权重和方法采用理由。', qa: '是否应由系统生成而非手填。' },
+      { group: 'part4', name: '测算依据文件清单', code: 'valuation_basis_docs_list', desc: '第四部分测算依据文件清单。', qa: '与第三部分依据清单是否要合并。' },
+      { group: 'part4', name: '测算依据文件清单(渲染)', code: 'valuation_basis_docs_rendered', desc: '清单渲染后的正文引用文本。', qa: '通常系统生成，不建议手填。' },
+      { group: 'part4', name: '估价方法选用理由段落', code: 'valuation_method_reasons', desc: '第四部分方法选用/未选用理由正文。', qa: '热区引用和人工修改保护是否符合预期。' },
+      { group: 'part4', name: '评估方法适用性阐述段落', code: 'valuation_method_applicability', desc: '方法适用性长段正文。', qa: '是否符合估价规程口径。' },
+      { group: 'part4', name: '价格加权确定理由段落', code: 'final_price_determination', desc: '确价、加权、开发程度等理由正文。', qa: '是否与公式和最终价格一致。' },
+      { group: 'part4', name: '确定估价结果正文', code: 'valuation_result_statement', desc: '最终估价结果正文。', qa: '单价、总价、面积、期日必须一致。' },
+      { group: 'part4', name: '基础设施开发程度段落', code: 'infrastructure_detail', desc: '基础设施开发程度细化正文。', qa: '是否与第二部分开发程度一致。' },
+      { group: 'part4', name: '成本逼近法测算依据段落', code: 'cost_approx_process_intro', desc: '成本逼近法底稿依据说明。', qa: '依据缺失时是否显示可点击提示。' },
+
+      // 第五部分：派生/内部字段 (8个字段)
+      { group: 'part5', name: '土地使用年期', code: 'land_use_term', desc: '设定土地使用年期文本，如“70年”。', qa: '第二部分可见但未登记到页签注册表，后续可补齐。' },
+      { group: 'part5', name: '土地使用年期数值', code: 'land_use_term_years', desc: '从年期文本提取数值，用于计算和模板。', qa: '是否自动提取准确。' },
+      { group: 'part5', name: '区域因素标题', code: 'regional_factor_title', desc: '模板中的区域因素标题辅助字段。', qa: '是否仍需要前端暴露。' },
+      { group: 'part5', name: '其他特别事项引用', code: 'other_special_notes_ref', desc: '报告其他说明章节引用文字。', qa: '是否为固定模板字段。' },
+      { group: 'part5', name: '土地状态类型', code: 'land_status_type', desc: '兼容旧逻辑的权属状态字段。', qa: '与 ownership_scenario_type 后续可合并。' },
+      { group: 'part5', name: '土地登记状况描述', code: 'land_registration_desc', desc: '第三部分自动生成正文之一。', qa: '热区引用、点击跳转和人工修改保护要重点测。' },
+      { group: 'part5', name: '土地权利状况描述', code: 'land_right_desc', desc: '第三部分自动生成正文之一。', qa: '他项权利和权属文件引用是否准确。' },
+      { group: 'part5', name: '土地利用现状描述', code: 'land_use_status_desc', desc: '第三部分自动生成正文之一。', qa: '现场照片和利用现状是否一致。' }
+    ];
+
+    // 能力地图数据 (9 个核心项)
+    const capabilities = [
+      { id: 1, title: '前端四页表单', status: '已具备', desc: '第一部分报告基础、第二部分规划条件、第三部分土地权属、第四部分确价测算。', qa: '展示字段分段排布，看布局是否符合估价师录入资料的心理习惯。' },
+      { id: 2, title: 'Excel 拖拽导入', status: '已具备', desc: '一键读取Excel测算表，回填地面价、总价等核心参数并改变来源。', qa: '测算表中数值一旦变更，在页面上的高亮追溯状态能保留几小时。' },
+      { id: 3, title: '字段来源标识', status: '已具备', desc: '区别标注来自 Excel、OCR、人工填写及系统推衍字段。', qa: '颜色（蓝、绿、紫、橘）是否足够清晰，是否存在视觉疲劳。' },
+      { id: 4, title: 'OCR 证据池', status: '已具备', desc: '通过粘贴文字或上传附件，识别证照及批件生成“待注入项”。', qa: '提取文号后是自动填充还是作为推荐项供估价师确认注入。' },
+      { id: 5, title: '基准地价侧边栏', status: '已具备', desc: '独立于四页表单，专门维护及沉淀各县市基准地价发布细节。', qa: '侧边栏弹出是否遮挡正文。' },
+      { id: 6, title: '智能热区透视', status: '已具备', desc: '生成正文含有大量引用热区，双击可以直接定位回表单字段。', qa: '点击橙色 [请填写] 是否能够秒级定位到表单中目标缺失的输入框。' },
+      { id: 7, title: '方法适用性预警', status: '已具备', desc: '未勾选市场活跃或资料条件不充分的方法时，触发警告。', qa: '预警是否会限制不常用方法的选取？系统已支持人工强行通过。' },
+      { id: 8, title: '确价正文生成', status: '已具备', desc: '结合选定的权重与平均测算值，自动生成确价部分数理公式与阐述段落。', qa: '检查生成的数学公式格式是否工整（在 Word 中不出现乱码）。' },
+      { id: 9, title: '字体字号后处理', status: '已修复', desc: '彻底锁死 Word 渲染层，防止模板样式发生混乱或字体继承崩溃。', qa: '实测发现不论是用 Microsoft Word 还是 WPS 重新打开，字号均完美锁定。' }
+    ];
+
+    // 会议意见存储
+    let feedbackList = [
+      { type: '必须修', module: '第四部分总价', content: '最终总价大写功能在部分极高金额下转换可能缺字，需要追加容错库' },
+      { type: '应该做', module: '第二部分规划条件', content: '需新增“工业仓储”细化话术，目前工业和商服的部分通用话术仍有交叉' },
+      { type: '可优化', module: '证据池', content: '证据解析并批量注入后，希望能自动停留在原页而非弹窗重定位' }
+    ];
+
+    // 会议议程时间设定 (单位：秒)
+    let agendaTotalSeconds = 95 * 60;
+    let agendaTimerInterval = null;
+
+    // 自检清单状态
+    const checklistData = [
+      { id: 1, text: '本地 Python 3.11 及相关工具版本校验符合要求', status: false },
+      { id: 2, text: '依赖库 fastapi, docx, docxtpl, win32com 全部导入通过', status: false },
+      { id: 3, text: '01_Source/02_Word_Templates 目录下报告模版存在且无损坏', status: false },
+      { id: 4, text: '前端静态产物 dist/index.html 完整且加载就绪', status: false },
+      { id: 5, text: '演示用本地 Word/WPS 及 PDF 虚拟打印驱动已默认配置', status: false },
+      { id: 6, text: '输入/输出测试目录 02_Process 与 03_Result 具有写入权限', status: false },
+      { id: 7, text: '局域网防火墙策略已放行 8000 端口，且 API 改为相对路径', status: false },
+    ];
+
+    // ---------------- 初始化 ----------------
+    window.onload = function() {
+      // 渲染能力地图
+      renderCapabilities();
+      // 渲染字段表格 (147个)
+      filterFields();
+      // 渲染部署方案
+      renderDeployContent();
+      // 渲染自检清单
+      renderChecklist();
+      // 渲染反馈表格
+      renderFeedback();
+      // 触发一次沙盒同步，确保正文初始化正确
+      syncSandboxData();
+    };
+
+    // ---------------- UI 及主题切换 ----------------
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('sunIcon').classList.remove('hidden');
+        document.getElementById('moonIcon').classList.add('hidden');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('sunIcon').classList.add('hidden');
+        document.getElementById('moonIcon').classList.remove('dark');
+        document.getElementById('moonIcon').classList.remove('hidden');
+      }
+      showToast(isDarkMode ? '已切换至暗色投影演示模式' : '已切换至经典明亮模式');
+    }
+
+    function switchTab(tabId) {
+      // 切换视图
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      
+      // 切换导航态
+      document.querySelectorAll('#sidebarNav button').forEach(btn => {
+        btn.classList.remove('bg-brand-500', 'text-white', 'shadow-sm');
+        btn.classList.add('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-200', 'dark:hover:bg-slate-800');
+      });
+      
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-brand-500', 'text-white', 'shadow-sm');
+        activeBtn.classList.remove('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-200', 'dark:hover:bg-slate-800');
+      }
+      
+      activeTab = tabId;
+    }
+
+    // ---------------- Toast 提示 ----------------
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+      
+      toast.classList.remove('opacity-0', 'translate-y-20', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-20', 'pointer-events-none');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 3000);
+    }
+
+    // ---------------- 议程倒计时 ----------------
+    function toggleAgendaTimer() {
+      const btn = document.getElementById('timerCtrlBtn');
+      if (agendaTimerInterval) {
+        // 暂停
+        clearInterval(agendaTimerInterval);
+        agendaTimerInterval = null;
+        btn.innerText = '恢复';
+        btn.className = 'bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded transition-colors';
+        showToast('会议计时暂停');
+      } else {
+        // 开始
+        agendaTimerInterval = setInterval(() => {
+          if (agendaTotalSeconds <= 0) {
+            clearInterval(agendaTimerInterval);
+            agendaTimerInterval = null;
+            showToast('会议议程时间已耗尽，请进入下一阶段');
+            return;
+          }
+          agendaTotalSeconds--;
+          updateAgendaTimerDisplay();
+        }, 1000);
+        btn.innerText = '暂停';
+        btn.className = 'bg-amber-600 hover:bg-amber-700 text-white text-xs px-2.5 py-1 rounded transition-colors';
+        showToast('会议计时开启');
+      }
+    }
+
+    function updateAgendaTimerDisplay() {
+      const minutes = Math.floor(agendaTotalSeconds / 60);
+      const seconds = agendaTotalSeconds % 60;
+      document.getElementById('agendaTimer').innerText = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // ---------------- 能力地图 ----------------
+    function renderCapabilities() {
+      const grid = document.getElementById('capabilitiesGrid');
+      grid.innerHTML = '';
+      capabilities.forEach(cap => {
+        const statusColor = cap.status === '已修复' || cap.status === '已具备' 
+          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400' 
+          : 'bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400';
+          
+        const card = document.createElement('div');
+        card.className = 'p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-brand-500 hover:shadow-md transition-all cursor-pointer flex flex-col justify-between';
+        card.onclick = () => selectCapability(cap);
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-400">模块：${cap.id.toString().padStart(2, '0')}</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColor}">${cap.status}</span>
+            </div>
+            <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">${cap.title}</h4>
+            <p class="text-xs text-slate-500 line-clamp-2">${cap.desc}</p>
+          </div>
+          <span class="text-[10px] text-brand-600 dark:text-brand-400 mt-3 font-semibold flex items-center gap-1">
+            查看宣讲要点 
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+          </span>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function selectCapability(cap) {
+      document.getElementById('capabilityDetail').classList.remove('hidden');
+      document.getElementById('capDetailTitle').innerText = `【${cap.title}】系统架构与参数深度解析`;
+      document.getElementById('capDetailDesc').innerText = cap.desc;
+      document.getElementById('capDetailQa').innerText = cap.qa;
+      
+      // 滚动到底部查看详细信息
+      document.getElementById('capabilityDetail').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ---------------- 沙盒核心交互 ----------------
+    function syncSandboxData() {
+      // 1. 获取输入数据
+      const clientName = document.getElementById('input-client_name').value || '[请填写委托人名称]';
+      const landLocation = document.getElementById('input-land_location').value || '[请填写估价对象位置简称]';
+      const realEstateCertNo = document.getElementById('input-real_estate_cert_no').value || '[请填写不动产权证书编号]';
+      const basePriceDocName = document.getElementById('input-base_price_doc_name').value || '[请填写基准地价文件名称]';
+      const basePriceDocAuthority = document.getElementById('input-base_price_doc_authority').value;
+
+      // 2. 联动报告预览视图
+      document.getElementById('preview-client_name').innerText = `[${clientName}]`;
+      document.getElementById('preview-land_location').innerText = `[${landLocation}]`;
+      document.getElementById('preview-real_estate_cert_no').innerText = `[${realEstateCertNo || '川(2026)成都市不动产权第XXXX号'}]`;
+      document.getElementById('preview-base_price_doc_name').innerText = `[${basePriceDocName || 'XX市基准地价更新标准手册'}]`;
+
+      const authorityPreviewEl = document.getElementById('preview-base_price_doc_authority');
+      if (basePriceDocAuthority) {
+        authorityPreviewEl.innerText = `[${basePriceDocAuthority}]`;
+        authorityPreviewEl.className = "border-b border-dashed border-slate-400 font-bold px-1 text-brand-600 dark:text-brand-400 cursor-pointer";
+      } else {
+        authorityPreviewEl.innerText = "[请填写基准地价批准机关]";
+        authorityPreviewEl.className = "bg-amber-500 text-white font-bold px-1.5 py-0.5 rounded animate-bounce inline-block cursor-pointer text-xs";
+      }
+    }
+
+    // 亮蓝定位：点击热区后左侧字段高亮并闪烁
+    function scrollToField(fieldId) {
+      const targetGroup = document.getElementById(`fieldGroup-${fieldId}`);
+      if (targetGroup) {
+        // 平滑滚动
+        targetGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // 闪烁效果
+        targetGroup.classList.add('pulse-target');
+        setTimeout(() => {
+          targetGroup.classList.remove('pulse-target');
+        }, 4500);
+
+        showToast(`已通过热区快速追溯到变量 [${fieldId}] 输入区域`);
+      }
+    }
+
+    // 模拟 Excel 导入
+    function simulateExcelImport() {
+      document.getElementById('input-client_name').value = '保利发展（成都）置业有限公司';
+      document.getElementById('input-land_location').value = '高新区新川创新科技园A-10住宅地块';
+      document.getElementById('input-base_price_doc_name').value = '成都市中心城区基准地价成果(2025版)';
+      
+      // 更新来源标识
+      setSourceLabel('client_name', '来自 Excel 测算表', 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400');
+      setSourceLabel('land_location', '来自 Excel 测算表', 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400');
+      setSourceLabel('base_price_doc_name', '来自 Excel 测算表', 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400');
+
+      syncSandboxData();
+      showToast('⚡ Excel 解析完成：地面单价、土地使用者、基准地价文件名等 12 个字段回填完毕');
+    }
+
+    // 模拟 OCR 注入
+    function simulateOcrInjection() {
+      document.getElementById('input-real_estate_cert_no').value = '川(2026)成都市不动产权第0112458号';
+      document.getElementById('input-base_price_doc_authority').value = '成都市自然资源和规划局';
+
+      setSourceLabel('real_estate_cert_no', '来自 OCR 证据池', 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-400');
+      setSourceLabel('base_price_doc_authority', '来自 OCR 证据池', 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-400');
+
+      syncSandboxData();
+      showToast('🔍 OCR 识别成功：提取不动产登记证书、土地证、基准地价发布机关注入至对应依据');
+    }
+
+    function setSourceLabel(fieldId, text, classStr) {
+      const label = document.getElementById(`source-${fieldId}`);
+      if (label) {
+        label.innerText = text;
+        label.className = `text-[10px] px-1.5 py-0.2 rounded font-bold ${classStr}`;
+      }
+    }
+
+    function resetSandbox() {
+      document.getElementById('input-client_name').value = '泰康人寿保险股份有限公司';
+      document.getElementById('input-land_location').value = '高新区A区-05号工业地块';
+      document.getElementById('input-real_estate_cert_no').value = '';
+      document.getElementById('input-base_price_doc_name').value = '';
+      document.getElementById('input-base_price_doc_authority').value = '';
+
+      setSourceLabel('client_name', '默认初始化', 'bg-slate-100 dark:bg-slate-700 text-slate-500');
+      setSourceLabel('land_location', '默认初始化', 'bg-slate-100 dark:bg-slate-700 text-slate-500');
+      setSourceLabel('real_estate_cert_no', '默认初始化', 'bg-slate-100 dark:bg-slate-700 text-slate-500');
+      setSourceLabel('base_price_doc_name', '默认初始化', 'bg-slate-100 dark:bg-slate-700 text-slate-500');
+      setSourceLabel('base_price_doc_authority', '请手动填写或由OCR注入', 'bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400');
+
+      syncSandboxData();
+      showToast('沙盒已被完全重置至初始准备状态');
+    }
+
+    function compileAndDownload() {
+      showToast('正在编译渲染 Word 模板并注入所配字段...');
+      setTimeout(() => {
+        showToast('🔒 字体字号锁定处理完成！自动归档至：03_Result/ 目录下，Word 文档已自动开始下载。');
+      }, 1500);
+    }
+
+    // ---------------- 字段字典渲染与过滤 ----------------
+    function filterFields() {
+      const groupFilter = document.getElementById('fieldGroupFilter').value;
+      const searchVal = document.getElementById('fieldSearch').value.toLowerCase();
+      const body = document.getElementById('fieldsTableBody');
+      body.innerHTML = '';
+
+      const filtered = fieldsData.filter(item => {
+        const matchesGroup = groupFilter === 'all' || item.group === groupFilter;
+        const matchesSearch = item.name.toLowerCase().includes(searchVal) || 
+                              item.code.toLowerCase().includes(searchVal) ||
+                              item.desc.toLowerCase().includes(searchVal);
+        return matchesGroup && matchesSearch;
+      });
+
+      // 展现加载字段的总计
+      document.getElementById('fieldsLoadedCount').innerText = filtered.length;
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-bold text-slate-900 dark:text-white">${item.name}</td>
+          <td class="p-3 font-mono text-brand-600 dark:text-brand-400"><span class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">${item.code}</span></td>
+          <td class="p-3 text-slate-600 dark:text-slate-300 max-w-xs truncate" title="${item.desc}">${item.desc}</td>
+          <td class="p-3 text-slate-500 dark:text-slate-400">${item.qa}</td>
+          <td class="p-3 text-center">
+            <button onclick="copyText('${item.code}')" class="text-xs text-brand-600 hover:text-brand-800 dark:text-brand-400 dark:hover:text-brand-300 font-semibold">
+              复制变量
+            </button>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    function copyText(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast(`已复制变量 \${text} 至剪贴板，可在模板中直接引用`);
+      } catch (err) {
+        showToast('复制失败，请手动选取变量名复制');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    // ---------------- 离线部署教程渲染 ----------------
+    const deployGuides = {
+      optA: `
+        <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">方案 A：最推荐，演示电脑本机运行</h4>
+        <p class="text-xs text-slate-500 leading-relaxed mb-3">适合直接使用 U 盘把整个系统包复制拷贝到同事或会议室电脑上运行，流畅度最好。</p>
+        <div class="bg-slate-950 text-slate-100 p-3 rounded-lg text-xs font-mono mb-3 space-y-1 overflow-x-auto relative">
+          <button onclick="copyCodeBlock('codeOptA')" class="absolute top-2 right-2 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">一键复制</button>
+          <pre id="codeOptA">cd D:\\评估报告工具
+powershell -ExecutionPolicy Bypass -File .\\scripts\\install_demo_deps.ps1 -PythonExe python
+powershell -ExecutionPolicy Bypass -File .\\scripts\\start_demo_server.ps1 -PythonExe python</pre>
+        </div>
+        <p class="text-[11px] text-brand-600">💡 提示：如果演示电脑上 Python 指令不是系统默认的 "python"，可将 -PythonExe 属性改为具体 Python 物理安装路径。</p>
+      `,
+      optB: `
+        <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">方案 B：一台电脑开服务，其余人局域网多点协同连入</h4>
+        <p class="text-xs text-slate-500 leading-relaxed mb-3">适合你在自己的电脑上开启服务，会议室里的所有人使用各自电脑的浏览器直接连入演示。</p>
+        <div class="bg-slate-950 text-slate-100 p-3 rounded-lg text-xs font-mono mb-3 space-y-1 overflow-x-auto relative">
+          <button onclick="copyCodeBlock('codeOptB')" class="absolute top-2 right-2 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">一键复制</button>
+          <pre id="codeOptB">cd D:\\评估报告工具
+powershell -ExecutionPolicy Bypass -File .\\scripts\\start_demo_server.ps1 -PythonExe python -Lan</pre>
+        </div>
+        <p class="text-xs text-slate-500 mb-1">脚本执行成功后会在命令行显示局域网服务地址，形如：</p>
+        <div class="bg-slate-100 dark:bg-slate-900 p-2 text-xs font-mono rounded inline-block text-brand-600">LAN demo URL: http://192.168.1.23:8000</div>
+        <p class="text-[11px] text-slate-400 mt-2">⚠️ 注意：局域网连入时防火墙可能进行拦截，如无法打开请确保关闭或在 Windows 高级安全中开放 8000 端口策略。</p>
+      `,
+      optC: `
+        <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">方案 C：演示过程中需要根据反馈，现场直接修改界面并热更预览</h4>
+        <p class="text-xs text-slate-500 leading-relaxed mb-3">需事先在开发设备中安装好 Node.js 以便进行前后端热重载（Hot Reload）：</p>
+        <div class="bg-slate-950 text-slate-100 p-3 rounded-lg text-xs font-mono mb-3 space-y-1 overflow-x-auto relative">
+          <button onclick="copyCodeBlock('codeOptC')" class="absolute top-2 right-2 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">一键复制</button>
+          <pre id="codeOptC">cd D:\\评估报告工具\\frontend
+npm install
+npm run dev
+
+# 另起一个终端面板启动后端
+cd D:\\评估报告工具
+python -m uvicorn src.api:app --host 127.0.0.1 --port 8000</pre>
+        </div>
+        <p class="text-xs text-slate-500">浏览器热更新开发视图，默认指向：<span class="text-brand-600 font-bold">http://127.0.0.1:5173</span></p>
+      `,
+      optNoNet: `
+        <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">无网电脑怎么搭建 Python 离线包依赖库环境</h4>
+        <p class="text-xs text-slate-500 leading-relaxed mb-3">在能够联网的笔记本或工位电脑上先将所有的 requirements.txt 依赖完整下好离线包：</p>
+        <div class="bg-slate-950 text-slate-100 p-3 rounded-lg text-xs font-mono mb-3 space-y-1 overflow-x-auto relative">
+          <button onclick="copyCodeBlock('codeOptNoNet')" class="absolute top-2 right-2 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">一键复制</button>
+          <pre id="codeOptNoNet"># 1. 联网下载包至离线存储池
+cd D:\\评估报告工具
+python -m pip download -r requirements.txt -d wheelhouse
+
+# 2. 拷贝至无网演示电脑后，执行本地依赖注入
+python -m pip install --no-index --find-links .\\wheelhouse -r requirements.txt</pre>
+        </div>
+        <p class="text-[11px] text-slate-400">打包离线依赖库可以最大程度避免因会议室无网、网速差、VPN连接受限导致现场无法拉取 Python 库。</p>
+      `
+    };
+
+    function switchDeployTab(key) {
+      deployTab = key;
+      document.querySelectorAll('[id^="deployBtn-"]').forEach(btn => {
+        btn.className = "p-3 text-left rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all";
+      });
+      document.getElementById(`deployBtn-\${key}`).className = "p-3 text-left rounded-lg border border-brand-500 bg-brand-50 dark:bg-brand-950/20 text-brand-700 dark:text-brand-300 transition-all";
+      
+      renderDeployContent();
+    }
+
+    function renderDeployContent() {
+      document.getElementById('deployContentArea').innerHTML = deployGuides[deployTab];
+    }
+
+    function copyCodeBlock(elId) {
+      const code = document.getElementById(elId).innerText;
+      copyText(code);
+    }
+
+    // ---------------- 演示自检清单 ----------------
+    function renderChecklist() {
+      const container = document.getElementById('checklistContainer');
+      container.innerHTML = '';
+      
+      checklistData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-lg border \${item.status ? 'bg-emerald-50/50 border-emerald-200 dark:bg-emerald-950/10 dark:border-emerald-800' : 'bg-slate-50 border-slate-200 dark:bg-slate-800/40 dark:border-slate-700'} flex items-center justify-between transition-all`;
+        div.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" \${item.status ? 'checked' : ''} onchange="toggleCheckItem(\${item.id})" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
+            <span class="text-xs \${item.status ? 'text-slate-500 line-through' : 'text-slate-700 dark:text-slate-200'} font-medium">\${item.text}</span>
+          </div>
+          <span class="text-[10px] font-bold \${item.status ? 'text-emerald-600' : 'text-slate-400'}">\${item.status ? '通过' : '待检验'}</span>
+        `;
+        container.appendChild(div);
+      });
+      
+      const passedCount = checklistData.filter(i => i.status).length;
+      const progressEl = document.getElementById('checklistProgress');
+      progressEl.innerText = `通过率 \${passedCount}/\${checklistData.length}`;
+      if (passedCount === checklistData.length) {
+        progressEl.className = "text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400 font-bold px-2.5 py-0.5 rounded-full";
+      } else {
+        progressEl.className = "text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400 px-2.5 py-0.5 rounded-full";
+      }
+    }
+
+    function toggleCheckItem(id) {
+      const item = checklistData.find(i => i.id === id);
+      if (item) {
+        item.status = !item.status;
+        renderChecklist();
+        showToast(`自检状态更新：\${item.text} -> \${item.status ? '已验证' : '待检验'}`);
+      }
+    }
+
+    // ---------------- 反馈列表模块 ----------------
+    function renderFeedback() {
+      const body = document.getElementById('feedbackTableBody');
+      body.innerHTML = '';
+      
+      feedbackList.forEach((fb, idx) => {
+        let typeBadge = '';
+        switch(fb.type) {
+          case '必须修':
+            typeBadge = '<span class="bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-400 px-2 py-0.5 rounded font-bold">🛠️ 必须修</span>';
+            break;
+          case '应该做':
+            typeBadge = '<span class="bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 px-2 py-0.5 rounded">⭐ 应该做</span>';
+            break;
+          case '可优化':
+            typeBadge = '<span class="bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-400 px-2 py-0.5 rounded">📈 可优化</span>';
+            break;
+          case '待确认':
+            typeBadge = '<span class="bg-purple-100 text-purple-800 dark:bg-purple-950/40 dark:text-purple-400 px-2 py-0.5 rounded">❓ 待确认</span>';
+            break;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-semibold">\${typeBadge}</td>
+          <td class="p-3 font-bold text-slate-800 dark:text-white">\${fb.module}</td>
+          <td class="p-3 text-slate-600 dark:text-slate-300">\${fb.content}</td>
+          <td class="p-3 text-center">
+            <button onclick="removeFeedbackItem(\${idx})" class="text-red-600 hover:text-red-800 dark:text-red-400 font-semibold text-xs">移除</button>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    function addFeedbackItem() {
+      const type = document.getElementById('fb-type').value;
+      const module = document.getElementById('fb-module').value;
+      const content = document.getElementById('fb-content').value;
+
+      if (!module || !content) {
+        showToast('请完整填写涉及模块和详细改进内容！');
+        return;
+      }
+
+      feedbackList.push({ type, module, content });
+      renderFeedback();
+      
+      document.getElementById('fb-module').value = '';
+      document.getElementById('fb-content').value = '';
+      
+      showToast('🎉 新意见已追加录入反馈成果表');
+    }
+
+    function removeFeedbackItem(idx) {
+      feedbackList.splice(idx, 1);
+      renderFeedback();
+      showToast('已将该意见从会后跟进任务栏移出');
+    }
+
+    // ---------------- 成果一键导出 ----------------
+    function toggleModal(modalId, show) {
+      const modal = document.getElementById(modalId);
+      if (show) modal.classList.remove('hidden');
+      else modal.classList.add('hidden');
+    }
+
+    function exportFeedback() {
+      const contentDiv = document.getElementById('exportModalContent');
+      
+      let html = `<div class="space-y-4">
+        <h4 class="text-sm font-bold border-b border-slate-200 dark:border-slate-700 pb-2">一、QA会议基本产出摘要</h4>
+        <p class="text-xs text-slate-500">会议时间：\${new Date().toLocaleDateString()}</p>
+        <p class="text-xs text-slate-500">适用平台：土地评估报告自动生成系统 V1.0</p>
+        
+        <h4 class="text-sm font-bold border-b border-slate-200 dark:border-slate-700 pb-2 pt-2">二、会后意见分类清单</h4>
+      `;
+
+      if (feedbackList.length === 0) {
+        html += `<p class="text-xs text-amber-600">（暂无录入的改进建议）</p>`;
+      } else {
+        html += `<table class="w-full text-left text-xs border border-slate-200 dark:border-slate-700">
+          <thead>
+            <tr class="bg-slate-100 dark:bg-slate-900">
+              <th class="p-2 border border-slate-200 dark:border-slate-700">分类</th>
+              <th class="p-2 border border-slate-200 dark:border-slate-700">业务模块</th>
+              <th class="p-2 border border-slate-200 dark:border-slate-700">改进建议内容</th>
+            </tr>
+          </thead>
+          <tbody>`;
+        feedbackList.forEach(fb => {
+          html += `<tr>
+            <td class="p-2 border border-slate-200 dark:border-slate-700 font-bold">\${fb.type}</td>
+            <td class="p-2 border border-slate-200 dark:border-slate-700 font-bold text-brand-600">\${fb.module}</td>
+            <td class="p-2 border border-slate-200 dark:border-slate-700">\${fb.content}</td>
+          </tr>`;
+        });
+        html += `</tbody></table>`;
+      }
+
+      html += `
+        <h4 class="text-sm font-bold border-b border-slate-200 dark:border-slate-700 pb-2 pt-4">三、系统后续迭代路线重点建议</h4>
+        <ol class="list-decimal pl-4 space-y-1 text-slate-500">
+          <li>用真实项目资料至少跑通 3 到 5 个样本，聚焦最终生成 Word 的排版与计算准确度。</li>
+          <li>根据“常用/必填/高级”分类表单字段，减少非高频录入字段的初见干扰。</li>
+          <li>对 OCR 证据池扩大样本覆盖面（尤其是各地市不同编排格式的不动产权证）。</li>
+        </ol>
+      </div>`;
+
+      contentDiv.innerHTML = html;
+      toggleModal('exportModal', true);
+    }
+
+    function copyGeneratedDocs() {
+      const container = document.getElementById('exportModalContent');
+      const rawText = container.innerText;
+      
+      const textarea = document.createElement('textarea');
+      textarea.value = rawText;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast('📋 会议反馈文本报告已成功复制至剪贴板，可直接发送到群组或记录在周报里');
+        toggleModal('exportModal', false);
+      } catch (err) {
+        showToast('复制失败，请手动选取文字复制');
+      }
+      document.body.removeChild(textarea);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1700 @@
+<template>
+  <div :class="['app-wrapper', { 'light-theme': isLightTheme }]">
+    
+    <!-- 🧭 顶部导航栏 -->
+    <header class="top-navbar">
+      <div class="brand-section">
+        <span class="brand-logo">📊</span>
+        <h1 class="brand-title">双轨制可视化评估报告生成平台</h1>
+      </div>
+      
+      <div class="controls-section">
+        <!-- 💡 一键高对比度浅色/暗色切换，防眼部疲劳 -->
+        <button class="icon-btn" @click="toggleTheme">
+          <span v-if="isLightTheme">🌙 护眼深色</span>
+          <span v-else>☀️ 冷白高反差</span>
+        </button>
+        
+        <!-- 一键 A4 高保真渲染预览 -->
+        <button class="icon-btn primary" @click="handleRenderReport" :disabled="isLoading">
+          <span>📄 高保真 A4 渲染</span>
+        </button>
+      </div>
+    </header>
+    
+    <!-- 🖥️ 双栏主视窗 -->
+    <main class="main-viewport" 
+          @dragover.prevent="handleDragOver" 
+          @dragleave.prevent="handleDragLeave" 
+          @drop.prevent="handleFileDrop">
+      
+      <!-- Excel 拖拽覆盖遮罩 -->
+      <div v-if="isDragging" class="excel-drag-overlay">
+        <div class="drag-icon">📥</div>
+        <h2>请释放鼠标，立即一键解析测算表</h2>
+        <p>系统将为您毫秒级回填 100% 对齐契约的指标</p>
+      </div>
+      
+      <!-- ==============================================================================
+           左侧：高密度表单填报区
+           ============================================================================== -->
+      <section class="left-panel">
+        <div class="scroll-form-container">
+          
+          <!-- 📊 快捷数据源状态栏 -->
+          <div class="fold-card" style="border-color: var(--accent);">
+            <div class="card-body" style="grid-template-columns: 1fr; gap: 8px; padding: 12px;">
+              <div style="font-size: 12px; font-weight: 700; color: var(--accent);">
+                📂 智能双轨填报工作流引导：
+              </div>
+              <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.5;">
+                1. 拖拽 Excel 测算表至本窗口任意位置以自动解析回填；<br>
+                2. 复制不动产权证或规划函 OCR 文本至底部终端一键捕获；<br>
+                3. 手动微调淡蓝色高亮字段，主权秒级回归人工。
+              </div>
+              <div v-if="excelMetadata.name" style="margin-top: 4px; padding: 6px; background: rgba(0,0,0,0.2); border-radius: 4px; font-size: 11px;">
+                <span style="color: var(--success);">✔ 已加载测算表:</span> {{ excelMetadata.name }} <br>
+                <span style="color: var(--text-secondary);">指纹MD5:</span> <code style="color: var(--accent);">{{ excelMetadata.md5.substring(0, 12) }}...</code>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 卡片一：地理区划与报告基础信息 -->
+          <!-- 第一章：报告基本信息与地理区划 -->
+          <div :class="['fold-card', { 'is-collapsed': collapsed.p1 }]">
+            <div class="card-header" @click="collapsed.p1 = !collapsed.p1">
+              <span class="card-title">📁 第一章：报告基本信息与地理区划</span>
+              <span class="card-toggle-icon">▼</span>
+            </div>
+            <div class="card-body">
+              <div class="form-item full-width" style="display: flex; gap: 16px; margin-bottom: 12px;">
+                <div style="flex: 1;">
+                  <label class="form-label">出让/评估目的模式（ transfer_purpose_mode ）</label>
+                  <select v-model="form.transfer_purpose_mode.value" @change="onTransferPurposeModeChange" class="field-input">
+                    <option value="拟挂牌出让">拟挂牌出让</option>
+                    <option value="办理土地使用权出让手续">办理土地使用权出让手续</option>
+                    <option value="其他">其他（自定义）</option>
+                  </select>
+                </div>
+                <div style="flex: 2;" v-if="form.transfer_purpose_mode.value === '其他'">
+                  <label class="form-label">自定义出让/评估目的（ transfer_purpose ）</label>
+                  <input type="text" v-model="form.transfer_purpose.value" @input="onFieldInput('transfer_purpose')" class="field-input" placeholder="请输入自定义出让/评估目的..." />
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">估价项目名称（ project_name ）</label>
+                <div class="input-wrapper" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                  <div style="display: flex; gap: 8px; width: 100%; align-items: stretch;">
+                    <textarea v-model="form.project_name.value" 
+                              :class="['field-input', getInputClass('project_name')]" 
+                              readonly 
+                              style="background-color: rgba(0,0,0,0.1); flex: 1; cursor: not-allowed; resize: none; min-height: 50px; line-height: 1.4; padding: 8px; width: 100%;" 
+                              title="由各字段自动拼接生成，不可直接编辑"></textarea>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                      <button @click.prevent="unlockProjectNameSuffix" class="icon-btn" style="white-space: nowrap; font-size: 12px; height: 28px;" title="修改默认后缀">修改后缀</button>
+                      <span v-if="showBadge('project_name')" :class="['origin-badge', getBadgeClass('project_name')]" style="align-self: center;">
+                        {{ getBadgeText('project_name') }}
+                      </span>
+                    </div>
+                  </div>
+                  <!-- 隐藏的后缀输入框，如果解锁则显示 -->
+                  <div v-if="isSuffixUnlocked">
+                    <label class="form-label">修改后缀（ project_name_suffix ）</label>
+                    <input type="text" v-model="form.project_name_suffix.value" @input="onFieldInput('project_name_suffix')" class="field-input" />
+                  </div>
+                </div>
+              </div>
+              <div class="form-item full-width">
+                <label class="form-label">委托人名称（ client_name ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.client_name.value" @input="onFieldInput('client_name')" 
+                         :class="['field-input', getInputClass('client_name')]" />
+                  <span v-if="showBadge('client_name')" :class="['origin-badge', getBadgeClass('client_name')]">
+                    {{ getBadgeText('client_name') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">受托估价机构（ appraisal_org ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.appraisal_org.value" @input="onFieldInput('appraisal_org')" 
+                         :class="['field-input', getInputClass('appraisal_org')]" />
+                  <span v-if="showBadge('appraisal_org')" :class="['origin-badge', getBadgeClass('appraisal_org')]">
+                    {{ getBadgeText('appraisal_org') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">土地使用者（ land_user ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_user.value" @input="onFieldInput('land_user')" 
+                         :class="['field-input', getInputClass('land_user')]" />
+                  <span v-if="showBadge('land_user')" :class="['origin-badge', getBadgeClass('land_user')]">
+                    {{ getBadgeText('land_user') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">评估报告编号（ report_no ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.report_no.value" @input="onFieldInput('report_no')" 
+                         :class="['field-input', getInputClass('report_no')]" />
+                  <span v-if="showBadge('report_no')" :class="['origin-badge', getBadgeClass('report_no')]">
+                    {{ getBadgeText('report_no') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">报告出具日期（ report_date ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.report_date.value" @input="onFieldInput('report_date')" 
+                         :class="['field-input', getInputClass('report_date')]" />
+                  <span v-if="showBadge('report_date')" :class="['origin-badge', getBadgeClass('report_date')]">
+                    {{ getBadgeText('report_date') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">估价期日（ valuation_date ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.valuation_date.value" @input="onFieldInput('valuation_date')" 
+                         :class="['field-input', getInputClass('valuation_date')]" />
+                  <span v-if="showBadge('valuation_date')" :class="['origin-badge', getBadgeClass('valuation_date')]">
+                    {{ getBadgeText('valuation_date') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">现场勘查与工作日期范围（ valuation_work_date ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.valuation_work_date.value" @input="onFieldInput('valuation_work_date')" 
+                         :class="['field-input', getInputClass('valuation_work_date')]" />
+                  <span v-if="showBadge('valuation_work_date')" :class="['origin-badge', getBadgeClass('valuation_work_date')]">
+                    {{ getBadgeText('valuation_work_date') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">委托方统一社会信用代码（ client_org_code ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.client_org_code.value" @input="onFieldInput('client_org_code')" 
+                         :class="['field-input', getInputClass('client_org_code')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">委托方负责人（ client_principal ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.client_principal.value" @input="onFieldInput('client_principal')" 
+                         :class="['field-input', getInputClass('client_principal')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">委托方机构性质（ client_org_type ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.client_org_type.value" @input="onFieldInput('client_org_type')" 
+                         :class="['field-input', getInputClass('client_org_type')]" />
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">委托方机构地址（ client_address ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.client_address.value" @input="onFieldInput('client_address')" 
+                         :class="['field-input', getInputClass('client_address')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">委托方联系人（ client_contact ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.client_contact.value" @input="onFieldInput('client_contact')" 
+                         :class="['field-input', getInputClass('client_contact')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">委托方联系电话（ client_phone ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.client_phone.value" @input="onFieldInput('client_phone')" 
+                         :class="['field-input', getInputClass('client_phone')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">委托方邮编（ client_postcode ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.client_postcode.value" @input="onFieldInput('client_postcode')" 
+                         :class="['field-input', getInputClass('client_postcode')]" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- 第二章：土地利用条件与规划限制指标 -->
+          <div :class="['fold-card', { 'is-collapsed': collapsed.p2 }]">
+            <div class="card-header" @click="collapsed.p2 = !collapsed.p2">
+              <span class="card-title">📐 第二章：土地利用条件与规划限制指标</span>
+              <span class="card-toggle-icon">▼</span>
+            </div>
+            <div class="card-body">
+              <div class="form-item full-width">
+                <label class="form-label">估价对象坐落位置（简称）（ land_location ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_location.value" @input="onFieldInput('land_location')" 
+                         :class="['field-input', getInputClass('land_location')]" />
+                  <span v-if="showBadge('land_location')" :class="['origin-badge', getBadgeClass('land_location')]">
+                    {{ getBadgeText('land_location') }}
+                  </span>
+                </div>
+              </div>
+              <div class="form-item full-width">
+                <label class="form-label">地块编号（ land_plot_number ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_plot_number.value" @input="onFieldInput('land_plot_number')" 
+                         :class="['field-input', getInputClass('land_plot_number')]" placeholder="如：（2025018号地块）" />
+                  <span v-if="showBadge('land_plot_number')" :class="['origin-badge', getBadgeClass('land_plot_number')]">
+                    {{ getBadgeText('land_plot_number') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">估价对象位置全称（ land_location_full ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_location_full.value" readonly style="background-color: rgba(0,0,0,0.1); cursor: not-allowed;" title="由简称与编号自动拼接生成" class="field-input" />
+                  <span v-if="showBadge('land_location_full')" :class="['origin-badge', getBadgeClass('land_location_full')]">
+                    {{ getBadgeText('land_location_full') }}
+                  </span>
+                </div>
+              </div>
+              <div class="form-item">
+                <label class="form-label">估价所属县市简称（ county_name ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.county_name.value" @input="onFieldInput('county_name')" 
+                         :class="['field-input', getInputClass('county_name')]" />
+                  <span v-if="showBadge('county_name')" :class="['origin-badge', getBadgeClass('county_name')]">
+                    {{ getBadgeText('county_name') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">技术报告编号（ technical_report_no ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.technical_report_no.value" @input="onFieldInput('technical_report_no')" 
+                         :class="['field-input', getInputClass('technical_report_no')]" />
+                  <span v-if="showBadge('technical_report_no')" :class="['origin-badge', getBadgeClass('technical_report_no')]">
+                    {{ getBadgeText('technical_report_no') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">宗地数量（ parcel_count ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.parcel_count.value" @input="onFieldInput('parcel_count')" 
+                         :class="['field-input', getInputClass('parcel_count')]" />
+                  <span v-if="showBadge('parcel_count')" :class="['origin-badge', getBadgeClass('parcel_count')]">
+                    {{ getBadgeText('parcel_count') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">分摊使用权面积（㎡）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_area.value" @input="onFieldInput('land_area')" 
+                         :class="['field-input', getInputClass('land_area')]" />
+                  <span v-if="showBadge('land_area')" :class="['origin-badge', getBadgeClass('land_area')]">
+                    {{ getBadgeText('land_area') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">建筑总面积（㎡）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.building_area.value" @input="onFieldInput('building_area')" 
+                         :class="['field-input', getInputClass('building_area')]" />
+                  <span v-if="showBadge('building_area')" :class="['origin-badge', getBadgeClass('building_area')]">
+                    {{ getBadgeText('building_area') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">设定土地用途简称（ land_usage_short ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_usage_short.value" @input="onFieldInput('land_usage_short')" 
+                         :class="['field-input', getInputClass('land_usage_short')]" />
+                  <span v-if="showBadge('land_usage_short')" :class="['origin-badge', getBadgeClass('land_usage_short')]">
+                    {{ getBadgeText('land_usage_short') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">设定土地用途全称（ land_usage ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_usage.value" @input="onFieldInput('land_usage')" 
+                         :class="['field-input', getInputClass('land_usage')]" />
+                  <span v-if="showBadge('land_usage')" :class="['origin-badge', getBadgeClass('land_usage')]">
+                    {{ getBadgeText('land_usage') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">登记土地用途全称（ land_usage_full ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_usage_full.value" @input="onFieldInput('land_usage_full')" 
+                         :class="['field-input', getInputClass('land_usage_full')]" />
+                  <span v-if="showBadge('land_usage_full')" :class="['origin-badge', getBadgeClass('land_usage_full')]">
+                    {{ getBadgeText('land_usage_full') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">使用权类型（ right_type ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.right_type.value" @input="onFieldInput('right_type')" 
+                         :class="['field-input', getInputClass('right_type')]" />
+                  <span v-if="showBadge('right_type')" :class="['origin-badge', getBadgeClass('right_type')]">
+                    {{ getBadgeText('right_type') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">土地使用年限（ land_use_term ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_use_term.value" @input="onFieldInput('land_use_term')" 
+                         :class="['field-input', getInputClass('land_use_term')]" />
+                  <span v-if="showBadge('land_use_term')" :class="['origin-badge', getBadgeClass('land_use_term')]">
+                    {{ getBadgeText('land_use_term') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">容积率类型（ plot_ratio_mode ）</label>
+                <div class="input-wrapper">
+                  <select v-model="form.plot_ratio_mode.value" @change="onPlotRatioInput('plot_ratio_mode')" class="field-input">
+                    <option value="range">范围值</option>
+                    <option value="fixed">固定值</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">{{ form.plot_ratio_mode.value === 'range' ? '设定容积率上限（ plot_ratio ）' : '设定容积率固定值（ plot_ratio ）' }}</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.plot_ratio.value" @input="onPlotRatioInput('plot_ratio')" 
+                         :class="['field-input', getInputClass('plot_ratio')]" />
+                  <span v-if="showBadge('plot_ratio')" :class="['origin-badge', getBadgeClass('plot_ratio')]">
+                    {{ getBadgeText('plot_ratio') }}
+                  </span>
+                </div>
+              </div>
+
+              <div v-if="form.plot_ratio_mode.value === 'range'" class="form-item">
+                <label class="form-label">规划容积率下限（ plot_ratio_min ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.plot_ratio_min.value" @input="onPlotRatioInput('plot_ratio_min')" 
+                         :class="['field-input', getInputClass('plot_ratio_min')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">报告展示容积率（ plot_ratio_display ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.plot_ratio_display.value" @input="onFieldInput('plot_ratio_display')" 
+                         :class="['field-input', getInputClass('plot_ratio_display')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">规划建筑密度下限</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.building_density_min.value" @input="onFieldInput('building_density_min')" 
+                         :class="['field-input', getInputClass('building_density_min')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">规划建筑密度上限</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.building_density_max.value" @input="onFieldInput('building_density_max')" 
+                         :class="['field-input', getInputClass('building_density_max')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">规划绿地率（ greening_rate ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.greening_rate.value" @input="onFieldInput('greening_rate')" 
+                         :class="['field-input', getInputClass('greening_rate')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">规划建筑限高（ building_height_limit ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.building_height_limit.value" @input="onFieldInput('building_height_limit')" 
+                         :class="['field-input', getInputClass('building_height_limit')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">设定利用条件类型（ valuation_condition_type ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.valuation_condition_type.value" @input="onFieldInput('valuation_condition_type')" 
+                         :class="['field-input', getInputClass('valuation_condition_type')]" />
+                  <span v-if="showBadge('valuation_condition_type')" :class="['origin-badge', getBadgeClass('valuation_condition_type')]">
+                    {{ getBadgeText('valuation_condition_type') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">实际土地开发程度（ land_development_actual ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_development_actual.value" @input="onFieldInput('land_development_actual')" 
+                         :class="['field-input', getInputClass('land_development_actual')]" />
+                  <span v-if="showBadge('land_development_actual')" :class="['origin-badge', getBadgeClass('land_development_actual')]">
+                    {{ getBadgeText('land_development_actual') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">设定土地开发程度（ land_development_set ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.land_development_set.value" @input="onFieldInput('land_development_set')" 
+                         :class="['field-input', getInputClass('land_development_set')]" />
+                  <span v-if="showBadge('land_development_set')" :class="['origin-badge', getBadgeClass('land_development_set')]">
+                    {{ getBadgeText('land_development_set') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">登记土地权利类型（ registered_right_type ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.registered_right_type.value" @input="onFieldInput('registered_right_type')" 
+                         :class="['field-input', getInputClass('registered_right_type')]" />
+                  <span v-if="showBadge('registered_right_type')" :class="['origin-badge', getBadgeClass('registered_right_type')]">
+                    {{ getBadgeText('registered_right_type') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">设定土地权利状态描述（ assumed_right_status ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.assumed_right_status.value" @input="onFieldInput('assumed_right_status')" 
+                         :class="['field-input', getInputClass('assumed_right_status')]" />
+                  <span v-if="showBadge('assumed_right_status')" :class="['origin-badge', getBadgeClass('assumed_right_status')]">
+                    {{ getBadgeText('assumed_right_status') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">原始权属登记的依据文书（ registered_proof_docs ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.registered_proof_docs.value" @input="onFieldInput('registered_proof_docs')" 
+                         :class="['field-input', getInputClass('registered_proof_docs')]" />
+                  <span v-if="showBadge('registered_proof_docs')" :class="['origin-badge', getBadgeClass('registered_proof_docs')]">
+                    {{ getBadgeText('registered_proof_docs') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">委托方提供资料清单（ entrusted_source_docs ）</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.entrusted_source_docs.value" @input="onFieldInput('entrusted_source_docs')" 
+                            rows="4" :class="['field-input', getInputClass('entrusted_source_docs')]" style="height: auto; line-height: 1.5;"></textarea>
+                  <span v-if="showBadge('entrusted_source_docs')" :class="['origin-badge', getBadgeClass('entrusted_source_docs')]" style="top: 15px;">
+                    {{ getBadgeText('entrusted_source_docs') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">宗地四至状况（ land_boundary_desc ）——【全网页手填一次即可，后端多处动态流转】</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.land_boundary_desc.value" @input="onFieldInput('land_boundary_desc')" 
+                            rows="2" :class="['field-input', getInputClass('land_boundary_desc')]"></textarea>
+                  <span v-if="showBadge('land_boundary_desc')" :class="['origin-badge', getBadgeClass('land_boundary_desc')]" style="top: 10px;">
+                    {{ getBadgeText('land_boundary_desc') }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 第三章：土地权属及原始证照（智能草稿 + 最终正文） -->
+          <div :class="['fold-card', { 'is-collapsed': collapsed.p3 }]" style="border-color: #8b5cf6;">
+            <div class="card-header" @click="collapsed.p3 = !collapsed.p3" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(109, 40, 217, 0.15));">
+              <span class="card-title" style="color: #c084fc;">📜 第三章：土地权属及原始证照信息</span>
+              <span class="card-toggle-icon" style="color: #c084fc;">▼</span>
+            </div>
+            <div class="card-body">
+              <div class="form-item full-width" style="background: rgba(139, 92, 246, 0.08); padding: 10px; border-radius: 6px; border: 1px dashed rgba(139, 92, 246, 0.3);">
+                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+                  <div>
+                    <label class="form-label" style="font-weight: 700; color: #c084fc;">权属情形（ ownership_scenario_type ）</label>
+                    <select v-model="form.ownership_scenario_type.value" @change="onOwnershipControlChange('ownership_scenario_type')" class="field-input" style="background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                      <option value="new_grant">首次出让 / 拟出让</option>
+                      <option value="historical_unregistered">历史遗留未登记</option>
+                      <option value="registered_complete">已登记</option>
+                      <option value="mixed_manual">复杂人工</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label" style="font-weight: 700; color: #c084fc;">用途话术类型（ asset_use_category ）</label>
+                    <select v-model="form.asset_use_category.value" @change="onOwnershipControlChange('asset_use_category')" class="field-input" style="background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                      <option value="residential">住宅</option>
+                      <option value="industrial">工业</option>
+                      <option value="commercial">商业服务业</option>
+                      <option value="public">公共管理与公共服务</option>
+                      <option value="other">其他</option>
+                    </select>
+                  </div>
+                </div>
+                <div v-if="form.asset_use_category.value === 'other'" style="margin-top: 10px;">
+                  <label class="form-label">其他用途名称（ asset_use_category_other ）</label>
+                  <div class="input-wrapper">
+                    <input type="text" v-model="form.asset_use_category_other.value" @input="onOwnershipControlChange('asset_use_category_other')" 
+                           :class="['field-input', getInputClass('asset_use_category_other')]" placeholder="例如：特殊用地、交通运输用地、仓储物流用地..." />
+                  </div>
+                </div>
+                <div style="display: flex; gap: 12px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+                  <label style="font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                    <input type="checkbox" v-model="form.include_registration_risk_note.value" @change="onOwnershipControlChange('include_registration_risk_note')" />
+                    追加登记风险提示
+                  </label>
+                  <button @click.prevent="regenerateOwnershipDraft(true)" class="icon-btn" style="font-size: 12px; height: 28px;">重新生成草稿</button>
+                </div>
+                <div v-if="form.include_registration_risk_note.value" style="margin-top: 10px;">
+                  <label class="form-label">登记风险提示文本（ registration_risk_note ）</label>
+                  <div class="input-wrapper">
+                    <textarea v-model="form.registration_risk_note.value" @input="onFieldInput('registration_risk_note')" rows="2" :class="['field-input', getInputClass('registration_risk_note')]"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">土地登记状况最终正文（ land_registration_desc ）</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.land_registration_desc.value" @input="onFieldInput('land_registration_desc')" 
+                            rows="7" :class="['field-input', getInputClass('land_registration_desc')]"></textarea>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">土地权利状况最终正文（ land_right_desc ）</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.land_right_desc.value" @input="onFieldInput('land_right_desc')" 
+                            rows="5" :class="['field-input', getInputClass('land_right_desc')]"></textarea>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">土地利用现状最终正文（ land_use_status_desc ）</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.land_use_status_desc.value" @input="onFieldInput('land_use_status_desc')" 
+                            rows="5" :class="['field-input', getInputClass('land_use_status_desc')]"></textarea>
+                </div>
+              </div>
+
+              <details class="form-item full-width" style="border: 1px solid rgba(148,163,184,0.22); border-radius: 6px; padding: 10px;">
+                <summary style="cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-secondary);">附件识别依据与细节字段</summary>
+                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px;">
+                  <div>
+                    <label class="form-label">政府批复文件名称</label>
+                    <input type="text" v-model="form.gov_approval_name.value" @input="onFieldInput('gov_approval_name')" :class="['field-input', getInputClass('gov_approval_name')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">政府批复文号</label>
+                    <input type="text" v-model="form.gov_approval_no.value" @input="onFieldInput('gov_approval_no')" :class="['field-input', getInputClass('gov_approval_no')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">政府批复日期</label>
+                    <input type="text" v-model="form.gov_approval_date.value" @input="onFieldInput('gov_approval_date')" :class="['field-input', getInputClass('gov_approval_date')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">批准机关</label>
+                    <input type="text" v-model="form.approval_authority.value" @input="onFieldInput('approval_authority')" :class="['field-input', getInputClass('approval_authority')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">批准农转用日期</label>
+                    <input type="text" v-model="form.approval_transfer_date.value" @input="onFieldInput('approval_transfer_date')" :class="['field-input', getInputClass('approval_transfer_date')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">原土地权属描述</label>
+                    <input type="text" v-model="form.original_land_owner_desc.value" @input="onFieldInput('original_land_owner_desc')" :class="['field-input', getInputClass('original_land_owner_desc')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">房屋所有权证名称</label>
+                    <input type="text" v-model="form.house_cert_name.value" @input="onFieldInput('house_cert_name')" :class="['field-input', getInputClass('house_cert_name')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">房屋所有权证编号</label>
+                    <input type="text" v-model="form.house_cert_no.value" @input="onFieldInput('house_cert_no')" :class="['field-input', getInputClass('house_cert_no')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">面积依据文件名</label>
+                    <input type="text" v-model="form.area_docs_desc_name.value" @input="onFieldInput('area_docs_desc_name')" :class="['field-input', getInputClass('area_docs_desc_name')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">房证登记建筑面积</label>
+                    <input type="text" v-model="form.registered_house_area.value" @input="onFieldInput('registered_house_area')" :class="['field-input', getInputClass('registered_house_area')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">权属证明文件名</label>
+                    <input type="text" v-model="form.proof_doc_name.value" @input="onFieldInput('proof_doc_name')" :class="['field-input', getInputClass('proof_doc_name')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">权属证明日期</label>
+                    <input type="text" v-model="form.proof_doc_date.value" @input="onFieldInput('proof_doc_date')" :class="['field-input', getInputClass('proof_doc_date')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">土地使用者身份描述</label>
+                    <input type="text" v-model="form.user_identity.value" @input="onFieldInput('user_identity')" :class="['field-input', getInputClass('user_identity')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">购房年份</label>
+                    <input type="text" v-model="form.buy_year.value" @input="onFieldInput('buy_year')" :class="['field-input', getInputClass('buy_year')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">房间详细位置坐落</label>
+                    <input type="text" v-model="form.room_detail_location.value" @input="onFieldInput('room_detail_location')" :class="['field-input', getInputClass('room_detail_location')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">购房坐落地点描述</label>
+                    <input type="text" v-model="form.buy_location_desc.value" @input="onFieldInput('buy_location_desc')" :class="['field-input', getInputClass('buy_location_desc')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">土地使用权证名称</label>
+                    <input type="text" v-model="form.land_cert_name.value" @input="onFieldInput('land_cert_name')" :class="['field-input', getInputClass('land_cert_name')]" />
+                  </div>
+                  <div>
+                    <label class="form-label">土地使用权证编号</label>
+                    <input type="text" v-model="form.land_cert_no.value" @input="onFieldInput('land_cert_no')" :class="['field-input', getInputClass('land_cert_no')]" />
+                  </div>
+                  <div style="grid-column: span 2;">
+                    <label class="form-label">土地使用权类型描述</label>
+                    <input type="text" v-model="form.land_use_type.value" @input="onFieldInput('land_use_type')" :class="['field-input', getInputClass('land_use_type')]" />
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <!-- 第四章：评估方法选择与加权确价 -->
+          <div :class="['fold-card', { 'is-collapsed': collapsed.p4 }]">
+            <div class="card-header" @click="collapsed.p4 = !collapsed.p4">
+              <span class="card-title">⚖️ 第四章：评估方法选择与加权确价</span>
+              <span class="card-toggle-icon">▼</span>
+            </div>
+            <div class="card-body">
+              <div class="form-item" style="grid-column: span 2; display: flex; flex-direction: row; gap: 16px; align-items: center; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 6px;">
+                <label class="form-label" style="font-weight: 700;">采用方法:</label>
+                <label style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                  <input type="checkbox" v-model="form.use_cost_approx.value" @change="onFieldInput('use_cost_approx')" /> 成本逼近
+                </label>
+                <label style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                  <input type="checkbox" v-model="form.use_market_comp.value" @change="onFieldInput('use_market_comp')" /> 市场比较
+                </label>
+                <label style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                  <input type="checkbox" v-model="form.use_income_cap.value" @change="onFieldInput('use_income_cap')" /> 收益还原
+                </label>
+                <label style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                  <input type="checkbox" v-model="form.use_benchmark_corr.value" @change="onFieldInput('use_benchmark_corr')" /> 基准系数
+                </label>
+                <label style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                  <input type="checkbox" v-model="form.use_residual.value" @change="onFieldInput('use_residual')" /> 剩余法
+                </label>
+              </div>
+
+              <!-- 5个评估方法比准单价输入框 -->
+              <div class="form-item" v-if="form.use_cost_approx.value">
+                <label class="form-label">成本逼近法单价（元/㎡）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.cost_approx_price.value" @input="onFieldInput('cost_approx_price')" 
+                         :class="['field-input', getInputClass('cost_approx_price')]" />
+                </div>
+              </div>
+
+              <div class="form-item" v-if="form.use_market_comp.value">
+                <label class="form-label">市场比较法单价（元/㎡）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.market_comp_price.value" @input="onFieldInput('market_comp_price')" 
+                         :class="['field-input', getInputClass('market_comp_price')]" />
+                </div>
+              </div>
+
+              <div class="form-item" v-if="form.use_income_cap.value">
+                <label class="form-label">收益还原法单价（元/㎡）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.income_cap_price.value" @input="onFieldInput('income_cap_price')" 
+                         :class="['field-input', getInputClass('income_cap_price')]" />
+                  <span v-if="showBadge('income_cap_price')" :class="['origin-badge', getBadgeClass('income_cap_price')]">
+                    {{ getBadgeText('income_cap_price') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item" v-if="form.use_benchmark_corr.value">
+                <label class="form-label">基准地价系数修正法单价（元/㎡）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.benchmark_corr_price.value" @input="onFieldInput('benchmark_corr_price')" 
+                         :class="['field-input', getInputClass('benchmark_corr_price')]" />
+                  <span v-if="showBadge('benchmark_corr_price')" :class="['origin-badge', getBadgeClass('benchmark_corr_price')]">
+                    {{ getBadgeText('benchmark_corr_price') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item" v-if="form.use_residual.value">
+                <label class="form-label">剩余法单价（元/㎡）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.residual_price.value" @input="onFieldInput('residual_price')" 
+                         :class="['field-input', getInputClass('residual_price')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">基准地价超期限制年限（如 三）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.base_land_price_expire_limit.value" @input="onFieldInput('base_land_price_expire_limit')" 
+                         :class="['field-input', getInputClass('base_land_price_expire_limit')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">确价加权逻辑（weight_logic_type）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.weight_logic_type.value" @input="onFieldInput('weight_logic_type')" 
+                         :class="['field-input', getInputClass('weight_logic_type')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">主导测算方法（dominant_method_name）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.dominant_method_name.value" @input="onFieldInput('dominant_method_name')" 
+                         :class="['field-input', getInputClass('dominant_method_name')]" />
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">规划条件批准机关（ planning_approval_authority ）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.planning_approval_authority.value" @input="onFieldInput('planning_approval_authority')" 
+                         :class="['field-input', getInputClass('planning_approval_authority')]" />
+                  <span v-if="showBadge('planning_approval_authority')" :class="['origin-badge', getBadgeClass('planning_approval_authority')]">
+                    {{ getBadgeText('planning_approval_authority') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">确价公式表达（formula_display_text）</label>
+                <div class="input-wrapper">
+                  <input type="text" v-model="form.formula_display_text.value" @input="onFieldInput('formula_display_text')" 
+                         :class="['field-input', getInputClass('formula_display_text')]" />
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">方法适用性方案（land_level_type）</label>
+                <div class="input-wrapper">
+                  <select v-model="form.land_level_type.value" @change="onFieldInput('land_level_type')" class="field-input">
+                    <option value="residential_level_3">住宅三级基准地价适用</option>
+                    <option value="residential_level_2">住宅二级基准地价适用</option>
+                    <option value="base_land_price_expired">基准地价超期停用</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">确价理由方案（method_combination_type）</label>
+                <div class="input-wrapper">
+                  <select v-model="form.method_combination_type.value" @change="onFieldInput('method_combination_type')" class="field-input">
+                    <option value="residential_residual_only">住宅：剩余法唯一主导</option>
+                    <option value="industrial_cost_and_market_average">工业：成本逼近 + 市场比较</option>
+                    <option value="weight_average_method">收益还原 + 基准系数加权</option>
+                    <option value="market_and_base_weight">市场比较 + 基准系数加权</option>
+                    <option value="single_method_base">基准系数单一方法</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">基础设施方案（infrastructure_type）</label>
+                <div class="input-wrapper">
+                  <select v-model="form.infrastructure_type.value" @change="onFieldInput('infrastructure_type')" class="field-input">
+                    <option value="five_通_residential">五通一平（住宅顺序）</option>
+                    <option value="five_通_industrial">五通一平（工业顺序）</option>
+                    <option value="three_通">三通一平</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label">采用方法理由阐述（weight_rationale_text）</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.weight_rationale_text.value" @input="onFieldInput('weight_rationale_text')" 
+                            rows="2" :class="['field-input', getInputClass('weight_rationale_text')]"></textarea>
+                </div>
+              </div>
+
+              <!-- 两个玻璃质感的智能 Toggle 开关 (show_price_in_text & is_base_price_expired) -->
+              <div class="form-item" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 11px; font-weight: 700;">正文是否显示单价 (show_price_in_text)</span>
+                <label class="switch-glow">
+                  <input type="checkbox" v-model="form.show_price_in_text.value" @change="onFieldInput('show_price_in_text')" />
+                  <span class="slider-round"></span>
+                </label>
+              </div>
+
+              <div class="form-item" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 11px; font-weight: 700;">基准地价是否超期 (is_base_price_expired)</span>
+                <label class="switch-glow">
+                  <input type="checkbox" v-model="form.is_base_price_expired.value" @change="onFieldInput('is_base_price_expired')" />
+                  <span class="slider-round"></span>
+                </label>
+              </div>
+
+              <!-- 补充三大核心模板长文本大段落，提供完美在线审查与修改 -->
+              <div class="form-item full-width" style="margin-top: 10px;">
+                <label class="form-label" style="color: var(--accent); font-weight: 700;">📝 方案二：评估方法适用性阐述大段落（ valuation_method_applicability ）</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.valuation_method_applicability.value" @input="onFieldInput('valuation_method_applicability')" 
+                            rows="4" :class="['field-input', getInputClass('valuation_method_applicability')]"
+                            style="height: auto; font-family: inherit; line-height: 1.6;"></textarea>
+                  <span v-if="showBadge('valuation_method_applicability')" :class="['origin-badge', getBadgeClass('valuation_method_applicability')]" style="top: 15px;">
+                    {{ getBadgeText('valuation_method_applicability') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label" style="color: var(--accent); font-weight: 700;">📝 方案三：价格加权确定理由大段落（ final_price_determination ）</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.final_price_determination.value" @input="onFieldInput('final_price_determination')" 
+                            rows="4" :class="['field-input', getInputClass('final_price_determination')]"
+                            style="height: auto; font-family: inherit; line-height: 1.6;"></textarea>
+                  <span v-if="showBadge('final_price_determination')" :class="['origin-badge', getBadgeClass('final_price_determination')]" style="top: 15px;">
+                    {{ getBadgeText('final_price_determination') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-item full-width">
+                <label class="form-label" style="color: var(--accent); font-weight: 700;">📝 方案四：基础设施开发程度大段落（ infrastructure_detail ）</label>
+                <div class="input-wrapper">
+                  <textarea v-model="form.infrastructure_detail.value" @input="onFieldInput('infrastructure_detail')" 
+                            rows="4" :class="['field-input', getInputClass('infrastructure_detail')]"
+                            style="height: auto; font-family: inherit; line-height: 1.6;"></textarea>
+                  <span v-if="showBadge('infrastructure_detail')" :class="['origin-badge', getBadgeClass('infrastructure_detail')]" style="top: 15px;">
+                    {{ getBadgeText('infrastructure_detail') }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+          <!-- ==============================================================================
+             📷 OCR 证照文本直贴控制台 (左下角)
+             ============================================================================== -->
+        <section class="ocr-terminal-bar">
+          <div class="terminal-title">
+            <span>📷 附件识别与文本快速离线提取终端</span>
+            <span style="font-size: 11px; color: var(--accent); font-weight: normal;">PDF/Word 文字层本地提取</span>
+          </div>
+          
+          <textarea v-model="ocrRawText" class="ocr-textarea" 
+                    placeholder="可直接上传 PDF/Word/txt 附件，也可在此粘贴不动产权证、国有土地使用证或规划条件函的原始文本。PDF 文字层过少或上传图片时，将在已安装 PaddleOCR 的情况下自动唤醒 OCR。"></textarea>
+          
+          <div class="terminal-controls">
+            <select v-model="ocrType" class="terminal-select">
+              <option value="property_cert">📁 提取不动产权证指标</option>
+              <option value="planning_condition">📐 提取规划条件函指标</option>
+            </select>
+
+            <input type="number"
+                   v-model.number="ocrMinTextChars"
+                   min="0"
+                   class="terminal-select"
+                   style="max-width: 118px;"
+                   title="PDF文字层少于该字数时自动唤醒 PaddleOCR"
+                   placeholder="文字阈值" />
+
+            <input type="file"
+                   multiple
+                   class="terminal-select"
+                   style="max-width: 240px;"
+                   accept=".pdf,.docx,.txt,.text,.md,.png,.jpg,.jpeg,.bmp,.tif,.tiff,.webp"
+                   @change="handleOcrFileUpload" />
+            
+            <button class="icon-btn primary" @click="handleOcrExtract" :disabled="isLoading">
+              <span>🚀 智能识别指标</span>
+            </button>
+          </div>
+        </section>
+        
+      </section>
+      
+      <!-- ==============================================================================
+           右侧：A4 比例 1:1 高保真 PDF 预览
+           ============================================================================== -->
+      <section class="right-panel">
+        
+        <!-- PDF A4 比例预览面板 -->
+        <div class="a4-preview-board">
+          <template v-if="pdfUrl">
+            <!-- 如果是高保真 PDF 物理流，正常 iframe 预览 -->
+            <iframe v-if="pdfUrlType === 'pdf'" :src="pdfUrl" class="a4-preview-iframe"></iframe>
+            
+            <!-- 如果是降级 Word 物理流，显示 Premium 极光交互大卡片，彻底消灭预览空白！ -->
+            <div v-else-if="pdfUrlType === 'docx'" class="preview-placeholder" style="background-color: #0f172a; padding: 20px; flex-direction: column;">
+              <div class="word-card-container">
+                <div class="word-icon">📥</div>
+                <h3 class="word-title">高保真 Word 报告极速生成成功！</h3>
+                <p class="word-desc">
+                  鉴于本地 Word 物理另存为接口挂起，为了不影响您的测试节奏，平台已<b>自动降级自愈并触发浏览器极速下载</b>！<br>
+                  高保真 Word 文件已在本地安全物理归档并下载，您可以立刻打开测试。
+                </p>
+                
+                <div style="display: flex; gap: 12px; justify-content: center; width: 100%;">
+                  <a :href="pdfUrl" download="重新下载高保真报告.docx" class="aurora-glow-button" style="text-decoration: none; width: 100%; justify-content: center;">
+                    <span>重新下载 Word 报告</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </template>
+          
+          <!-- 引导页遮罩 -->
+          <div v-else class="preview-placeholder">
+            <div class="placeholder-icon">📄</div>
+            <h3 class="placeholder-title">高保真 A4 报告预览监视器</h3>
+            <p class="placeholder-desc">
+              暂无当前渲染快照。请通过左侧导入 Excel 测算表或提取证照指标，确认无误后点击右上角<b>“高保真 A4 渲染”</b>。
+            </p>
+            <p style="font-size: 11px; color: var(--text-secondary);">
+              转换将物理调用本地 Word 引擎，生成后通过 <b>BackgroundTasks</b> 自动完成即用即销清理，不占用额外磁盘！
+            </p>
+          </div>
+        </div>
+        
+        <!-- 🌀 API 加载中遮罩 -->
+        <div v-if="isLoading" class="loading-overlay">
+          <div class="spinner"></div>
+          <div style="color: #ffffff; font-size: 14px; font-weight: 600;">{{ loadingMessage }}</div>
+        </div>
+        
+      </section>
+      
+    </main>
+    
+    <!-- 🔔 全局 Toast 通知 -->
+    <div class="toast-container">
+      <div v-for="toast in toasts" :key="toast.id" :class="['toast', toast.type]">
+        <span>{{ toast.text }}</span>
+      </div>
+    </div>
+    
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted, watch } from 'vue';
+
+// 1. 界面与主题控制
+const isLightTheme = ref(false);
+const isLoading = ref(false);
+const loadingMessage = ref('加载中...');
+const isDragging = ref(false);
+const pdfUrl = ref('');
+const pdfUrlType = ref('pdf'); // 可为 'pdf' 或 'docx'
+
+// Excel 溯源元数据
+const excelMetadata = reactive({
+  name: '',
+  md5: ''
+});
+
+// 折叠状态控制
+const collapsed = reactive({
+  p1: false,
+  p2: true,
+  p3: true,
+  p4: true
+});
+
+// 2. OCR 直贴控制状态
+const ocrRawText = ref('');
+const ocrType = ref('property_cert');
+const ocrMinTextChars = ref(80);
+
+  const isSuffixUnlocked = ref(false);
+
+  const unlockProjectNameSuffix = () => {
+    if (confirm("警告：当前后缀为标准法定词汇，非必要请勿修改。确定要修改吗？")) {
+      isSuffixUnlocked.value = true;
+    }
+  };
+
+  const onTransferPurposeModeChange = () => {
+    onFieldInput('transfer_purpose_mode');
+    if (form.transfer_purpose_mode.value !== '其他') {
+      form.transfer_purpose.value = form.transfer_purpose_mode.value;
+      onFieldInput('transfer_purpose');
+    }
+  };
+
+
+// 3. 核心表单响应式状态机
+// value + origin + is_dirty 三维签名，完美支持主权秒级回归人工
+const form = reactive({
+  // 1. 📁 第一章：报告基本信息与地理区划
+  client_name: { value: '通道侗族自治县自然资源局', origin: 'manual', is_dirty: false },
+    transfer_purpose_mode: { value: '拟挂牌出让', origin: 'manual', is_dirty: false },
+    transfer_purpose: { value: '拟挂牌出让', origin: 'manual', is_dirty: false },
+    project_name_suffix: { value: '国有建设用地使用权市场价格评估', origin: 'manual', is_dirty: false },
+  project_name: { value: '通道侗族自治县自然资源局办理土地使用权出让手续涉及位于通道县双江镇城南街一宗住宅用途国有土地使用权市场价格评估', origin: 'manual', is_dirty: false },
+  appraisal_org: { value: '湖南兆财不动产规划评估有限公司', origin: 'manual', is_dirty: false },
+  land_user: { value: '黄璞', origin: 'manual', is_dirty: false },
+  report_no: { value: '（湖南）湘兆财土地[2026]（估）字第ZC0005号', origin: 'manual', is_dirty: false },
+  technical_report_no: { value: '（湖南）湘兆财土地[2026]（技）字第ZC0005号', origin: 'manual', is_dirty: false },
+  report_date: { value: '2026年05月08日', origin: 'manual', is_dirty: false },
+  valuation_date: { value: '2026年04月23日', origin: 'manual', is_dirty: false },
+  valuation_work_date: { value: '2026年4月23日至2026年4月27日', origin: 'manual', is_dirty: false },
+  client_org_code: { value: '11431230MB16183635', origin: 'manual', is_dirty: false },
+  client_principal: { value: '杨理雄', origin: 'manual', is_dirty: false },
+  client_org_type: { value: '机关', origin: 'manual', is_dirty: false },
+  client_address: { value: '湖南省怀化市通道侗族自治县双江镇友谊街3号', origin: 'manual', is_dirty: false },
+  client_contact: { value: '袁先生', origin: 'manual', is_dirty: false },
+  client_phone: { value: '13974595151', origin: 'manual', is_dirty: false },
+  client_postcode: { value: '418500', origin: 'manual', is_dirty: false },
+
+  // 2. 📐 第二章：土地利用条件与规划限制指标
+    land_location: { value: '通道县双江镇城南街', origin: 'manual', is_dirty: false },
+    land_plot_number: { value: '', origin: 'manual', is_dirty: false },
+    land_location_full: { value: '通道县双江镇城南街', origin: 'manual', is_dirty: false },
+  county_name: { value: '通道县', origin: 'manual', is_dirty: false },
+  parcel_count: { value: '一宗', origin: 'manual', is_dirty: false },
+  land_area: { value: '25.32', origin: 'manual', is_dirty: false },
+  building_area: { value: '107', origin: 'manual', is_dirty: false },
+  plot_ratio_mode: { value: 'range', origin: 'manual', is_dirty: false },
+  plot_ratio: { value: '4.23', origin: 'manual', is_dirty: false },
+  plot_ratio_min: { value: '0.7', origin: 'manual', is_dirty: false },
+  plot_ratio_display: { value: '0.7-4.23', origin: 'manual', is_dirty: false },
+  building_density_min: { value: '35%', origin: 'manual', is_dirty: false },
+  building_density_max: { value: '55%', origin: 'manual', is_dirty: false },
+  greening_rate: { value: '≤15%', origin: 'manual', is_dirty: false },
+  building_height_limit: { value: '24米', origin: 'manual', is_dirty: false },
+  land_use_term: { value: '70年', origin: 'manual', is_dirty: false },
+  land_use_term_years: { value: '70', origin: 'manual', is_dirty: false },
+  right_type: { value: '出让', origin: 'manual', is_dirty: false },
+  land_usage: { value: '城镇住宅用地', origin: 'manual', is_dirty: false },
+  land_usage_short: { value: '住宅用地', origin: 'manual', is_dirty: false },
+  land_usage_full: { value: '城镇住宅用地（划拨转出让）', origin: 'manual', is_dirty: false },
+  land_boundary_desc: { value: '东临建筑物，南临建筑物，西临长征南路，北临建筑物', origin: 'manual', is_dirty: false },
+  planning_approval_authority: { value: '通道县自然资源局', origin: 'manual', is_dirty: false },
+  
+  valuation_condition_type: { value: '现状', origin: 'manual', is_dirty: false },
+  land_development_actual: { value: '宗地红线内外“五通”（通路、通电、供水、排水、通讯）及红线内场地平整', origin: 'manual', is_dirty: false },
+  land_development_set: { value: '宗地红线内外“五通”（通路、通电、供水、排水、通讯）及红线内场地平整', origin: 'manual', is_dirty: false },
+  registered_right_type: { value: '行政划拨', origin: 'manual', is_dirty: false },
+  assumed_right_status: { value: '无他项权利的完全权利条件', origin: 'manual', is_dirty: false },
+  registered_proof_docs: { value: '《土地登记申请书》和《土地登记审批表》', origin: 'manual', is_dirty: false },
+  entrusted_source_docs: { value: '《土地登记审批表》（编号：（2002）第032号）\n《土地登记申请书》（编号：他项（2002）032）\n《土地分户分摊面积明细表》', origin: 'manual', is_dirty: false },
+  regional_factor_title: { value: '土地市场状况', origin: 'manual', is_dirty: false },
+  other_special_notes_ref: { value: '第十一部分  其他需要说明的事项', origin: 'manual', is_dirty: false },
+
+  // 3. ⚖️ 第四章：评估方法选择与加权确价
+  use_cost_approx: { value: true, origin: 'manual', is_dirty: false },
+  use_market_comp: { value: true, origin: 'manual', is_dirty: false },
+  use_income_cap: { value: false, origin: 'manual', is_dirty: false },
+  use_benchmark_corr: { value: false, origin: 'manual', is_dirty: false },
+  use_residual: { value: false, origin: 'manual', is_dirty: false },
+  
+  cost_approx_price: { value: '189.9', origin: 'manual', is_dirty: false },
+  market_comp_price: { value: '127.7', origin: 'manual', is_dirty: false },
+  income_cap_price: { value: '1329.5', origin: 'manual', is_dirty: false },
+  benchmark_corr_price: { value: '895.7', origin: 'manual', is_dirty: false },
+  residual_price: { value: '2510.5', origin: 'manual', is_dirty: false },
+  base_land_price_expire_limit: { value: '三', origin: 'manual', is_dirty: false },
+  show_price_in_text: { value: false, origin: 'manual', is_dirty: false },
+  is_base_price_expired: { value: true, origin: 'manual', is_dirty: false },
+
+  weight_logic_type: { value: 'simple_average', origin: 'manual', is_dirty: false },
+  dominant_method_name: { value: '剩余法', origin: 'manual', is_dirty: false },
+  formula_display_text: { value: '成本逼近法×50%+市场比较法×50%', origin: 'manual', is_dirty: false },
+  land_level_type: { value: 'residential_level_3', origin: 'manual', is_dirty: false },
+  method_combination_type: { value: 'residential_residual_only', origin: 'manual', is_dirty: false },
+  infrastructure_type: { value: 'five_通_residential', origin: 'manual', is_dirty: false },
+  weight_rationale_text: { value: '由于评估对象属于城镇住宅用地，当地同类房地产市场交易活跃，故选用市场比较法和成本逼近法加权，合理确价。', origin: 'manual', is_dirty: false },
+  
+  valuation_method_applicability: { value: '估价对象为已开发建设土地，基础设施达到红线外五通及红线内场地平整，因此适用成本逼近法。由于同类住宅用地交易实例较多，也适用市场比较法。', origin: 'manual', is_dirty: false },
+  final_price_determination: { value: '本次确价采用成本逼近法和市场比较法的简单算术平均值作为最终估价结果。', origin: 'manual', is_dirty: false },
+  infrastructure_detail: { value: '宗地红线外“五通”（即通路、通电、供水、排水、通讯），宗地红线内场地平整。', origin: 'manual', is_dirty: false },
+
+  // 4. 📜 第三章：土地权属及证照信息（智能草稿 + 最终正文）
+  ownership_scenario_type: { value: 'historical_unregistered', origin: 'manual', is_dirty: false },
+  land_status_type: { value: 'historical_unregistered', origin: 'manual', is_dirty: false },
+  asset_use_category: { value: 'residential', origin: 'manual', is_dirty: false },
+  asset_use_category_other: { value: '', origin: 'manual', is_dirty: false },
+  include_registration_risk_note: { value: false, origin: 'manual', is_dirty: false },
+  registration_risk_note: { value: '', origin: 'manual', is_dirty: false },
+  land_registration_desc: { value: '', origin: 'generated', is_dirty: false },
+  land_right_desc: { value: '', origin: 'generated', is_dirty: false },
+  land_use_status_desc: { value: '', origin: 'generated', is_dirty: false },
+
+  gov_approval_name: { value: '关于通道县2002年第七批次建设用地农用地转用和土地征收的批复', origin: 'manual', is_dirty: false },
+  gov_approval_no: { value: '湘政地〔2002〕1205号', origin: 'manual', is_dirty: false },
+  gov_approval_date: { value: '2002年9月5日', origin: 'manual', is_dirty: false },
+  original_land_owner_desc: { value: '双江镇城南街第六、七组共有建设用地', origin: 'manual', is_dirty: false },
+  approval_transfer_date: { value: '2002年12月30日', origin: 'manual', is_dirty: false },
+  approval_authority: { value: '通道县人民政府', origin: 'manual', is_dirty: false },
+  
+  house_cert_name: { value: '房屋所有权证', origin: 'manual', is_dirty: false },
+  house_cert_no: { value: '通房字第5172号', origin: 'manual', is_dirty: false },
+  area_docs_desc_name: { value: '土地资产评估委托书、土地分户分摊面积明细表', origin: 'manual', is_dirty: false },
+  room_detail_location: { value: '通道侗族自治县双江镇城南街皮革厂家属楼3栋4层404房', origin: 'manual', is_dirty: false },
+  proof_doc_name: { value: '通道县房屋登记核发权证申请表', origin: 'manual', is_dirty: false },
+  proof_doc_date: { value: '2002年12月30日', origin: 'manual', is_dirty: false },
+  user_identity: { value: '公职人员', origin: 'manual', is_dirty: false },
+  buy_year: { value: '2002年', origin: 'manual', is_dirty: false },
+  buy_location_desc: { value: '通道县双江镇城南街皮革厂家属楼', origin: 'manual', is_dirty: false },
+  registered_house_area: { value: '107.13', origin: 'manual', is_dirty: false },
+  
+  land_cert_name: { value: '', origin: 'manual', is_dirty: false },
+  land_cert_no: { value: '', origin: 'manual', is_dirty: false },
+  land_use_type: { value: '', origin: 'manual', is_dirty: false }
+});
+
+// 监听要素，自动更新 project_name
+watch(
+  () => [
+    form.client_name.value, 
+    form.transfer_purpose.value, 
+    form.land_location.value, 
+    form.land_plot_number.value,
+    form.parcel_count.value,
+    form.land_usage.value,
+    form.project_name_suffix.value
+  ],
+  ([client, transfer, location, plot, parcel, usage, suffix]) => {
+    const fullLocation = `${location || ''}${plot || ''}`;
+    form.land_location_full.value = fullLocation;
+    form.land_location_full.origin = 'manual';
+
+    form.project_name.value = `${client || ''}${transfer || ''}涉及位于${fullLocation}的${parcel || '一宗'}${usage || ''}${suffix || ''}`;
+    form.project_name.origin = 'manual';
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  regenerateOwnershipDraft(false);
+});
+
+// Toast 控制系统
+const toasts = ref([]);
+let toastId = 0;
+const showToast = (text, type = 'success') => {
+  const id = toastId++;
+  toasts.value.push({ id, text, type });
+  setTimeout(() => {
+    toasts.value = toasts.value.filter(t => t.id !== id);
+  }, 4000);
+};
+
+// 4. 视觉状态机辅助函数
+const getInputClass = (key) => {
+  const field = form[key];
+  if (!field) return '';
+  if (field.is_dirty) return '';
+  if (field.origin === 'excel_imported') return 'origin-excel';
+  if (field.origin === 'ocr_extracted') return 'origin-ocr';
+  return '';
+};
+
+const showBadge = (key) => {
+  const field = form[key];
+  return field && field.origin !== 'manual' && !field.is_dirty;
+};
+
+const getBadgeClass = (key) => {
+  const field = form[key];
+  if (!field) return '';
+  if (field.origin === 'excel_imported') return 'excel';
+  if (field.origin === 'ocr_extracted') return 'ocr';
+  return '';
+};
+
+const getBadgeText = (key) => {
+  const field = form[key];
+  if (!field) return '';
+  if (field.origin === 'excel_imported') return '📊 测算表';
+  if (field.origin === 'ocr_extracted') return '📷 证照识别';
+  return '';
+};
+
+const applyExtractedFields = (extracted, origin = 'ocr_extracted') => {
+  let matchCount = 0;
+  Object.keys(extracted || {}).forEach(key => {
+    const value = extracted[key];
+    if (form[key] && value !== '' && value !== null && value !== undefined && value !== '______') {
+      form[key].value = value;
+      form[key].origin = origin;
+      form[key].is_dirty = false;
+      matchCount++;
+    }
+  });
+  regenerateOwnershipDraft(false);
+  return matchCount;
+};
+
+// 键盘敲击，主权瞬间秒级收归人工！背景变白，微章隐去！
+const onFieldInput = (key) => {
+  const field = form[key];
+  if (field) {
+    field.is_dirty = true;
+    field.origin = 'manual';
+  }
+};
+
+const buildPlotRatioDisplay = () => {
+  const mode = form.plot_ratio_mode?.value || 'range';
+  const value = String(form.plot_ratio?.value || '').trim();
+  const min = String(form.plot_ratio_min?.value || '').trim();
+  return mode === 'range' && min ? `${min}-${value}` : value;
+};
+
+const syncPlotRatioDisplay = (force = false) => {
+  if (!form.plot_ratio_display) return;
+  if (force || !form.plot_ratio_display.is_dirty) {
+    form.plot_ratio_display.value = buildPlotRatioDisplay();
+    form.plot_ratio_display.origin = form.plot_ratio.origin;
+    form.plot_ratio_display.is_dirty = false;
+  }
+};
+
+const onPlotRatioInput = (key) => {
+  onFieldInput(key);
+  syncPlotRatioDisplay(true);
+};
+
+const textValue = (key, fallback = '') => {
+  const value = form[key]?.value;
+  if (value === null || value === undefined) return fallback;
+  const text = String(value).trim();
+  return text && text !== '______' ? text : fallback;
+};
+
+const wrapDoc = (name, no = '', date = '') => {
+  let docName = String(name || '').trim();
+  if (!docName || docName === '______') return '';
+  docName = docName.startsWith('《') && docName.endsWith('》') ? docName : `《${docName.replace(/[《》]/g, '')}》`;
+  const extras = [no, date].map(v => String(v || '').trim()).filter(v => v && v !== '______');
+  return extras.length ? `${docName}（${extras.join('，')}）` : docName;
+};
+
+const wrapDocList = (names) => String(names || '')
+  .split(/[、,，;；\n]+/)
+  .map(name => wrapDoc(name.trim()))
+  .filter(Boolean)
+  .join('、');
+
+const inferAssetUseCategory = () => {
+  const explicit = form.asset_use_category?.value;
+  if (['residential', 'industrial', 'commercial', 'public', 'other'].includes(explicit)) return explicit;
+  const usage = `${textValue('land_usage_short')}${textValue('land_usage')}${textValue('land_usage_full')}`;
+  if (/住宅|居住|公寓/.test(usage)) return 'residential';
+  if (/工业|工矿|仓储|物流|厂房/.test(usage)) return 'industrial';
+  if (/商业|商服|商务|零售|餐饮|旅馆|娱乐|金融/.test(usage)) return 'commercial';
+  if (/公共|机关|教育|医疗|文化|体育|交通|公用/.test(usage)) return 'public';
+  return 'other';
+};
+
+const assetUseLabel = (category = inferAssetUseCategory()) => {
+  if (category === 'other') {
+    return textValue('asset_use_category_other') || textValue('land_usage_short') || textValue('land_usage') || '其他用途';
+  }
+  return {
+    residential: '住宅',
+    industrial: '工业',
+    commercial: '商业服务业',
+    public: '公共管理与公共服务'
+  }[category] || '其他用途';
+};
+
+const supplyPhrase = (label) => label.endsWith('用地') ? `拟作为${label}供应` : `拟作为${label}用途国有建设用地供应`;
+
+const normalizedOwnershipScenario = () => {
+  const raw = form.ownership_scenario_type?.value || form.land_status_type?.value || 'new_grant';
+  return raw === 'registered' ? 'registered_complete' : raw;
+};
+
+const ownershipContext = () => ({
+  land_location: textValue('land_location_full') || textValue('land_location', '估价对象坐落'),
+  land_area: textValue('land_area', '____'),
+  building_area: textValue('building_area', '____'),
+  land_user: textValue('land_user', '待确认权利人'),
+  land_usage: textValue('land_usage') || textValue('land_usage_short', '设定用途'),
+  land_usage_short: textValue('land_usage_short') || textValue('land_usage', '设定用途'),
+  asset_use_label: assetUseLabel(),
+  right_type: textValue('right_type', '国有出让'),
+  registered_right_type: textValue('registered_right_type') || textValue('right_type', '国有划拨'),
+  land_use_type: textValue('land_use_type') || textValue('registered_right_type') || textValue('right_type', '登记使用权类型'),
+  valuation_condition_type: textValue('valuation_condition_type', '现状'),
+  assumed_right_status: textValue('assumed_right_status', '无他项权利的完全权利条件'),
+  actual_dev: textValue('land_development_actual', '宗地红线内外开发程度以委托方资料及现场勘查为准'),
+  set_dev: textValue('land_development_set', '设定开发程度以本次地价定义为准'),
+  boundary: textValue('land_boundary_desc', '四至界址以委托方提供资料及现场勘查结果为准'),
+  room_location: textValue('room_detail_location') || textValue('land_location_full') || textValue('land_location', '估价对象坐落'),
+  buy_year: textValue('buy_year'),
+  buy_location: textValue('buy_location_desc'),
+  user_identity: textValue('user_identity'),
+  registered_house_area: textValue('registered_house_area') || textValue('building_area', '____')
+});
+
+const setGeneratedField = (key, value, force = false) => {
+  const field = form[key];
+  if (!field) return;
+  const canUpdate = force || !field.is_dirty && (field.origin === 'generated' || !String(field.value || '').trim());
+  if (canUpdate) {
+    field.value = value;
+    field.origin = 'generated';
+    field.is_dirty = false;
+  }
+};
+
+const regenerateOwnershipDraft = async (force = false) => {
+  const edited = ['land_registration_desc', 'land_right_desc', 'land_use_status_desc']
+    .some(key => form[key]?.is_dirty && String(form[key]?.value || '').trim());
+  if (force && edited && !confirm('当前权属正文已有手工修改，是否覆盖为系统重新生成的草稿？')) {
+    return;
+  }
+  
+  const payload = {};
+  Object.keys(form).forEach(key => {
+    payload[key] = textValue(key);
+  });
+  
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/build-ownership-draft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: payload })
+    });
+    if (!res.ok) throw new Error('生成草稿失败');
+    const result = await res.json();
+    if (result.status === 'success') {
+      const drafts = result.data;
+      if (drafts.ownership_scenario_type) form.ownership_scenario_type.value = drafts.ownership_scenario_type;
+      if (drafts.ownership_scenario_type) form.land_status_type.value = drafts.ownership_scenario_type === 'registered_complete' ? 'registered' : drafts.ownership_scenario_type;
+      if (drafts.asset_use_category) form.asset_use_category.value = drafts.asset_use_category;
+      
+      const keysToUpdate = ['land_registration_desc', 'land_right_desc', 'land_use_status_desc'];
+      keysToUpdate.forEach(key => setGeneratedField(key, drafts[key], force));
+      showToast('权属草稿已由后端智能引擎重新生成', 'success');
+    }
+  } catch (err) {
+    showToast('调用后端草稿引擎失败: ' + err.message, 'error');
+  }
+};
+
+const onOwnershipControlChange = (key) => {
+  onFieldInput(key);
+  regenerateOwnershipDraft(true);
+};
+
+// 5. 换肤控制 (支持冷色温浅色切换)
+const toggleTheme = () => {
+  isLightTheme.value = !isLightTheme.value;
+  showToast(isLightTheme.value ? '☀️ 已切换为冷白高对比度模式' : '🌙 已切换为护眼暗黑模式', 'warning');
+};
+
+// ==============================================================================
+// 📥 测算表拖拽解析
+// ==============================================================================
+const handleDragOver = () => {
+  isDragging.value = true;
+};
+
+const handleDragLeave = () => {
+  isDragging.value = false;
+};
+
+const handleFileDrop = async (e) => {
+  isDragging.value = false;
+  const files = e.dataTransfer.files;
+  if (files.length === 0) return;
+  
+  const file = files[0];
+  if (!file.name.endsWith('.xlsx')) {
+    showToast('❌ 仅支持拖入 .xlsx 格式的测算表', 'error');
+    return;
+  }
+  
+  // 组装上传表单
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  isLoading.value = true;
+  loadingMessage.value = '正在一键安全解析 Excel 测算表...';
+  
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/parse-excel', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.detail || '接口解析失败');
+    }
+    
+    const res = await response.json();
+    
+    // 更新元数据
+    excelMetadata.name = res.excel_name;
+    excelMetadata.md5 = res.md5_checksum;
+    
+    // 自动触发回填，并打上 excel_imported 标签
+    const back_data = res.data;
+    Object.keys(back_data).forEach(key => {
+      const incomingValue = back_data[key];
+      if (form[key] && incomingValue !== '' && incomingValue !== null && incomingValue !== undefined && incomingValue !== '______') {
+        form[key].value = incomingValue;
+        form[key].origin = 'excel_imported';
+        form[key].is_dirty = false;
+      }
+    });
+    syncPlotRatioDisplay(true);
+    regenerateOwnershipDraft(false);
+    
+    // 自动展开所有卡片以便审计回填数据
+    collapsed.p1 = false;
+    collapsed.p2 = false;
+    collapsed.p3 = false;
+    collapsed.p4 = false;
+    
+    showToast('🎉 Excel 测算表成功一键解析并回填！');
+  } catch (error) {
+    showToast(`❌ 解析失败: ${error.message}`, 'error');
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// ==============================================================================
+// 📷 证照 OCR 直贴提取
+// ==============================================================================
+const handleOcrExtract = async () => {
+  if (!ocrRawText.value.trim()) {
+    showToast('⚠ 请先粘贴待识别的原始文本', 'warning');
+    return;
+  }
+  
+  isLoading.value = true;
+  loadingMessage.value = '正在调用离线高精度匹配引擎提取指标...';
+  
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/ocr', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        raw_text: ocrRawText.value,
+        attachment_type: ocrType.value
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('OCR 提取服务连接失败');
+    }
+    
+    const res = await response.json();
+    const matchCount = applyExtractedFields(res.data);
+    
+    if (matchCount > 0) {
+      showToast(`🎉 离线引擎提取成功！共规整回填了 ${matchCount} 个证书指标。`);
+      // 自动展开所有卡片以便审计回填数据
+      collapsed.p1 = false;
+      collapsed.p2 = false;
+      collapsed.p3 = false;
+      collapsed.p4 = false;
+    } else {
+      showToast('⚠ 提取成功但未能匹配到对应字段，请检查文本是否正确', 'warning');
+    }
+    
+  } catch (error) {
+    showToast(`❌ OCR 识别提取阶段失败: ${error.message}`, 'error');
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const handleOcrFileUpload = async (event) => {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+
+  isLoading.value = true;
+  loadingMessage.value = '正在读取附件文字层并提取指标...';
+
+  let totalMatches = 0;
+  const extractedTexts = [];
+  const failures = [];
+
+  try {
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('attachment_type', ocrType.value);
+      formData.append('min_text_chars', String(ocrMinTextChars.value ?? 80));
+
+      const response = await fetch('http://127.0.0.1:8000/api/ocr-file', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        let message = '附件识别失败';
+        try {
+          const err = await response.json();
+          message = err.detail || message;
+        } catch (_) {}
+        failures.push(`${file.name}: ${message}`);
+        continue;
+      }
+
+      const res = await response.json();
+      totalMatches += applyExtractedFields(res.data);
+      if (res.text) {
+        extractedTexts.push(`【${file.name}｜${res.extraction_method}】\n${res.text}`);
+      }
+    }
+
+    if (extractedTexts.length) {
+      ocrRawText.value = extractedTexts.join('\n\n---\n\n');
+    }
+
+    if (totalMatches > 0) {
+      collapsed.p1 = false;
+      collapsed.p2 = false;
+      collapsed.p3 = false;
+      collapsed.p4 = false;
+      showToast(`🎉 附件识别完成，已回填 ${totalMatches} 个字段。`);
+    } else if (extractedTexts.length) {
+      showToast('⚠ 附件已提取文字，但未匹配到表单字段，请检查附件类型选择。', 'warning');
+    }
+
+    if (failures.length) {
+      showToast(`⚠ 部分附件未能识别：${failures[0]}`, 'warning');
+    }
+  } catch (error) {
+    showToast(`❌ 附件识别失败: ${error.message}`, 'error');
+  } finally {
+    isLoading.value = false;
+    event.target.value = '';
+  }
+};
+
+// ==============================================================================
+// 📄 高保真 A4 渲染与即用即销预览
+// ==============================================================================
+const handleRenderReport = async () => {
+  isLoading.value = true;
+  loadingMessage.value = '正在物理渲染并转换为高保真 A4 PDF 预览...';
+  
+  // 拼装扁平 JSON 数据
+  const renderData = {};
+  Object.keys(form).forEach(key => {
+    renderData[key] = form[key].value;
+  });
+  if (!renderData['plot_ratio_display']) {
+    renderData['plot_ratio_display'] = buildPlotRatioDisplay();
+  }
+  
+  // 加上 Excel 指纹和归档指令
+  renderData['excel_name'] = excelMetadata.name || '桌面端手工微调填报';
+  renderData['md5_checksum'] = excelMetadata.md5 || 'MANUAL_VER_NO_CHECKSUM';
+  renderData['archive_to_result'] = true; // 渲染时顺便归档一份正式 word 文件到 03_Result
+  
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/render-report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(renderData)
+    });
+    
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.detail || '渲染引擎响应失败');
+    }
+    
+    // 获取 Blob 流并建立本地临时 blob URL
+    const blob = await response.blob();
+    if (pdfUrl.value) {
+      URL.revokeObjectURL(pdfUrl.value); // 回收以前的 blob 内存
+    }
+    
+    // 核心物理分流：智能检查 Blob 类型以确定展示模式
+    if (blob.type === 'application/pdf') {
+      pdfUrlType.value = 'pdf';
+      pdfUrl.value = URL.createObjectURL(blob);
+      showToast('🎉 A4 高保真报告极速渲染成功！PDF 预览已实时刷新！');
+    } else {
+      pdfUrlType.value = 'docx';
+      pdfUrl.value = URL.createObjectURL(blob);
+      
+      // 物理触发自动极速下载，对齐用户的高效操作
+      const link = document.createElement('a');
+      link.href = pdfUrl.value;
+      
+      // 采用清晰的项目简名命名下载文件，后端归档更严密
+      const prjName = form.land_location.value || '自动生成的估价报告';
+      link.download = `${prjName.replace(/[\\/:*?"<>|]/g, '_')}_高保真 Word 报告_${new Date().getTime()}.docx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('🎉 本地另存为 PDF 接口挂起，平台已自愈降级，高保真 Word 报告已为您自动下载！', 'warning');
+    }
+  } catch (error) {
+    showToast(`❌ 高保真 A4 渲染阶段失败: ${error.message}`, 'error');
+  } finally {
+    isLoading.value = false;
+  }
+};
+</script>
+
+<style>
+/* 引用我们在 style.css 里的样式，这里不需要重复 */
+</style>

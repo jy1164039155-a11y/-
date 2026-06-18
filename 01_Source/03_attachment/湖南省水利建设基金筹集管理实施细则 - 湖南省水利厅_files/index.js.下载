@@ -1,0 +1,611 @@
+// JavaScript Document
+var dynamicLoading = {
+    css: function(path){
+		if(!path || path.length === 0){
+			throw new Error('argument "path" is required !');
+		}
+		var head = document.getElementsByTagName('head')[0];
+        var link = document.createElement('link');
+        link.href = path;
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        head.appendChild(link);
+    },
+    js: function(path){
+		if(!path || path.length === 0){
+			throw new Error('argument "path" is required !');
+		}
+		var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.src = path;
+        script.type = 'text/javascript';
+        head.appendChild(script);
+    }
+}
+dynamicLoading.css("https://daohang.hunan.gov.cn/images/floatDiv.css");
+dynamicLoading.css("https://daohang.hunan.gov.cn/images/2015tj_wp_logincommon.css");
+dynamicLoading.js("https://daohang.hunan.gov.cn/images/2015tj_wp_logincommon.js");
+var scripts = document.getElementsByTagName("script");
+var scriptArgs = scripts[ scripts.length - 1 ].src.substr(scripts[ scripts.length - 1 ].src.lastIndexOf("?"));
+//console.log(scripts[ scripts.length - 1 ].src);
+var getCoords = function(el){
+	var box = el.getBoundingClientRect(),
+	doc = el.ownerDocument,
+	body = doc.body,
+	html = doc.documentElement,
+	clientTop = html.clientTop || body.clientTop || 0,
+	clientLeft = html.clientLeft || body.clientLeft || 0,
+	top = box.top + (self.pageYOffset || html.scrollTop || body.scrollTop ) - clientTop,
+	left = box.left + (self.pageXOffset || html.scrollLeft || body.scrollLeft) - clientLeft
+	return { 'top': top, 'left': left };
+};
+function GetQueryString(name)
+{
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = scriptArgs.substr(1).match(reg);
+     if(r!=null)return  unescape(r[2]); return null;
+}
+//alert(scriptArgs+"///"+GetQueryString("id"));
+var topColor = "#"+GetQueryString("tc");
+var midColor = "#"+GetQueryString("mc");
+var chlColor = "#"+GetQueryString("cc");
+var textColor = "#"+GetQueryString("ttc");
+var siteId = parseInt(GetQueryString("id"),10);
+var dposition = parseInt(GetQueryString("p"),10);
+var isfgw = parseInt(GetQueryString("fgw"),10);
+//alert(dposition);
+if(topColor=="#"||topColor=="#null") topColor = "#556fb5";
+if(midColor=="#"||midColor=="#null") midColor = "#556fb5";
+if(chlColor=="#"||chlColor=="#null") chlColor = "#556fb5";
+if(textColor=="#"||textColor=="#null") {textColor = "";}else{textColor = "color:"+textColor;}
+//alert(topColor+"::::::"+midColor);
+//console.log((document.documentElement||document.body).scrollWidth);
+//console.log(dposition);
+
+var extendsString = [
+    "",//1
+    "",//2
+    "",//3
+    "",//4
+     "",//5
+    "",//6
+    "",//7
+      " | <a href='http://oa.hnsfpb.hunan.gov.cn/' style='"+textColor+"' target='_blank'>扶贫OA</a>",//8
+    "",//9
+    "",//10
+    "",//11
+    "",//12
+    "",//13
+    "",//14
+    "",//15
+    "",//16
+    "",//17
+    "| <a href='http://218.76.24.45:8080/jrb/102/408/default.htm' style='"+textColor+"' target='_blank'>微门户</a> ",//18
+    "",//19
+    "",//20
+    "",//21
+    "",//22
+    "",//23
+    "",//24
+    "",//25
+    "",//26
+    "",//27
+    "",//28
+    "",//29 | <a href='http://mail.hnwr.gov.cn/' style='"+textColor+"' target='_blank'>水利邮箱</a>
+    "",//30
+    " | <a href='/fzlm/wytg/201609/t20160914_3262919.html' style='color:#EE0000;background-color:#FFFFFF;' target='_blank'>我要投稿</a>",//31
+    "",//32
+    "",//33
+    "",//34
+    "",//35
+    "",//36
+    "",//37
+    "",//38
+    "",//| <a href='http://222.240.80.50:8080/rums/rums.jsp' style='"+textColor+"' target='_blank'>后台入口</a>",//39
+    "",//40
+    "| <a href='http://www.hnjt.gov.cn/fzlm/wzdt/' style='"+textColor+"' target='_blank'>网站地图</a>",//41
+    "",//42
+    "",//43
+    "",//44
+    "",//45
+    "",//46
+    "",//47
+    "",//48
+    " | <a href='http://mail.sports.gov.cn/' style='"+textColor+"' target='_blank'>电子邮箱系统</a>",//49
+    " | <a href='https://mail.hn.stats.cn/' style='"+textColor+"' target='_blank'>统计邮箱</a> | <a href='/rss.xml' style='"+textColor+"' target='_blank'>RSS订阅</a> | <a href='/gnxlm/wzdh/' style='"+textColor+"'>网站导航</a>|<a href='/English' style='"+textColor+"' target='_blank'>English</a>",//50
+    "",//51
+    "",//52
+    " | <a href='javascript:void(0);' style='"+textColor+"'>举报投诉 12312</a>",//53
+    "",//54
+    "",//55
+    ""//56
+];
+var topPositionX = 0;
+var iiii=0;
+function countTop(){
+	var windowWidth = (document.documentElement||document.body).scrollWidth;
+	topPositionX = windowWidth/2 + dposition;
+	//console.log(topPositionX);
+	var tobj = document.getElementById("topSystemBtn_id");
+	tobj.style.left = topPositionX+"px";
+	var obj = document.getElementById("div_topSystem_id");
+	obj.style.right = (windowWidth - getCoords(tobj).left - tobj.offsetWidth) + "px";
+	obj.style.top = (tobj.offsetHeight) + "px";
+	var lobj = document.getElementById("comm_topLink_id");
+	lobj.style.right = (windowWidth - tobj.offsetLeft + 20) + "px";
+        //lobj.style.left = (topPositionX - lobj.offsetWidth - 15) + "px";
+}
+function countMid(){
+	try{
+	var mbtn = document.getElementById("midSystemBtn_id");
+	var mobj = document.getElementById("div_midSystem_id");
+	mobj.style.left = ( getCoords(mbtn).left ) + "px";
+	mobj.style.top = ( getCoords(mbtn).top + mbtn.offsetHeight) + "px";
+	}catch(o){}
+}
+function countPosition(){
+	countTop();
+	countMid();
+}
+
+
+var systemDatas;
+var xxgkDatas;
+var bsfwDatas;
+var hdjlDatas;
+
+function initData(){
+	
+$.ajax({  
+   url :"https://hd.hunan.gov.cn/hdpt/szck/none_list.html", 
+   type:"get",  
+   async:false,  
+   data: {},
+   dataType:"jsonp",
+   jsonp:"callback",
+   jsonpCallback:"cb",
+   success: function(data){  
+
+      systemDatas = data;
+	  xxgkDatas = data;
+	  bsfwDatas = data;
+	  hdjlDatas = data;
+	  initDoc();
+   },
+   error: function(){  
+      
+   } 
+}); 
+}
+
+/*var systemDatas = [
+	{id:1,name:'省发展和改革委员会',url:'http://fgw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省教育厅',url:'http://jyt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省科学技术厅',url:'http://kjt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省工业和信息化厅',url:'http://gxt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省民族宗教事务委员会',url:'http://mzw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省公安厅',url:'http://gat.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省民政厅',url:'http://mzt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省司法厅',url:'http://sft.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省财政厅',url:'http://czt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省人力资源和社会保障厅',url:'http://rst.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省自然资源厅',url:'http://zrzyt.hunan.gov.cn',color:'#C00',isenable:true}
+,{id:1,name:'省生态环境厅',url:'http://sthjt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省住房和城乡建设厅',url:'http://zjt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省交通运输厅',url:'http://jtt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省水利厅',url:'http://slt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省农业农村厅',url:'http://agri.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省商务厅',url:'http://swt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省文化和旅游厅',url:'http://whhlyt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省卫生健康委员会',url:'http://wjw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省审计厅',url:'http://sjt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省退役军人事务厅',url:'http://tyjrswt.hunan.gov.cn/',color:'#C00',isenable:true}
+        ,{id:1,name:'省应急管理厅',url:'http://yjt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省国资委',url:'http://gzw.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省林业局',url:'http://lyj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省市场监督管理局',url:'http://amr.hunan.gov.cn',color:'#C00',isenable:true}
+,{id:1,name:'省广播电视局',url:'http://gbdsj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省体育局',url:'http://tyj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省统计局',url:'http://tjj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省机关事务管理局',url:'http://jgswj.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省地方金融监督管理局',url:'http://dfjrjgj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省人防办',url:'http://rfb.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省信访局',url:'http://xfj.hunan.gov.cn',color:'#C00',isenable:true}
+        ,{id:1,name:'省扶贫办',url:'http://hnsfpb.hunan.gov.cn/',color:'#C00',isenable:true}
+ ,{id:1,name:'省粮食和物资储备局',url:'http://lshwzcbj.hunan.gov.cn/',color:'#C00',isenable:true}
+ ,{id:1,name:'省医疗保障局',url:'http://ybj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省监狱管理局',url:'http://hnjyj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省中医药管理局',url:'http://tcm.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省药品监督管理局',url:'http://mpa.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省文史研究馆',url:'http://css.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省档案局',url:'http://sdaj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省供销合作总社',url:'http://gxhzs.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省政府发展研究中心',url:'http://fzyj.hunan.gov.cn',color:'#C00',isenable:true}
+
+
+];
+var xxgkDatas = [
+		{id:1,name:'省发展和改革委员会',url:'http://fgw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省教育厅',url:'http://jyt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省科学技术厅',url:'http://kjt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省工业和信息化厅',url:'http://gxt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省民族宗教事务委员会',url:'http://mzw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省公安厅',url:'http://gat.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省民政厅',url:'http://mzt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省司法厅',url:'http://sft.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省财政厅',url:'http://czt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省人力资源和社会保障厅',url:'http://rst.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省自然资源厅',url:'http://zrzyt.hunan.gov.cn',color:'#C00',isenable:true}
+,{id:1,name:'省生态环境厅',url:'http://sthjt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省住房和城乡建设厅',url:'http://zjt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省交通运输厅',url:'http://jtt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省水利厅',url:'http://slt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省农业农村厅',url:'http://agri.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省商务厅',url:'http://swt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省文化和旅游厅',url:'http://whhlyt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省卫生健康委员会',url:'http://wjw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省审计厅',url:'http://sjt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省退役军人事务厅',url:'http://tyjrswt.hunan.gov.cn/',color:'#C00',isenable:true}
+        ,{id:1,name:'省应急管理厅',url:'http://yjt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省国资委',url:'http://gzw.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省林业局',url:'http://lyj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省市场监督管理局',url:'http://amr.hunan.gov.cn',color:'#C00',isenable:true}
+,{id:1,name:'省广播电视局',url:'http://gbdsj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省体育局',url:'http://tyj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省统计局',url:'http://tjj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省机关事务管理局',url:'http://jgswj.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省地方金融监督管理局',url:'http://dfjrjgj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省人防办',url:'http://rfb.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省信访局',url:'http://xfj.hunan.gov.cn',color:'#C00',isenable:true}
+        ,{id:1,name:'省扶贫办',url:'http://hnsfpb.hunan.gov.cn/',color:'#C00',isenable:true}
+ ,{id:1,name:'省粮食和物资储备局',url:'http://lshwzcbj.hunan.gov.cn/',color:'#C00',isenable:true}
+ ,{id:1,name:'省医疗保障局',url:'http://ybj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省监狱管理局',url:'http://hnjyj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省中医药管理局',url:'http://tcm.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省药品监督管理局',url:'http://mpa.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省文史研究馆',url:'http://css.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省档案局',url:'http://sdaj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省供销合作总社',url:'http://gxhzs.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省政府发展研究中心',url:'http://fzyj.hunan.gov.cn',color:'#C00',isenable:true}
+
+];
+var bsfwDatas = [
+	{id:1,name:'省发展和改革委员会',url:'http://fgw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省教育厅',url:'http://jyt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省科学技术厅',url:'http://kjt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省工业和信息化厅',url:'http://gxt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省民族宗教事务委员会',url:'http://mzw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省公安厅',url:'http://gat.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省民政厅',url:'http://mzt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省司法厅',url:'http://sft.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省财政厅',url:'http://czt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省人力资源和社会保障厅',url:'http://rst.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省自然资源厅',url:'http://zrzyt.hunan.gov.cn',color:'#C00',isenable:true}
+,{id:1,name:'省生态环境厅',url:'http://sthjt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省住房和城乡建设厅',url:'http://zjt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省交通运输厅',url:'http://jtt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省水利厅',url:'http://slt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省农业农村厅',url:'http://agri.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省商务厅',url:'http://swt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省文化和旅游厅',url:'http://whhlyt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省卫生健康委员会',url:'http://wjw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省审计厅',url:'http://sjt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省退役军人事务厅',url:'http://tyjrswt.hunan.gov.cn/',color:'#C00',isenable:true}
+        ,{id:1,name:'省应急管理厅',url:'http://yjt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省国资委',url:'http://gzw.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省林业局',url:'http://lyj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省市场监督管理局',url:'http://amr.hunan.gov.cn',color:'#C00',isenable:true}
+,{id:1,name:'省广播电视局',url:'http://gbdsj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省体育局',url:'http://tyj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省统计局',url:'http://tjj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省机关事务管理局',url:'http://jgswj.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省地方金融监督管理局',url:'http://dfjrjgj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省人防办',url:'http://rfb.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省信访局',url:'http://xfj.hunan.gov.cn',color:'#C00',isenable:true}
+        ,{id:1,name:'省扶贫办',url:'http://hnsfpb.hunan.gov.cn/',color:'#C00',isenable:true}
+ ,{id:1,name:'省粮食和物资储备局',url:'http://lshwzcbj.hunan.gov.cn/',color:'#C00',isenable:true}
+ ,{id:1,name:'省医疗保障局',url:'http://ybj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省监狱管理局',url:'http://hnjyj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省中医药管理局',url:'http://tcm.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省药品监督管理局',url:'http://mpa.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省文史研究馆',url:'http://css.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省档案局',url:'http://sdaj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省供销合作总社',url:'http://gxhzs.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省政府发展研究中心',url:'http://fzyj.hunan.gov.cn',color:'#C00',isenable:true}
+	
+];
+var hdjlDatas = [
+	{id:1,name:'省发展和改革委员会',url:'http://fgw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省教育厅',url:'http://jyt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省科学技术厅',url:'http://kjt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省工业和信息化厅',url:'http://gxt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省民族宗教事务委员会',url:'http://mzw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省公安厅',url:'http://gat.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省民政厅',url:'http://mzt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省司法厅',url:'http://sft.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省财政厅',url:'http://czt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省人力资源和社会保障厅',url:'http://rst.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省自然资源厅',url:'http://zrzyt.hunan.gov.cn',color:'#C00',isenable:true}
+,{id:1,name:'省生态环境厅',url:'http://sthjt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省住房和城乡建设厅',url:'http://zjt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省交通运输厅',url:'http://jtt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省水利厅',url:'http://slt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省农业农村厅',url:'http://agri.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省商务厅',url:'http://swt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省文化和旅游厅',url:'http://whhlyt.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省卫生健康委员会',url:'http://wjw.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省审计厅',url:'http://sjt.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省退役军人事务厅',url:'http://tyjrswt.hunan.gov.cn/',color:'#C00',isenable:true}
+        ,{id:1,name:'省应急管理厅',url:'http://yjt.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省国资委',url:'http://gzw.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省林业局',url:'http://lyj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省市场监督管理局',url:'http://amr.hunan.gov.cn',color:'#C00',isenable:true}
+,{id:1,name:'省广播电视局',url:'http://gbdsj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省体育局',url:'http://tyj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省统计局',url:'http://tjj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省机关事务管理局',url:'http://jgswj.hunan.gov.cn/',color:'#C00',isenable:true}
+,{id:1,name:'省地方金融监督管理局',url:'http://dfjrjgj.hunan.gov.cn',color:'#C00',isenable:true}
+	,{id:1,name:'省人防办',url:'http://rfb.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省信访局',url:'http://xfj.hunan.gov.cn',color:'#C00',isenable:true}
+        ,{id:1,name:'省扶贫办',url:'http://hnsfpb.hunan.gov.cn/',color:'#C00',isenable:true}
+ ,{id:1,name:'省粮食和物资储备局',url:'http://lshwzcbj.hunan.gov.cn/',color:'#C00',isenable:true}
+ ,{id:1,name:'省医疗保障局',url:'http://ybj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省监狱管理局',url:'http://hnjyj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省中医药管理局',url:'http://tcm.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省药品监督管理局',url:'http://mpa.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省文史研究馆',url:'http://css.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省档案局',url:'http://sdaj.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省供销合作总社',url:'http://gxhzs.hunan.gov.cn/',color:'#C00',isenable:true}
+	,{id:1,name:'省政府发展研究中心',url:'http://fzyj.hunan.gov.cn',color:'#C00',isenable:true}
+	
+];
+var topList = '';
+for(var i=0;i<systemDatas.length;i++){
+	//alert(systemDatas[i].name);
+	topList += '<li class="'+(systemDatas[i].isenable?"":"disable")+'"><a href="'+systemDatas[i].url+'" target="_blank">'+systemDatas[i].name+'</a></li>';
+}*/
+//添加头部按钮
+var topSystemBtn = document.createElement("div");
+topSystemBtn.id="topSystemBtn_id";
+topSystemBtn.setAttribute("style","background-color:"+topColor+";");
+topSystemBtn.style.backgroundColor=topColor;
+topSystemBtn.innerHTML="省直窗口";
+document.body.appendChild(topSystemBtn);
+//添加头部站点列表
+var div_topSystem = document.createElement("div");
+div_topSystem.setAttribute("style", "background:"+ midColor +";display:none;");
+div_topSystem.style.backgroundColor = midColor;
+div_topSystem.style.display = "none";
+div_topSystem.id="div_topSystem_id";
+div_topSystem.innerHTML = '<div class="topSystem_inner"><h3><span>省直单位</span></h3><ul id="unitlist"></ul></div>';
+document.body.appendChild(div_topSystem);
+//document.getElementById("unitlist").innerHTML=topList;
+//添加登录按钮、简繁、无障碍等功能区
+/*fffstr = '';
+if(isfgw==1)fffstr=" | <a href='http://222.240.128.168/Index.html' style='"+textColor+"' target='_blank'>旧版网站</a>";
+var topFuncLink = '<!--登录页start-->\
+  <div class="login-box">\
+   	<div class="login-tit"><strong>用户登录</strong><span></span></div>\
+    <div class="login-bg">\
+    <div class="login-con">\
+    	<ul class="login-ul">\
+            	<li class="u-name"><input type="text" class="txt" id="username" value="用户名" onfocus="if(value==\'用户名\')value=\'\'" onblur="if(value==\'\') value=\'用户名\'" /></li>\
+                <li class="u-password"><input type="password" id="password" class="txt" /></li>\
+                <li class="u-btn"><a href="javascript:void(0);" class="a-login" onclick="login()">登录</a><a href="" target="_blank">忘记密码？</a><a href="" target="_blank">注册</a></li>\
+            </ul>\
+         <!-- <dl class="login-other">\
+            	<dt>可以使用以下方式登录：</dt>\
+                <dd><a href="#" class="a1">办事系统</a><a href="#" class="a2">QQ</a><a href="#" class="a3">新浪微博</a></dd>\
+            </dl-->\
+    </div>\
+    </div>\
+</div>\
+<!--登录页end-->'
+var newDiv = document.createElement("div");
+newDiv.className="h-login";
+newDiv.innerHTML=topFuncLink;
+document.body.appendChild(newDiv);*/
+
+var linkDiv = document.createElement("div");
+linkDiv.className = 'comm_topLink';
+linkDiv.id = 'comm_topLink_id';
+var departmentEmail ="";
+//设置各单位的邮箱
+if(siteId==1){
+  departmentEmail ="<a target=\"_blank\" href=\"https://mail.hunan.gov.cn/\" style=\""+textColor+"\">政务邮箱</a>";
+} else if(siteId==6){
+  departmentEmail="<a target=\"_blank\" href=\"https://mail.hnst.gov.cn/\" style=\""+textColor+"\">政务邮箱</a>";
+}else if(siteId==36){
+  departmentEmail="";
+}else{
+ departmentEmail="<a target=\"_blank\" href=\"https://mail.hunan.gov.cn/\" style=\""+textColor+"\">政务邮箱</a>";
+
+
+}
+
+var sthbenglish="";
+//设置环保英文入口
+if(siteId==40){
+  sthbenglish="<a target=\"_blank\" href=\"http://hnhbt.hunan.gov.cn/english/\" style=\""+textColor+"\">English</a>";
+}
+
+linkDiv.innerHTML = '     <iframe id="logIframe" src="https://home.hunan.gov.cn/otherLogin/login.html" width="220" height="30" scrolling="no" frameborder="0" style="float:left;" ></iframe> <a href="javascript:void(0);" id="logout" style="display:none;'+textColor+'">退出</a>|\
+                        <a href="javascript:void(0);" id="StranLink" style="'+textColor+'">繁體中文</a>|'+
+                       departmentEmail+extendsString[siteId-1];
+linkDiv.setAttribute("style",textColor);
+document.body.appendChild(linkDiv);
+
+
+//头部鼠标经过事件注册
+var t_top = 0;
+var t_mid = 0;
+topSystemBtn.onmouseover=function(){
+	clearTimeout(t_top);
+	var obj=document.getElementById("div_topSystem_id");
+	if(obj.style.display=="none"){
+		obj.style.display="block";
+	}
+	document.getElementById("topSystemBtn_id").className="topSystemBtn_hover";
+}
+topSystemBtn.onmouseout=function(){
+	t_top = setTimeout('hiddenTopSystem()',100);
+}
+function hiddenTopSystem(){
+	var obj=document.getElementById("div_topSystem_id");
+	obj.style.display="none";
+	document.getElementById("topSystemBtn_id").className="";
+}
+div_topSystem.onmouseout=function(){
+	t_top = setTimeout('hiddenTopSystem()',100);
+}
+div_topSystem.onmouseover=function(){
+	clearTimeout(t_top);
+}
+function hiddenMidSystem(){
+	var obj=document.getElementById("div_midSystem_id");
+	obj.style.display="none";
+	document.getElementById("midSystemBtn_id").className="";
+}
+
+
+function initDoc(){
+	var topList = '';
+for(var i=0;i<systemDatas.length;i++){
+	//alert(systemDatas[i].name);
+	topList += '<li class=""><a href="'+systemDatas[i].URL+'" target="_blank">'+systemDatas[i].TITLE+'</a></li>';
+}
+
+document.getElementById("unitlist").innerHTML=topList;
+//栏目切换导航添加
+	var midList = '';
+	var channelName = '信息公开';
+	var midDatas = xxgkDatas;
+	var genDiv = null;
+	if(document.getElementById("xxgk_midNav")){
+		midDatas = xxgkDatas;
+		channelName = "信息公开";
+		genDiv = document.getElementById("xxgk_midNav");
+	}else if(document.getElementById("bsfw_midNav")){
+		midDatas = bsfwDatas;
+		channelName = "办事服务";
+		genDiv = document.getElementById("bsfw_midNav");
+	}else if(document.getElementById("hdjl_midNav")){
+		midDatas = hdjlDatas;
+		channelName = "互动交流";
+		genDiv = document.getElementById("hdjl_midNav");
+	}
+	for(var i=0;i<midDatas.length;i++){
+		//alert(systemDatas[i].name);
+		midList += '<li class=""><a href="'+midDatas[i].URL+'" target="_blank">'+midDatas[i].TITLE+'</a></li>';
+	}
+	//添加中间按钮
+	var midSystemBtn = document.createElement("div");
+	midSystemBtn.id="midSystemBtn_id";
+	midSystemBtn.setAttribute("style","background-color:"+chlColor+";");
+	midSystemBtn.style.backgroundColor=chlColor;
+	midSystemBtn.innerHTML="省直部门"+channelName;
+	if(null != genDiv){
+		genDiv.appendChild(midSystemBtn);
+		//添加中间频道列表
+		var div_midSystem = document.createElement("div");
+		div_midSystem.setAttribute("style", "background:"+ chlColor +";display:none;");
+		div_midSystem.style.backgroundColor = chlColor;
+		div_midSystem.style.display = "none";
+		div_midSystem.id="div_midSystem_id";
+		div_midSystem.innerHTML = '<div class="midSystem_inner"><ul id="midunitlist"></ul></div>';
+		document.body.appendChild(div_midSystem);
+		document.getElementById("midunitlist").innerHTML=midList;
+
+
+		//中部鼠标经过事件注册
+		midSystemBtn.onmouseover=function(){
+			clearTimeout(t_mid);
+			var obj=document.getElementById("div_midSystem_id");
+			if(obj.style.display=="none"){
+				obj.style.display="block";
+			}
+			document.getElementById("midSystemBtn_id").className="midSystemBtn_hover";
+		}
+		midSystemBtn.onmouseout=function(){
+			t_mid = setTimeout('hiddenMidSystem()',100);
+		}
+		div_midSystem.onmouseout=function(){
+			t_mid = setTimeout('hiddenMidSystem()',100);
+		}
+		div_midSystem.onmouseover=function(){
+			clearTimeout(t_mid);
+		}
+	}
+}
+
+$(document).ready(function(e) {
+	initData();
+	//栏目切换导航添加
+	/*var midList = '';
+	var channelName = '信息公开';
+	var midDatas = xxgkDatas;
+	var genDiv = null;
+	if(document.getElementById("xxgk_midNav")){
+		midDatas = xxgkDatas;
+		channelName = "信息公开";
+		genDiv = document.getElementById("xxgk_midNav");
+	}else if(document.getElementById("bsfw_midNav")){
+		midDatas = bsfwDatas;
+		channelName = "办事服务";
+		genDiv = document.getElementById("bsfw_midNav");
+	}else if(document.getElementById("hdjl_midNav")){
+		midDatas = hdjlDatas;
+		channelName = "互动交流";
+		genDiv = document.getElementById("hdjl_midNav");
+	}
+	for(var i=0;i<midDatas.length;i++){
+		//alert(systemDatas[i].name);
+		midList += '<li class="'+(midDatas[i].isenable?"":"disable")+'"><a href="'+(midDatas[i].isenable?(midDatas[i].url+'" target="_blank"'):'javascript:void(0);"')+'>'+midDatas[i].name+'</a></li>';
+	}
+	//添加中间按钮
+	var midSystemBtn = document.createElement("div");
+	midSystemBtn.id="midSystemBtn_id";
+	midSystemBtn.setAttribute("style","background-color:"+chlColor+";");
+	midSystemBtn.style.backgroundColor=chlColor;
+	midSystemBtn.innerHTML="省直部门"+channelName;
+	if(null != genDiv){
+		genDiv.appendChild(midSystemBtn);
+		//添加中间频道列表
+		var div_midSystem = document.createElement("div");
+		div_midSystem.setAttribute("style", "background:"+ chlColor +";display:none;");
+		div_midSystem.style.backgroundColor = chlColor;
+		div_midSystem.style.display = "none";
+		div_midSystem.id="div_midSystem_id";
+		div_midSystem.innerHTML = '<div class="midSystem_inner"><ul id="midunitlist"></ul></div>';
+		document.body.appendChild(div_midSystem);
+		document.getElementById("midunitlist").innerHTML=midList;
+
+
+		//中部鼠标经过事件注册
+		midSystemBtn.onmouseover=function(){
+			clearTimeout(t_mid);
+			var obj=document.getElementById("div_midSystem_id");
+			if(obj.style.display=="none"){
+				obj.style.display="block";
+			}
+			document.getElementById("midSystemBtn_id").className="midSystemBtn_hover";
+		}
+		midSystemBtn.onmouseout=function(){
+			t_mid = setTimeout('hiddenMidSystem()',100);
+		}
+		div_midSystem.onmouseout=function(){
+			t_mid = setTimeout('hiddenMidSystem()',100);
+		}
+		div_midSystem.onmouseover=function(){
+			clearTimeout(t_mid);
+		}
+	}*/
+});
+
+countPosition();
+window.onresize=countPosition;
+setInterval("countPosition()",100);
+
+
+
+//漂浮图片

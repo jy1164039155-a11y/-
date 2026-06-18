@@ -1,0 +1,38 @@
+{
+  "version": "2026-06-13.2",
+  "policy_name": "怀化市人民政府关于印发《怀化市集体土地与房屋征收补偿安置办法》的通知",
+  "policy_document_no": "待校核文号",
+  "policy_source_file": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市水田旱地青苗补偿标准.doc",
+  "county_aliases": ["通道县", "通道侗族自治县"],
+  "review_status": "verified_partial",
+  "review_note": "附件3 DOC 结构化：通道侗族自治县水田1500、旱地1000元/亩；附件4 成片用材林胸径14cm以上4000元/亩",
+  "standards": [
+    {"key": "paddy", "land_subclasses": ["水田", "水浇地"], "standard_per_mu": "1500", "label": "水田/水浇地", "attachment": "附件3"},
+    {"key": "dryland", "land_subclasses": ["旱地"], "standard_per_mu": "1000", "label": "旱地", "attachment": "附件3"},
+    {"key": "forest_patch", "land_subclasses": ["乔木林地", "竹林地", "灌木林地", "其他林地"], "standard_per_mu": "4000", "label": "成片用材林（胸径14cm以上）", "attachment": "附件4"},
+    {"key": "forest_scattered", "land_subclasses": ["油茶"], "standard_per_mu": "12000", "label": "油茶盛产期", "attachment": "附件4", "optional": true}
+  ],
+  "policy_files": [
+    {
+      "category": "青苗补偿",
+      "label": "怀化市水田旱地青苗补偿标准",
+      "path": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市水田旱地青苗补偿标准.doc",
+      "counties": ["通道县", "通道侗族自治县"],
+      "status": "verified_partial"
+    },
+    {
+      "category": "青苗补偿",
+      "label": "怀化市青苗补偿标准-成片林果经济林",
+      "path": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市青苗补偿标准-成片林果经济林.doc",
+      "counties": ["通道县", "通道侗族自治县"],
+      "status": "verified_partial"
+    },
+    {
+      "category": "青苗补偿",
+      "label": "怀化市青苗补偿标准-零星树木竹类果树经济林苗木花卉",
+      "path": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市青苗补偿标准-零星树木竹类果树经济林苗木花卉.doc",
+      "counties": ["通道县", "通道侗族自治县"],
+      "status": "verified_partial"
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0047)https://home.hunan.gov.cn/otherLogin/login.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=1200">
+  <title>欢迎光临湖南省人民政府</title>
+  <link rel="stylesheet" type="text/css" href="./base.css">
+  <link rel="stylesheet" type="text/css" href="./head(1).css">
+  <style type="text/css">
+    .head-skin {
+      height: inherit;
+      background: none;
+    }
+
+    .m-head {
+      background: none;
+      height: inherit;
+    }
+
+    .wrap {
+      width: inherit;
+    }
+
+    .top-links {
+      height: inherit;
+      line-height: 30px;
+      font-size: 12px;
+    }
+
+    .top-links .item .top-login {
+      color: #fff;
+    }
+
+    .top-links .item .top-login a {
+      padding: 0 5px;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+<input type="hidden" id="isL" name="isL" value="no">
+<input type="hidden" id="userid" name="userid" value="">
+<input type="hidden" id="userType" name="userType" value="">
+<input type="hidden" id="webroot" name="webroot" value="">
+<input type="hidden" id="clientId" name="clientId" value="sXK6HBx3QwuJqaMXqmx2fQ">
+<input type="hidden" id="clientUrl" name="clientUrl" value="http://zwfw-new.hunan.gov.cn:80">
+<input type="hidden" id="serverUrl" name="serverUrl" value="http://auth.zwfw.hunan.gov.cn">
+<div class="m-head head-skin">
+  <div class="wrap">
+    <div class="top-links clearfix">
+      <div class="item fr">
+                <span class="top-login">
+	                <span id="loged_span" style="display: none;">
+						<a onclick="login()" target="_blank" id="logname_a"></a>
+                    <!--						<label>|</label>-->
+						<span>&nbsp;&nbsp;&nbsp;欢迎您!&nbsp;&nbsp;&nbsp;</span>
+					</span>
+	                <span id="belog_span">
+						<a onclick="login()" target="_blank" class="top-ico01">登录</a>
+						<label>|</label>
+						<a id="regUser" href="https://auth.zwfw.hunan.gov.cn/oauth2/register/register.html" target="_blank">注册</a>
+					</span>
+
+                </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--右侧我的服务结束-->
+<script type="text/javascript" src="./jquery-3.2.1.min.js.下载"></script>
+<script type="text/javascript">
+    // var server_url = "http://192.168.1.145:8080";
+    var server_url = "https://home.hunan.gov.cn:8096";
+    // var protocolStr = document.location.protocol;
+    var token = localStorage.getItem("token");
+
+    // console.log("token", token);
+
+    var deptIdV2021111803 = getParam(location.href, 'deptId');
+
+    var textColor = getParam(location.href, 'textColor');
+    // console.log($('.top-login a'));
+    if (textColor) {
+        $('.top-login span').css('color', textColor);
+        $('.top-login a').css('color', textColor);
+        $('.top-login label').css('color', textColor);
+    }
+
+    /**
+     *
+     * @param href
+     * @param param
+     * @returns {string}
+     */
+    function getParam(href, param, defaultValue) {
+        var reg = new RegExp("[^\?&]?" + encodeURI(param) + "=[^&]+");
+        var arr = href.match(reg);
+        if (arr != null) {
+            return decodeURI(arr[0].substring(arr[0].search("=") + 1));
+        }
+        return defaultValue ? defaultValue : '';
+    }
+
+    if (localStorage.getItem("token")) {
+        checkLogin();
+    }
+
+    var logname = document.getElementById("logname_a");
+
+    //校验用户登录
+    function checkLogin() {
+        $.ajax({
+            url: server_url + "/account-center/a/sys/app/interface/introspect",
+            type: "POST",
+            data: [],
+            dataType: "JSON",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("token", localStorage.getItem("token"));
+            },
+            success: function (result) {
+                // console.log(result);
+                if (result.active == true) {
+                    getUserInfo();
+                } else {
+                    handleLoginData();
+                }
+            },
+            error: function (e) {
+                handleLoginData();
+                console.log("用户校验登录失败...");
+            }
+        });
+    }
+
+    //获取用户信息
+    function getUserInfo() {
+        $.ajax({
+            url: server_url + "/account-center/a/sys/sysMember/getMember",
+            type: "POST",
+            data: [],
+            dataType: "JSON",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("token", localStorage.getItem("token"));
+            },
+            success: function (result) {
+                //console.log(result.data);
+                //console.log(result.data.nickName);
+                //console.log(result.data.id);
+                localStorage.setItem("ids", result.data.id);
+                localStorage.setItem("name", result.data.nickName);
+                localStorage.setItem("sfz", result.data.idNo);
+                localStorage.setItem("idNo", result.data.mobile);
+                handleLoginData(result.data);
+            },
+            error: function (e) {
+                handleLoginData();
+                console.log("获取用户信息失败...");
+            }
+        });
+    }
+
+    //登录事件
+    function login() {
+        var s = server_url + "/account-center/a/login" + '?deptId=' + deptIdV2021111803;
+        window.open(s);
+        /*
+                $.ajax({
+                    url: server_url + "/account-center/a/sys/app/interface/introspect",
+                    type: "POST",
+                    data: [],
+                    dataType: "JSON",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("token", localStorage.getItem("token"));
+                    },
+                    success: function (result) {
+                        // console.log(result);
+                        // console.log(result.toString());
+                        if (result.active == true) {
+                            var s = server_url + "/account-center/a/login" + '?deptId=' + deptIdV2021111803;
+                            window.open(s);
+                            // console.log(result.toString() + "111111111111");
+                        } else {
+                            handleLoginData();
+                            var s = server_url + "/account-center/a/logout?deptId=" + deptIdV2021111803;
+                            window.open(s);
+                            // console.log(result.toString() + "22222222222");
+                        }
+                    },
+                    error: function (e) {
+                        var s = server_url + "/account-center/a/login" + '?deptId=' + deptIdV2021111803;
+                        window.open(s);
+                        handleLoginData();
+                        // console.log("用户校验登录失败...");
+                    }
+                });
+        */
+    }
+
+    function handleLoginData(result) {
+        if (result) {
+            //用户Id
+            var userId = localStorage.getItem("ids");
+            //用户姓名
+            var username = localStorage.getItem("name");
+            //用户身份证
+            var cardId = localStorage.getItem("sfz");
+            //用户电话号码
+            var idNo = localStorage.getItem("idNo");
+
+            //已登录
+            //传值给父页面
+            window.parent.postMessage(username, "*");
+            window.parent.postMessage(cardId, "*");
+            window.parent.postMessage(idNo, "*");
+            window.parent.postMessage(userId, "*");
+            window.parent.postMessage(token, "*");
+            //console.log("userId : " + userId);
+            if (username.length > 4) {
+                //console.log("截取前的username : " + username);
+                logname.setAttribute("title", username);
+                username = username.substring(0, 4) + "...";
+                //console.log("截取后的username : " + username);
+            }
+            //console.log("已登录... 用户名 : "  + username);
+            document.getElementById("belog_span").style.display = "none";
+            document.getElementById("loged_span").style.display = "block";
+            document.getElementById("logname_a").innerText = username;
+        } else {
+            //未登录
+            window.localStorage.clear();
+            window.parent.postMessage(token, "*");
+            console.log("未登录...");
+            document.getElementById("logname_a").style.display = "block";
+            document.getElementById("loged_span").style.display = "none";
+        }
+    }
+</script>
+
+
+</body></html>

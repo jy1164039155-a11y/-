@@ -1,0 +1,135 @@
+{
+  "version": "2026-06-15.2",
+  "region": "怀化市",
+  "county_aliases": ["通道县", "通道侗族自治县"],
+  "policy_name": "怀化市人民政府关于印发《怀化市集体土地与房屋征收补偿安置办法》的通知",
+  "policy_document_no": "待校核文号",
+  "policy_source_file": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市人民政府关于印发《怀化市集体土地与房屋征收补偿安置办法》的通知 - 怀化市人民政府.pdf",
+  "review_status": "verified_partial",
+  "review_note": "附件7房屋/附件8装修/附件9生产生活设施及附着物/附件10坟墓 DOC 结构化，仅进政策目录(从政策目录添加)；默认表单行保持范例同款；搬家/过渡费政策正文待校核",
+  "grade_catalog": {
+    "house_compensation": [
+      {"key": "rc_frame", "label": "钢筋砼框架结构", "standard": "1100", "house_rate": "1100", "note": "附件7", "is_default": false},
+      {"key": "brick_mixed_1", "label": "砖混一类", "standard": "900", "house_rate": "900", "note": "附件7", "is_default": true},
+      {"key": "brick_mixed_2", "label": "砖混二类", "standard": "830", "house_rate": "830", "note": "附件7"},
+      {"key": "brick_wood", "label": "砖木结构", "standard": "650", "house_rate": "650", "note": "附件7"},
+      {"key": "brick_wood_side", "label": "砖木偏房", "standard": "380", "house_rate": "380", "note": "附件7"},
+      {"key": "wood_structure", "label": "木结构类", "standard": "450", "house_rate": "450", "note": "附件7"},
+      {"key": "misc_house", "label": "杂屋类", "standard": "180", "house_rate": "180", "note": "附件7"},
+      {"key": "hollow_brick", "label": "空心砖", "standard": "450", "house_rate": "450", "note": "附件7参照木结构类"}
+    ],
+    "decoration_compensation": [
+      {"key": "rc_frame_dec", "label": "钢筋砼框架结构", "standard": "600", "decoration_rate": "600", "note": "附件8"},
+      {"key": "brick_mixed_1_dec", "label": "砖混一类", "standard": "500", "decoration_rate": "500", "note": "附件8", "is_default": true},
+      {"key": "brick_mixed_2_dec", "label": "砖混二类", "standard": "450", "decoration_rate": "450", "note": "附件8"},
+      {"key": "brick_wood_dec", "label": "砖木结构", "standard": "400", "decoration_rate": "400", "note": "附件8"},
+      {"key": "brick_wood_side_dec", "label": "砖木偏房", "standard": "300", "decoration_rate": "300", "note": "附件8"},
+      {"key": "wood_structure_dec", "label": "木结构类", "standard": "260", "decoration_rate": "260", "note": "附件8"}
+    ],
+    "grave_compensation": [
+      {"key": "earth_grave_no_coffin", "label": "土坟·无棺", "standard": "1000", "standard_unit": "元/冢", "note": "附件10", "is_default": true},
+      {"key": "earth_grave_coffin", "label": "土坟·有棺", "standard": "6000", "standard_unit": "元/冢", "note": "附件10（新坟；旧坟4000）"},
+      {"key": "brick_stone_grave", "label": "砖石坟", "standard": "7000", "standard_unit": "元/冢", "note": "附件10（新坟；旧坟5000）"},
+      {"key": "concrete_grave", "label": "砼坟", "standard": "8000", "standard_unit": "元/冢", "note": "附件10（新坟；旧坟6000）"},
+      {"key": "grave_stele", "label": "碑", "standard": "600", "standard_unit": "元/座", "note": "附件10：600-1000元/座，按实际"},
+      {"key": "grave_enclosure", "label": "罗围", "standard": "1200", "standard_unit": "元/圈", "note": "附件10：1200-2000元/圈，按实际"}
+    ],
+    "drying_floor": [
+      {"key": "rock_slab_floor", "label": "岩板坪", "standard": "65", "standard_unit": "元/平方米", "note": "附件9：厚≥6cm，岩匠过钻抹平安砌；未达此标准按水泥坪", "is_default": true},
+      {"key": "cement_floor", "label": "水泥坪", "standard": "60", "standard_unit": "元/平方米", "note": "附件9：厚≥6cm，砖石垫层水泥抹面"},
+      {"key": "lime_soil_floor", "label": "三合土坪", "standard": "40", "standard_unit": "元/平方米", "note": "附件9：厚≥6cm，三合灰捣制表面抹光"}
+    ],
+    "enclosing_wall": [
+      {"key": "wall_24_solid", "label": "24砖眠墙", "standard": "350", "standard_unit": "元/立方米", "note": "附件9：含基础，贴瓷砖每㎡增10元", "is_default": true},
+      {"key": "wall_24_cavity", "label": "24砖斗墙", "standard": "240", "standard_unit": "元/立方米", "note": "附件9"},
+      {"key": "wall_18", "label": "18砖墙", "standard": "200", "standard_unit": "元/立方米", "note": "附件9"},
+      {"key": "wall_13_pillar", "label": "13砖附柱墙", "standard": "240", "standard_unit": "元/立方米", "note": "附件9"},
+      {"key": "wall_earth", "label": "土筑、土砖墙", "standard": "150", "standard_unit": "元/立方米", "note": "附件9（含三合灰砌筑墙）"}
+    ],
+    "retaining_wall": [
+      {"key": "rock_retaining", "label": "岩砌挡土墙护坡", "standard": "320", "standard_unit": "元/立方米", "note": "附件9：按砌体体积计算", "is_default": true},
+      {"key": "brick_stone_dry_retaining", "label": "砖、片石干砌挡土墙护坡", "standard": "240", "standard_unit": "元/立方米", "note": "附件9"},
+      {"key": "cement_mortar_retaining", "label": "水泥浆砌", "standard": "200", "standard_unit": "元/立方米", "note": "附件9"},
+      {"key": "hollow_brick_lime_retaining", "label": "空心砖、三合灰", "standard": "150", "standard_unit": "元/立方米", "note": "附件9"},
+      {"key": "rock_dry_retaining", "label": "岩石干砌", "standard": "180", "standard_unit": "元/立方米", "note": "附件9"}
+    ],
+    "road_surface": [
+      {"key": "concrete_road_6cm", "label": "砼道路（厚6cm）", "standard": "60", "standard_unit": "元/平方米", "note": "附件9：厚≥6cm水泥抹平", "is_default": true},
+      {"key": "concrete_road_15cm", "label": "砼道路（厚15cm以上）", "standard": "90", "standard_unit": "元/平方米", "note": "附件9：厚≥15cm"},
+      {"key": "gravel_road", "label": "砂卵石、碴、碎石道路（三合土）面", "standard": "30", "standard_unit": "元/平方米", "note": "附件9：表面平整"}
+    ],
+    "water_pool": [
+      {"key": "brick_living_pool", "label": "砖粉生活用水池", "standard": "350", "standard_unit": "元/立方米", "note": "附件9：砖砌粉水泥，有盖板；内外贴瓷砖增30%", "is_default": true},
+      {"key": "brick_production_pool", "label": "砖粉生产水（粪）池", "standard": "320", "standard_unit": "元/立方米", "note": "附件9：13cm以上砖砌粉水泥，深>3m按3m，占地>20㎡按水塘补偿"},
+      {"key": "lime_production_pool", "label": "三合灰生产水（粪）池", "standard": "200", "standard_unit": "元/立方米", "note": "附件9：同上口径"}
+    ],
+    "biogas_pool": [
+      {"key": "biogas_pool_set", "label": "沼气池", "standard": "2500", "standard_unit": "元/套", "note": "附件9：含管道、气表等", "is_default": true}
+    ],
+    "water_well": [
+      {"key": "drilled_well", "label": "机钻井（摇泵井）", "standard": "4000", "standard_unit": "元/口", "note": "附件9：含井台周边水泥地面及抽水设备拆除工资；废弃不补", "is_default": true},
+      {"key": "earth_well", "label": "土井", "standard": "300", "standard_unit": "元/口", "note": "附件9：含井台周边水泥地面；废弃不补"}
+    ],
+    "masonry_well": [
+      {"key": "masonry_well_m", "label": "砖砌、石砌井", "standard": "100", "standard_unit": "元/米", "note": "附件9：含井台周边水泥地面；废弃不补", "is_default": true}
+    ],
+    "drainage_ditch": [
+      {"key": "brick_open_ditch", "label": "砖砌明沟", "standard": "80", "standard_unit": "元/米", "note": "附件9：断面24×35cm，断面不同按比例换算", "is_default": true},
+      {"key": "lime_open_ditch", "label": "三合灰明沟", "standard": "50", "standard_unit": "元/米", "note": "附件9：断面24×35cm"},
+      {"key": "brick_covered_ditch", "label": "砖砌暗沟", "standard": "100", "standard_unit": "元/米", "note": "附件9：含盖板断面24×35cm"},
+      {"key": "concrete_pipe_110", "label": "暗砼涵管Ф110mm", "standard": "50", "standard_unit": "元/米", "note": "附件9"},
+      {"key": "concrete_pipe_300", "label": "暗砼涵管Ф300mm", "standard": "80", "standard_unit": "元/米", "note": "附件9"},
+      {"key": "cast_iron_pipe_100", "label": "铸铁管Ф100mm", "standard": "60", "standard_unit": "元/米", "note": "附件9"}
+    ],
+    "power_pole": [
+      {"key": "cement_pole_under_7m", "label": "7米以下水泥电杆", "standard": "300", "standard_unit": "元/根", "note": "附件9：拆卸，含杆上设备", "is_default": true},
+      {"key": "cement_pole_over_7m", "label": "7米以上水泥电杆", "standard": "400", "standard_unit": "元/根", "note": "附件9：拆卸，含杆上设备"},
+      {"key": "wood_pole", "label": "木电杆", "standard": "100", "standard_unit": "元/根", "note": "附件9：拆卸"}
+    ],
+    "outdoor_lighting": [
+      {"key": "outdoor_lighting_line", "label": "室外照明线", "standard": "30", "standard_unit": "元/米", "note": "附件9：含双线；动力四线每米增5元", "is_default": true}
+    ],
+    "transformer": [
+      {"key": "transformer_eval", "label": "变压器", "standard": "", "standard_unit": "元/个", "review_status": "pending", "note": "附件9：经电力部门评定用于生产生活的，经评估后给予拆卸、搬运、安装费用（待评估）", "is_default": true}
+    ],
+    "greenhouse": [
+      {"key": "steel_greenhouse", "label": "钢架大棚", "standard": "32", "standard_unit": "元/平方米", "note": "附件9：热浸锌钢管等标准配置；达不到要求按实际工程量", "is_default": true},
+      {"key": "cement_greenhouse", "label": "水泥大棚", "standard": "22", "standard_unit": "元/平方米", "note": "附件9"},
+      {"key": "bamboo_greenhouse", "label": "竹架大棚", "standard": "10", "standard_unit": "元/平方米", "note": "附件9"}
+    ],
+    "water_pipe": [
+      {"key": "water_pipe_m", "label": "水管", "standard": "5", "standard_unit": "元/米", "note": "附件9：室内的不计算补偿", "is_default": true}
+    ]
+  },
+  "catalog_templates": {
+    "decoration_compensation": {"label": "房屋装修补偿", "standard_unit": "元/平方米", "calculation_basis": "按合法建筑面积", "note": "附件8"},
+    "grave_compensation": {"label": "坟墓及附属设施补偿", "standard_unit": "元/冢", "calculation_basis": "按实际挖掘数", "note": "附件10"},
+    "drying_floor": {"label": "晒坪类", "standard_unit": "元/平方米", "calculation_basis": "按面积", "note": "附件9"},
+    "enclosing_wall": {"label": "围墙类", "standard_unit": "元/立方米", "calculation_basis": "按砌体体积", "note": "附件9"},
+    "retaining_wall": {"label": "挡土墙护坡保坎类", "standard_unit": "元/立方米", "calculation_basis": "按砌体体积", "note": "附件9"},
+    "road_surface": {"label": "道路类", "standard_unit": "元/平方米", "calculation_basis": "按面积", "note": "附件9"},
+    "water_pool": {"label": "水池类", "standard_unit": "元/立方米", "calculation_basis": "按容积", "note": "附件9"},
+    "biogas_pool": {"label": "沼气池", "standard_unit": "元/套", "calculation_basis": "按套", "note": "附件9"},
+    "water_well": {"label": "水井类（口）", "standard_unit": "元/口", "calculation_basis": "按口", "note": "附件9"},
+    "masonry_well": {"label": "砖砌、石砌井（米）", "standard_unit": "元/米", "calculation_basis": "按井深", "note": "附件9"},
+    "drainage_ditch": {"label": "排水沟（涵管）类", "standard_unit": "元/米", "calculation_basis": "按长度", "note": "附件9"},
+    "power_pole": {"label": "电杆线类", "standard_unit": "元/根", "calculation_basis": "按根", "note": "附件9"},
+    "outdoor_lighting": {"label": "室外照明线", "standard_unit": "元/米", "calculation_basis": "按长度", "note": "附件9"},
+    "transformer": {"label": "变压器", "standard_unit": "元/个", "calculation_basis": "按评估", "note": "附件9（待评估）"},
+    "greenhouse": {"label": "蔬菜大棚类", "standard_unit": "元/平方米", "calculation_basis": "按面积", "note": "附件9"},
+    "water_pipe": {"label": "水管类", "standard_unit": "元/米", "calculation_basis": "按长度", "note": "附件9"}
+  },
+  "rows": [
+    {"key": "house_compensation", "label": "房屋补偿费", "standard": "900", "standard_unit": "元/平方米", "structure_grade": "brick_mixed_1", "calculation_basis": "按合法建筑面积", "quantity": "70", "divisor": "1", "note": "附件7 砖混一类 900元/㎡（装修等其余结构等级见从政策目录添加）", "source_doc": "怀化/怀化市集体土地房屋征收补偿标准.doc"},
+    {"key": "vacating_award", "label": "主动腾地奖", "standard": "", "standard_unit": "元/平方米", "calculation_basis": "按合法建筑面积", "quantity": "70", "divisor": "1", "review_status": "pending", "note": "怀化政策腾地/签约奖励金额待校核", "source_doc": "怀化/怀化市集体土地与房屋征收补偿安置办法.pdf"},
+    {"key": "moving_fee", "label": "搬家费", "standard": "", "standard_unit": "元/户", "calculation_basis": "按每户，4人/户", "quantity": "1", "divisor": "4", "review_status": "pending", "note": "政策正文待校核（DOC 附件6 未列金额）", "source_doc": "怀化/怀化市房屋征收补偿标准说明.doc"},
+    {"key": "transition_fee", "label": "过渡费", "standard": "", "standard_unit": "元/户/月", "calculation_basis": "按每户，4人/户", "quantity": "1", "divisor": "4", "review_status": "pending", "note": "怀化过渡费标准与过渡期待校核", "source_doc": "怀化/怀化市房屋征收补偿标准说明.doc"}
+  ],
+  "policy_files": [
+    {"category": "青苗房屋及附着物", "label": "怀化市集体土地与房屋征收补偿安置办法", "path": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市人民政府关于印发《怀化市集体土地与房屋征收补偿安置办法》的通知 - 怀化市人民政府.pdf", "counties": ["通道县", "通道侗族自治县"], "status": "verified_partial"},
+    {"category": "房屋及附着物补偿", "label": "怀化市集体土地房屋征收补偿标准", "path": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市集体土地房屋征收补偿标准.doc", "counties": ["通道县", "通道侗族自治县"], "status": "verified_partial"},
+    {"category": "房屋及附着物补偿", "label": "怀化市房屋装修补偿标准", "path": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市房屋装修补偿标准.doc", "counties": ["通道县", "通道侗族自治县"], "status": "verified_partial"},
+    {"category": "生产生活设施及附着物补偿", "label": "怀化市集体土地补偿标准（生产生活设施及地上建构筑物附着物）", "path": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市集体土地补偿标准.doc", "counties": ["通道县", "通道侗族自治县"], "status": "verified_partial"},
+    {"category": "坟墓补偿", "label": "怀化市坟墓征收补偿标准", "path": "01_Source/03_attachment/集体土地与房屋征收补偿安置办法/怀化/怀化市坟墓征收补偿标准.doc", "counties": ["通道县", "通道侗族自治县"], "status": "verified_partial"}
+  ]
+}

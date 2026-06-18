@@ -1,0 +1,247 @@
+{
+  "version": "2026-06-13.2",
+  "user_decisions": {
+    "recorded_at": "2026-06-13",
+    "B7_paid_land_use_fee": "A：2026年道县项目仍默认采用十三等16元/㎡；原湘财综〔2018〕42号文件载明2023-12-19到期，暂无延续文件，由估价师确认后采用",
+    "B8_water_conservancy_fund": "A：仍按新增建设用地有偿使用费×10%；暂无比湘政发〔2011〕27号更新的延续文件",
+    "B9_social_security_fund": "A：默认30元/㎡；无道县固定正式标准；不要求强制上传附件，估价师可调整并确认"
+  },
+  "policy_rules": [
+    {
+      "key": "dao_paid_land_use_fee_2018",
+      "fee_key": "paid_land_use_fee",
+      "region_level": "county",
+      "region": "道县",
+      "aliases": ["道县", "道县城区"],
+      "effective_date": "2018-01-01",
+      "expiry_date": "",
+      "document_expiry_date": "2023-12-19",
+      "user_decision": "B7-A",
+      "land_subclasses": ["*"],
+      "grade_name": "十三等",
+      "standard_value": "16",
+      "standard_unit": "元/平方米",
+      "formula_key": "direct",
+      "source_note": "道县十三等新增建设用地土地有偿使用费标准",
+      "internal_note": "原文件有效期至2023-12-19，2026-06-13用户确认仍作默认测算值，正式采用前须估价师确认；风险标注仅工作台展示，不得写入报告正文",
+      "source_file": "关于调整新增建设用地土地有偿使用费征收管理有关政策的通知 - 湖南省自然资源厅.pdf"
+    },
+    {
+      "key": "hunan_water_conservancy_fund_2011",
+      "fee_key": "water_conservancy_fund",
+      "region_level": "province",
+      "region": "湖南省",
+      "aliases": ["湖南省"],
+      "effective_date": "2011-01-01",
+      "expiry_date": "",
+      "user_decision": "B8-A",
+      "land_subclasses": ["*"],
+      "grade_name": "按新增建设用地土地有偿使用费等别",
+      "standard_value": "10",
+      "standard_unit": "%",
+      "formula_key": "paid_land_use_fee_times_rate",
+      "depends_on": "paid_land_use_fee",
+      "source_note": "按新增建设用地土地有偿使用费的10%计取",
+      "internal_note": "2026-06-13用户确认维持10%，暂无更新延续文件，正式采用前须估价师确认；风险标注仅工作台展示，不得写入报告正文",
+      "source_file": "湘政发〔2011〕27号湖南省水利建设基金筹集和使用管理办法.doc"
+    },
+    {
+      "key": "hunan_farmland_occupation_tax_2019",
+      "fee_key": "farmland_occupation_tax",
+      "region_level": "province",
+      "region": "湖南省",
+      "aliases": ["湖南省"],
+      "effective_date": "2019-09-01",
+      "expiry_date": "",
+      "land_subclasses": ["水田", "水浇地", "旱地", "园地", "林地", "草地", "其他农用地", "*"],
+      "grade_name": "道县适用税额",
+      "standard_value": "25",
+      "standard_unit": "元/平方米",
+      "formula_key": "standard_times_land_coefficient",
+      "source_note": "湖南省县级地区耕地占用税适用税额；园地、林地等按规定降低20%",
+      "source_file": "湖南省人民代表大会常务委员会关于湖南省耕地占用税适用税额的决定-湘阴县政府网.pdf"
+    },
+    {
+      "key": "hunan_farmland_reclamation_superior_paddy_2019",
+      "fee_key": "farmland_reclamation_fee",
+      "region_level": "province",
+      "region": "湖南省",
+      "aliases": ["湖南省"],
+      "effective_date": "2019-07-17",
+      "expiry_date": "",
+      "land_subclasses": ["水田", "水浇地"],
+      "grade_name": "优等水田",
+      "standard_value": "7.8",
+      "standard_unit": "万元/亩",
+      "formula_key": "ten_thousand_per_mu_to_sqm",
+      "source_note": "优等水田耕地开垦费标准（湘政办发〔2019〕38号附件）",
+      "source_file": "湖南省耕地开垦费征收使用管理办法.pdf"
+    },
+    {
+      "key": "hunan_farmland_reclamation_high_paddy_2019",
+      "fee_key": "farmland_reclamation_fee",
+      "region_level": "province",
+      "region": "湖南省",
+      "aliases": ["湖南省"],
+      "effective_date": "2019-07-17",
+      "expiry_date": "",
+      "land_subclasses": ["水田", "水浇地"],
+      "grade_name": "高等水田",
+      "standard_value": "7.4",
+      "standard_unit": "万元/亩",
+      "formula_key": "ten_thousand_per_mu_to_sqm",
+      "source_note": "高等水田耕地开垦费标准（湘政办发〔2019〕38号附件）",
+      "source_file": "湖南省耕地开垦费征收使用管理办法.pdf"
+    },
+    {
+      "key": "hunan_farmland_reclamation_medium_paddy_2019",
+      "fee_key": "farmland_reclamation_fee",
+      "region_level": "province",
+      "region": "湖南省",
+      "aliases": ["湖南省"],
+      "effective_date": "2019-07-17",
+      "expiry_date": "",
+      "land_subclasses": ["水田", "水浇地"],
+      "grade_name": "中等水田",
+      "standard_value": "6.6",
+      "standard_unit": "万元/亩",
+      "formula_key": "ten_thousand_per_mu_to_sqm",
+      "is_default": true,
+      "source_note": "中等水田耕地开垦费标准（湘政办发〔2019〕38号附件）",
+      "source_file": "湖南省耕地开垦费征收使用管理办法.pdf"
+    },
+    {
+      "key": "hunan_farmland_reclamation_low_paddy_2019",
+      "fee_key": "farmland_reclamation_fee",
+      "region_level": "province",
+      "region": "湖南省",
+      "aliases": ["湖南省"],
+      "effective_date": "2019-07-17",
+      "expiry_date": "",
+      "land_subclasses": ["水田", "水浇地"],
+      "grade_name": "低等水田",
+      "standard_value": "5.9",
+      "standard_unit": "万元/亩",
+      "formula_key": "ten_thousand_per_mu_to_sqm",
+      "source_note": "低等水田耕地开垦费标准（湘政办发〔2019〕38号附件）",
+      "source_file": "湖南省耕地开垦费征收使用管理办法.pdf"
+    },
+    {
+      "key": "hunan_farmland_reclamation_dryland_2019",
+      "fee_key": "farmland_reclamation_fee",
+      "region_level": "province",
+      "region": "湖南省",
+      "aliases": ["湖南省"],
+      "effective_date": "2019-07-17",
+      "expiry_date": "",
+      "land_subclasses": ["旱地"],
+      "grade_name": "旱地",
+      "standard_value": "3.8",
+      "standard_unit": "万元/亩",
+      "formula_key": "ten_thousand_per_mu_to_sqm",
+      "source_note": "旱地耕地开垦费标准；政策将水浇地归入旱地类别（湘政办发〔2019〕38号附件）",
+      "source_file": "湖南省耕地开垦费征收使用管理办法.pdf"
+    },
+    {
+      "key": "dao_social_security_manual",
+      "fee_key": "social_security_fund",
+      "region_level": "county",
+      "region": "道县",
+      "aliases": ["道县", "道县城区"],
+      "effective_date": "2023-04-28",
+      "expiry_date": "",
+      "user_decision": "B9-A",
+      "land_subclasses": ["*"],
+      "grade_name": "市县确定",
+      "standard_value": "30",
+      "standard_unit": "元/平方米",
+      "formula_key": "manual_default",
+      "source_note": "湘人社规〔2023〕1号原则性规定，无道县固定公开标准；默认30元/㎡供测算，估价师可调整并确认，不强制上传地方附件",
+      "source_file": "湘人社规〔2023〕1号-被征地农民社保通知.docx"
+    }
+  ],
+  "risk_schemes": {
+    "hunan_general": {
+      "assignment": {"D": "0", "C": "2", "B": "4", "A": "8"},
+      "groups": [
+        {
+          "key": "policy_risk",
+          "label": "政策风险",
+          "weight": "0.3234",
+          "factors": [
+            {"label": "产业政策", "weight": "0.2957"},
+            {"label": "土地使用制度改革", "weight": "0.2121"},
+            {"label": "住房制度", "weight": "0.2734"},
+            {"label": "环保变化", "weight": "0.2188"}
+          ]
+        },
+        {
+          "key": "economic_risk",
+          "label": "经济风险",
+          "weight": "0.3922",
+          "factors": [
+            {"label": "市场供求", "weight": "0.3434"},
+            {"label": "财务风险", "weight": "0.2119"},
+            {"label": "管理风险", "weight": "0.2365"},
+            {"label": "当地经济发展", "weight": "0.2082"}
+          ]
+        },
+        {
+          "key": "social_risk",
+          "label": "社会风险",
+          "weight": "0.2844",
+          "factors": [
+            {"label": "城市规划", "weight": "0.3762"},
+            {"label": "区域发展", "weight": "0.3113"},
+            {"label": "治安", "weight": "0.3125"}
+          ]
+        }
+      ]
+    }
+  },
+  "location_templates": {
+    "residential_general": {
+      "label": "住宅通用",
+      "usage_keys": ["residential"],
+      "rule_table_title": "表3-9 道县城区城镇住宅用地宗地地价区域因素修正系数表（%）",
+      "result_table_title": "表3-10 宗地地价影响因素条件说明、修正系数表",
+      "factors": [
+        {"key": "bus_station_distance", "group": "交通条件", "label": "距汽车站的距离", "levels": ["近", "较近", "一般", "较远", "远"], "grade_amplitude": "2"},
+        {"key": "railway_station_distance", "group": "交通条件", "label": "距火车站距离", "levels": ["近", "较近", "一般", "较远", "远"], "grade_amplitude": "2"},
+        {"key": "business_center_distance", "group": "繁华程度", "label": "距商服中心距离", "levels": ["近", "较近", "一般", "较远", "远"], "grade_amplitude": "2"},
+        {"key": "road_type", "group": "交通条件", "label": "临路类型", "levels": ["混合型主干道", "生活型主干道", "交通型主道", "交通次主道", "支路"], "grade_amplitude": "2"},
+        {"key": "road_network_density", "group": "交通条件", "label": "路网密度", "levels": ["高", "较高", "一般", "较低", "低"], "grade_amplitude": "2"},
+        {"key": "external_transport", "group": "交通条件", "label": "对外交通便利度", "levels": ["便利", "较便利", "一般便利", "较不便利", "不便利"], "grade_amplitude": "3"},
+        {"key": "environment_quality", "group": "环境条件", "label": "环境质量优劣度", "levels": ["优", "较优", "一般", "较劣", "劣"], "grade_amplitude": "3"},
+        {"key": "population_density", "group": "人口状况", "label": "人口密度", "levels": ["密集", "较密集", "一般", "较稀疏", "稀疏"], "grade_amplitude": "2"},
+        {"key": "infrastructure", "group": "基础设施", "label": "基础设施完善度", "levels": ["完善", "较完善", "一般完善", "较不完善", "不完善"], "grade_amplitude": "3"},
+        {"key": "terrain", "group": "个别因素", "label": "地形状况", "levels": ["平坦", "较平坦", "基本平坦", "较不平坦", "不平坦"], "grade_amplitude": "1"},
+        {"key": "parcel_area", "group": "个别因素", "label": "宗地面积", "levels": ["适中", "面积较大", "面积一般", "面积较小", "面积小"], "grade_amplitude": "1"},
+        {"key": "parcel_shape", "group": "个别因素", "label": "宗地形状", "levels": ["规则", "较规则", "基本规则", "较不规则", "不规则"], "grade_amplitude": "2"}
+      ]
+    },
+    "commercial_fuel_station": {
+      "label": "商服加油站",
+      "usage_keys": ["commercial"],
+      "rule_table_title": "表3-9 商服用地（加油站）宗地地价区域个别因素修正系数表（%）",
+      "result_table_title": "表3-10 商服用地（加油站）宗地地价影响因素条件说明、修正系数表",
+      "factors": [
+        {"key": "road_network_density", "group": "区域因素", "label": "区域路网密度", "levels": ["区域路网密度好", "区域路网密度较好", "一般", "区域路网密度较劣", "劣"], "grade_amplitude": "2"},
+        {"key": "population_density", "group": "区域因素", "label": "区域内人口密集度", "levels": ["密集", "较密集", "一般", "较稀疏", "稀疏"], "grade_amplitude": "2"},
+        {"key": "road_flow", "group": "区域因素", "label": "区域道路通畅度", "levels": ["通畅", "较通畅", "一般", "较不通畅", "不通畅"], "grade_amplitude": "2"},
+        {"key": "environment", "group": "区域因素", "label": "环境优劣度", "levels": ["无污染", "基本无污染", "轻度污染", "较重污染区", "重度污染"], "grade_amplitude": "2"},
+        {"key": "road_quality", "group": "个别因素", "label": "所临道路质量", "levels": ["好", "较好", "一般", "较劣", "劣"], "grade_amplitude": "2"},
+        {"key": "entrance_access", "group": "个别因素", "label": "入口方便程度", "levels": ["方便", "较方便", "一般", "较不方便", "不方便"], "grade_amplitude": "1"},
+        {"key": "road_traffic", "group": "个别因素", "label": "临路车流量", "levels": ["车流量大", "车流量较大", "车流量一般", "车流量较小", "车流量小"], "grade_amplitude": "1"},
+        {"key": "safety", "group": "个别因素", "label": "安全系数", "levels": ["科学管理、安全系数高", "科学管理、安全系数较高", "科学管理、安全系数一般", "科学管理、安全系数较低", "低"], "grade_amplitude": "1"}
+      ]
+    },
+    "custom": {
+      "label": "当前报告自定义",
+      "usage_keys": [],
+      "rule_table_title": "表3-9 宗地地价区域个别因素修正系数表（%）",
+      "result_table_title": "表3-10 宗地地价影响因素条件说明、修正系数表",
+      "factors": []
+    }
+  }
+}

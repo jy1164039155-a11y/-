@@ -1,0 +1,52 @@
+var layoutView;
+var wapViewportContent = 'width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no';
+var otherViewportContent = 'width=1140';
+function setViewport() {
+    layoutView = window.screen.width;
+    var viewportContent = layoutView < 768 ? wapViewportContent : otherViewportContent;
+    var meta = document.querySelector('meta[name=viewport]');
+    if (meta) {
+        meta.setAttribute('content', viewportContent);
+    } else {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', 'viewport');
+        meta.setAttribute('content', viewportContent);
+        document.querySelector('head').insertBefore(meta, document.querySelector('meta').nextSibling);
+    }
+}
+setViewport();
+window.addEventListener('resize', function () {
+    setViewport();
+    aautoroll233();
+});
+window.addEventListener('load', function () {
+    autoroll233();
+});
+
+function autoroll233() {
+    var ul233 = document.querySelector(".main_list_left>ul");
+    if (layoutView < 768) {
+        var list233s = document.querySelectorAll(".main_list_left>ul>li");
+        var Num = 0;
+        list233s.forEach(function (list233) {
+            Num += list233.clientWidth;
+        })
+        ul233.style.width = Num + 'px';
+    } else {
+        ul233.style.width = '100%';
+    }
+}
+
+//wap端标签页切换不跳转 
+window.addEventListener('load', function () {
+    var tabs_xxgk = document.querySelectorAll('.main_center .title h2 a'); 
+    if (tabs_xxgk.length > 0) { 
+        tabs_xxgk.forEach(function(tab) { 
+            tab.onclick = function(e) { console.log(e)
+                  if (docEle.getBoundingClientRect().width < 768) { 
+                         e.preventDefault(); 
+                  } 
+            } 
+        }); 
+    } 
+});

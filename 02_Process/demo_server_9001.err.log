@@ -1,0 +1,5 @@
+INFO:api_server:[STATIC] 离线前端静态资源托管挂载成功！路径: D:\评估报告工具\frontend\dist
+INFO:     Started server process [31728]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:9001 (Press CTRL+C to quit)

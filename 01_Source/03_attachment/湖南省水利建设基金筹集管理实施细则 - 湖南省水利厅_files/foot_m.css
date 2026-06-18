@@ -1,0 +1,64 @@
+@charset "utf-8";
+/*CSS reset*/
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,blockquote,th,td,p{margin:0;padding:0; font-family:"微软雅黑"; font-size:14px; cursor:default;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;border:none;}
+ul,li,dl ,dt,dd ,ol,p,img{ list-style: none;border: none;}
+address,caption,cite,code,dfn,em,th,var,optgroup{font-style:normal;font-weight:normal;}
+del,ins{text-decoration:none;}
+caption,th{text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;}
+button,input,select,textarea{font-size:100%;}
+q:before,q:after{content:'';}
+abbr,acronym{border:0;font-variant:normal;}
+sup{vertical-align:baseline;}
+sub{vertical-align:baseline;}
+a{text-decoration:none; outline:none;}
+a:hover{ text-decoration:none;cursor:pointer;}
+a:active{outline: none;star:expression(this.onFocus=this.blur());}
+.clearfix:after { content:"."; display:block; height:0; visibility:hidden; clear:both; }   
+.clearfix { zoom:1; } 
+*{margin:0;padding:0;box-sizing:border-box;-moz-box-sizing:border-box; /* Firefox */-webkit-box-sizing:border-box; /* Safari */	}
+.fl{float:left;}
+.fr{float: right;}
+a {color: #333;}
+a * { cursor: pointer;}
+body{
+	width:100%;
+	overflow-x:hidden
+}
+
+/* 公共样式 */
+.one-row {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.two-row {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.f-a-center {
+	display: flex;
+	align-items: center;
+}
+.f-a-center-jsb {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+/*底部*/
+.foot_m{padding: .5rem .36rem;background:#2572b6;}
+.foot_m img{vertical-align: middle;border:none;margin:0;padding:0; max-width:100%;max-height:100%;}
+.footer_main_m{ width:100%;}
+.footer_main_m .gov_icon_m{height:1.2rem;}
+.footer_main_m .gov_icon_m img {position: relative;height:1.2rem;margin-right:.3rem!important}
+.footer_main_m p{color: #fff; margin-top:.5rem;line-height: .7rem;font-size:.35rem;}
+
+
+
+

@@ -1,0 +1,11 @@
+pandas
+openpyxl
+docxtpl
+python-docx
+python-dotenv
+PyYAML
+fastapi
+uvicorn
+python-multipart
+pywin32
+PyMuPDF

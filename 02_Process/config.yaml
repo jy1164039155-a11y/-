@@ -1,0 +1,57 @@
+conditions:
+  base_land_price_expire_limit: "三"
+  is_base_price_expired: true
+  ownership_scenario_type: historical_unregistered
+  land_status_type: historical_unregistered
+  asset_use_category: residential
+  asset_use_category_other: ""
+  include_registration_risk_note: false
+  registration_risk_note: ""
+  land_level_type: residential_level_3
+  method_combination_type: residential_residual_only
+  infrastructure_type: five_通_residential
+mapping:
+  # 基础信息映射与日期纠错
+  client_name: 已开发建设土地（划拨办出让）!D2
+  land_location: 已开发建设土地（划拨办出让）!D3
+  parcel_count: 已开发建设土地（划拨办出让）!D4
+  appraisal_org: 已开发建设土地（划拨办出让）!D6
+  land_user: 已开发建设土地（划拨办出让）!E40
+  report_no: 已开发建设土地（划拨办出让）!D7
+  technical_report_no: 已开发建设土地（划拨办出让）!J4
+  report_date: 已开发建设土地（划拨办出让）!D8
+  valuation_date: 已开发建设土地（划拨办出让）!D15
+  valuation_work_date: 已开发建设土地（划拨办出让）!D13
+
+  # 规划与指标映射
+  land_area: 已开发建设土地（划拨办出让）!E19
+  building_area: 已开发建设土地（划拨办出让）!E20
+  plot_ratio: 已开发建设土地（划拨办出让）!E21
+  land_use_term: 已开发建设土地（划拨办出让）!E25
+  right_type: 已开发建设土地（划拨办出让）!E24
+  land_usage: 已开发建设土地（划拨办出让）!D16
+  land_usage_short: 已开发建设土地（划拨办出让）!D5
+  land_usage_full: 已开发建设土地（划拨办出让）!D16
+
+  # 宗地四至整体映射
+  land_boundary_desc: 已开发建设土地（划拨办出让）!E41
+
+  # 权属与设定自愈字段
+  valuation_condition_type: 已开发建设土地（划拨办出让）!E18
+  registered_right_type: 已开发建设土地（划拨办出让）!E23
+  assumed_right_status: 已开发建设土地（划拨办出让）!E28
+  registered_proof_docs: 已开发建设土地（划拨办出让）!E22
+  land_development_actual: 已开发建设土地（划拨办出让）!E26
+  land_development_set: 已开发建设土地（划拨办出让）!E27
+  client_org_code: 已开发建设土地（划拨办出让）!E33
+  client_principal: 已开发建设土地（划拨办出让）!E34
+  client_org_type: 已开发建设土地（划拨办出让）!E35
+  client_address: 已开发建设土地（划拨办出让）!E36
+  client_contact: 已开发建设土地（划拨办出让）!E37
+  client_phone: 已开发建设土地（划拨办出让）!E38
+  client_postcode: 已开发建设土地（划拨办出让）!E39
+  entrusted_source_docs: 已开发建设土地（划拨办出让）!E56
+
+  # 比准单价与测算价格映射
+  benchmark_corr_price: 基本信息!D34
+  income_cap_price: 基本信息!F34

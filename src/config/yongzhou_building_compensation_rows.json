@@ -1,0 +1,148 @@
+{
+  "version": "2026-06-15.2",
+  "region": "永州市",
+  "county_aliases": ["道县", "道县城区"],
+  "policy_name": "永州市人民政府关于印发《永州市集体土地与房屋征收补偿安置办法》的通知",
+  "policy_document_no": "永政发〔2024〕4号",
+  "policy_source_file": "永州市人民政府关于印发《永州市集体土地与房屋征收补偿安置办法》的通知.xlsx",
+  "policy_source_pdf": "永州市人民政府关于印发《永州市集体土地与房屋征收补偿安置办法》的通知.pdf",
+  "review_status": "verified_partial",
+  "review_note": "房屋砖混二等(永政发4号附件1：750+500=1250)已核验；房屋其余结构等级/坟墓/生产生活设施及附着物取自道县办法(道政发〔2020〕2号)附件3/6/12 结构化，仅进政策目录(从政策目录添加)，默认表单行保持范例同款。",
+  "grade_catalog": {
+    "house_compensation": [
+      {"key": "brick_mixed_2", "label": "砖混结构二等", "standard": "1250", "house_rate": "750", "decoration_rate": "500", "note": "永政发4号附件1：房屋750+装修500", "is_default": true},
+      {"key": "rc_concrete", "label": "钢混结构", "standard": "1600", "house_rate": "1600", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "brick_mixed_1", "label": "砖混结构一等", "standard": "1350", "house_rate": "1350", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "brick_mixed_3", "label": "砖混结构三等", "standard": "1150", "house_rate": "1150", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "brick_wood_1", "label": "砖木结构一等", "standard": "900", "house_rate": "900", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "brick_wood_2", "label": "砖木结构二等", "standard": "850", "house_rate": "850", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "brick_wood_3", "label": "砖木结构三等", "standard": "800", "house_rate": "800", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "earth_wood_1", "label": "土木结构一等", "standard": "700", "house_rate": "700", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "earth_wood_2", "label": "土木结构二等", "standard": "650", "house_rate": "650", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "earth_wood_3", "label": "土木结构三等", "standard": "600", "house_rate": "600", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "simple_1", "label": "简易结构一等", "standard": "350", "house_rate": "350", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "simple_2", "label": "简易结构二等", "standard": "300", "house_rate": "300", "note": "道政发〔2020〕2号附件3 重置价（含装修）"},
+      {"key": "simple_3", "label": "简易结构三等", "standard": "150", "house_rate": "150", "note": "道政发〔2020〕2号附件3 重置价（含装修）"}
+    ],
+    "vacating_award": [
+      {"key": "signing_award_80", "label": "签约奖", "standard": "80", "note": "第三十二条：签约奖80元/㎡"},
+      {"key": "vacating_award_100", "label": "主动腾地奖", "standard": "100", "note": "第三十二条：主动腾地奖100元/㎡", "is_default": true},
+      {"key": "vacating_award_100_alt", "label": "腾地奖（二层口径）", "standard": "100", "note": "按二层合法建筑面积计取"}
+    ],
+    "grave_compensation": [
+      {"key": "grave_no_coffin", "label": "无棺", "standard": "1500", "standard_unit": "元/冢", "note": "附件12（道政发〔2020〕2号）", "is_default": true},
+      {"key": "grave_coffin", "label": "有棺", "standard": "2500", "standard_unit": "元/冢", "note": "附件12"},
+      {"key": "grave_stele", "label": "碑", "standard": "1000", "standard_unit": "元/座", "note": "附件12：1000-1500元/座，按实际"}
+    ],
+    "biogas_water_pool": [
+      {"key": "biogas_pool_brick", "label": "沼气（水）池·红砖砌体水泥抹面", "standard": "450", "standard_unit": "元/立方米", "note": "附件6 水塔类", "is_default": true},
+      {"key": "biogas_pool_concrete", "label": "沼气（水）池·混凝土", "standard": "550", "standard_unit": "元/立方米", "note": "附件6 水塔类"}
+    ],
+    "water_tower": [
+      {"key": "water_tower_rc", "label": "水塔（钢筋砼正规水塔）", "standard": "300", "standard_unit": "元/立方米", "note": "附件6 水塔类", "is_default": true}
+    ],
+    "septic_tank": [
+      {"key": "septic_soil", "label": "化粪池·土涵", "standard": "40", "standard_unit": "元/立方米", "note": "附件6 水塔类", "is_default": true},
+      {"key": "septic_three_sand", "label": "化粪池·三砂", "standard": "55", "standard_unit": "元/立方米", "note": "附件6"},
+      {"key": "septic_brick_cement", "label": "化粪池·砖砌粉水泥", "standard": "90", "standard_unit": "元/立方米", "note": "附件6"}
+    ],
+    "water_well": [
+      {"key": "brick_well", "label": "砖砌井", "standard": "300", "standard_unit": "元/米", "note": "附件6：按井深计算，含井台周边水泥地面及抽水设备；废弃不补", "is_default": true},
+      {"key": "stone_well", "label": "石砌井", "standard": "250", "standard_unit": "元/米", "note": "附件6"},
+      {"key": "earth_well", "label": "土井", "standard": "200", "standard_unit": "元/米", "note": "附件6"}
+    ],
+    "well_drilled": [
+      {"key": "drilled_well_seat", "label": "机钻井（摇泵井）", "standard": "4000", "standard_unit": "元/座", "note": "附件6：含抽水设备", "is_default": true}
+    ],
+    "road_surface": [
+      {"key": "concrete_road_6cm", "label": "砼道路（厚6cm）", "standard": "80", "standard_unit": "元/平方米", "note": "附件6：厚≥6cm水泥抹平", "is_default": true},
+      {"key": "concrete_road_15cm", "label": "砼道路（厚15cm以上）", "standard": "120", "standard_unit": "元/平方米", "note": "附件6"},
+      {"key": "gravel_road", "label": "砂卵石、碴、碎石道路（三合土）面", "standard": "40", "standard_unit": "元/平方米", "note": "附件6：表面平整"},
+      {"key": "asphalt_road", "label": "炒沙路", "standard": "130", "standard_unit": "元/平方米", "note": "附件6：沥青层厚≥6cm，含垫层"}
+    ],
+    "drying_floor": [
+      {"key": "asphalt_floor", "label": "沥青坪", "standard": "130", "standard_unit": "元/平方米", "note": "附件6：沥青层厚≥6cm，含垫层", "is_default": true},
+      {"key": "cement_floor", "label": "水泥坪", "standard": "70", "standard_unit": "元/平方米", "note": "附件6：厚≥8cm，砖石垫层水泥抹面"},
+      {"key": "lime_soil_floor", "label": "三合土坪", "standard": "40", "standard_unit": "元/平方米", "note": "附件6：厚≥8cm"},
+      {"key": "soil_floor", "label": "土坪", "standard": "20", "standard_unit": "元/平方米", "note": "附件6：厚≥8cm"}
+    ],
+    "drainage_ditch": [
+      {"key": "brick_open_ditch", "label": "砖砌明沟", "standard": "60", "standard_unit": "元/米", "note": "附件6：断面24×35cm，断面不同按比例换算", "is_default": true},
+      {"key": "lime_open_ditch", "label": "三合灰明沟", "standard": "30", "standard_unit": "元/米", "note": "附件6"},
+      {"key": "brick_covered_ditch", "label": "砖砌暗沟", "standard": "80", "standard_unit": "元/米", "note": "附件6：含盖板断面24×35cm"},
+      {"key": "concrete_pipe_under_200", "label": "暗砼涵管（φ200mm以下）", "standard": "30", "standard_unit": "元/米", "note": "附件6"},
+      {"key": "concrete_pipe_over_200", "label": "暗砼涵管（φ200mm以上）", "standard": "40", "standard_unit": "元/米", "note": "附件6"},
+      {"key": "cast_iron_pipe_100", "label": "铸铁管Ф100mm", "standard": "30", "standard_unit": "元/米", "note": "附件6"}
+    ],
+    "retaining_wall": [
+      {"key": "stone_retaining_mortar", "label": "片石砌挡土墙（浆砌）", "standard": "230", "standard_unit": "元/平方米", "note": "附件6", "is_default": true},
+      {"key": "stone_retaining_dry", "label": "片石砌挡土墙（干砌）", "standard": "200", "standard_unit": "元/平方米", "note": "附件6"},
+      {"key": "stone_slope_mortar", "label": "片石护坡（浆砌）", "standard": "120", "standard_unit": "元/平方米", "note": "附件6"},
+      {"key": "stone_slope_dry", "label": "片石护坡（干砌）", "standard": "100", "standard_unit": "元/平方米", "note": "附件6"}
+    ],
+    "power_pole": [
+      {"key": "cement_pole_under_7m", "label": "7米以下水泥电杆", "standard": "400", "standard_unit": "元/根", "note": "附件6：拆卸，含杆上设备", "is_default": true},
+      {"key": "cement_pole_over_7m", "label": "7米以上水泥电杆", "standard": "800", "standard_unit": "元/根", "note": "附件6：拆卸，含杆上设备"},
+      {"key": "wood_pole", "label": "木电杆", "standard": "200", "standard_unit": "元/根", "note": "附件6：拆卸"}
+    ],
+    "outdoor_lighting": [
+      {"key": "outdoor_lighting_line", "label": "室外照明线", "standard": "30", "standard_unit": "元/米", "note": "附件6：含双线；动力四线每米增5元", "is_default": true}
+    ],
+    "transformer": [
+      {"key": "transformer_eval", "label": "变压器", "standard": "", "standard_unit": "元/个", "review_status": "pending", "note": "附件6：经评估给予拆卸、搬运、安装费用（待评估）", "is_default": true}
+    ],
+    "greenhouse": [
+      {"key": "steel_greenhouse", "label": "钢结构大棚", "standard": "40", "standard_unit": "元/平方米", "note": "附件6：顶高>2米", "is_default": true},
+      {"key": "concrete_greenhouse", "label": "砼结构大棚", "standard": "45", "standard_unit": "元/平方米", "note": "附件6：顶高>2米"},
+      {"key": "bamboo_greenhouse", "label": "竹木结构大棚", "standard": "20", "standard_unit": "元/平方米", "note": "附件6：顶高>2米"},
+      {"key": "brick_greenhouse", "label": "温室砖石墙", "standard": "25", "standard_unit": "元/平方米", "note": "附件6：顶高>2米"},
+      {"key": "low_greenhouse", "label": "顶高<2米（不分结构）", "standard": "15", "standard_unit": "元/平方米", "note": "附件6"}
+    ],
+    "enclosing_wall": [
+      {"key": "wall_24_solid", "label": "24砖眠墙", "standard": "120", "standard_unit": "元/平方米", "note": "附件6：限主体建筑之外，含基础；贴瓷砖每㎡增10元", "is_default": true},
+      {"key": "wall_24_cavity", "label": "24砖斗墙", "standard": "80", "standard_unit": "元/平方米", "note": "附件6"},
+      {"key": "wall_18", "label": "18砖墙", "standard": "60", "standard_unit": "元/平方米", "note": "附件6"},
+      {"key": "wall_13_pillar", "label": "13砖附柱墙", "standard": "60", "standard_unit": "元/平方米", "note": "附件6"},
+      {"key": "wall_earth", "label": "土筑、土砖墙", "standard": "40", "standard_unit": "元/平方米", "note": "附件6（含三合灰砌筑墙）"}
+    ],
+    "misc_structures": [
+      {"key": "concrete_slab", "label": "砼板", "standard": "25", "standard_unit": "元/平方米", "note": "附件6：水塘设施", "is_default": true},
+      {"key": "rockery", "label": "假山", "standard": "50", "standard_unit": "元/立方米", "note": "附件6：少一项减10%"},
+      {"key": "railing", "label": "各种栏杆", "standard": "20", "standard_unit": "元/米", "note": "附件6：钢砼花格栏杆以上每米增10元"},
+      {"key": "cement_strip_board", "label": "钢砼水泥条板", "standard": "60", "standard_unit": "元/平方米", "note": "附件6：贴瓷砖每㎡增10元"},
+      {"key": "rc_bridge", "label": "钢砼水泥过桥", "standard": "120", "standard_unit": "元/平方米", "note": "附件6：车辆通道"},
+      {"key": "precast_bridge", "label": "预制板水泥过桥", "standard": "60", "standard_unit": "元/平方米", "note": "附件6"},
+      {"key": "brick_warm_bed", "label": "砖砌温床（花围）", "standard": "50", "standard_unit": "元/立方米", "note": "附件6：按面积计算"},
+      {"key": "blade_fence", "label": "刀片", "standard": "60", "standard_unit": "元/米", "note": "附件6：含立柱，按长度"},
+      {"key": "roman_column", "label": "罗马柱", "standard": "80", "standard_unit": "元/米", "note": "附件6：含立柱，按长度"},
+      {"key": "coffin_move", "label": "棺木（搬运费）", "standard": "200", "standard_unit": "元/付", "note": "附件6：搬运费"},
+      {"key": "tile_kiln", "label": "瓦窖", "standard": "2000", "standard_unit": "元/个", "note": "附件6：2000-2500元/个，废弃不补"},
+      {"key": "lime_kiln", "label": "石灰窖", "standard": "1000", "standard_unit": "元/个", "note": "附件6：废弃不补"},
+      {"key": "brick_stove", "label": "砖砌一锅灶（室外）", "standard": "300", "standard_unit": "元/座", "note": "附件6：贴瓷砖增10%，带热水箱及洗涤池另增200，每增一锅增200"}
+    ]
+  },
+  "catalog_templates": {
+    "grave_compensation": {"label": "迁移坟墓补偿", "standard_unit": "元/冢", "calculation_basis": "按实际挖掘数", "note": "附件12（道政发〔2020〕2号）"},
+    "biogas_water_pool": {"label": "沼气（水）池", "standard_unit": "元/立方米", "calculation_basis": "按容积", "note": "附件6 水塔类"},
+    "water_tower": {"label": "水塔", "standard_unit": "元/立方米", "calculation_basis": "按容积", "note": "附件6 水塔类"},
+    "septic_tank": {"label": "化粪池", "standard_unit": "元/立方米", "calculation_basis": "按容积", "note": "附件6 水塔类"},
+    "water_well": {"label": "水井类（按井深）", "standard_unit": "元/米", "calculation_basis": "按井深", "note": "附件6 水井类"},
+    "well_drilled": {"label": "机钻井（座）", "standard_unit": "元/座", "calculation_basis": "按座", "note": "附件6 水井类"},
+    "road_surface": {"label": "道路类", "standard_unit": "元/平方米", "calculation_basis": "按面积", "note": "附件6 道路类"},
+    "drying_floor": {"label": "晒坪类", "standard_unit": "元/平方米", "calculation_basis": "按面积", "note": "附件6 晒坪类"},
+    "drainage_ditch": {"label": "排水沟（涵管）类", "standard_unit": "元/米", "calculation_basis": "按长度", "note": "附件6 排水沟涵管类"},
+    "retaining_wall": {"label": "挡土墙护坡保坎类", "standard_unit": "元/平方米", "calculation_basis": "按面积", "note": "附件6 挡土墙护坡保坎类"},
+    "power_pole": {"label": "电杆线类", "standard_unit": "元/根", "calculation_basis": "按根", "note": "附件6 电杆线类"},
+    "outdoor_lighting": {"label": "室外照明线", "standard_unit": "元/米", "calculation_basis": "按长度", "note": "附件6 电杆线类"},
+    "transformer": {"label": "变压器", "standard_unit": "元/个", "calculation_basis": "按评估", "note": "附件6 电杆线类（待评估）"},
+    "greenhouse": {"label": "蔬菜大棚", "standard_unit": "元/平方米", "calculation_basis": "按面积", "note": "附件6 蔬菜大棚"},
+    "enclosing_wall": {"label": "围墙类", "standard_unit": "元/平方米", "calculation_basis": "按面积", "note": "附件6 围墙类"},
+    "misc_structures": {"label": "假山、砼板、栏杆、过桥等其他类", "standard_unit": "元/平方米", "calculation_basis": "按项目", "note": "附件6 其他类"}
+  },
+  "rows": [
+    {"key": "house_compensation", "label": "房屋补偿费", "standard": "1250", "standard_unit": "元/平方米", "structure_grade": "brick_mixed_2", "calculation_basis": "按合法建筑面积", "quantity": "70", "divisor": "1", "amount": "87500", "note": "砖混二等：房屋补偿750元/㎡+装修补偿500元/㎡（附件1）"},
+    {"key": "vacating_award", "label": "主动腾地奖", "standard": "100", "standard_unit": "元/平方米", "structure_grade": "vacating_award_100", "calculation_basis": "按合法建筑面积", "quantity": "70", "divisor": "1", "amount": "7000", "note": "按二层计算"},
+    {"key": "moving_fee", "label": "搬家费", "standard": "2000", "standard_unit": "元/户", "calculation_basis": "按每户，4人/户", "quantity": "1", "divisor": "4", "amount": "500", "note": "按中间值计算"},
+    {"key": "transition_fee", "label": "过渡费", "standard": "1000", "standard_unit": "元/户/月", "calculation_basis": "按每户，4人/户", "quantity": "1", "divisor": "4", "months": "12", "amount": "3000", "note": "过渡期12个月"}
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "2026-06-01",
+  "scope": "第三部分：土地权属、登记状况、权利状况、利用现状素材库",
+  "notes": [
+    "本文件只管理第三部分可复用话术素材，不管理整篇 Word 母本。",
+    "估价师最终可在前端三个大文本框中直接修改生成草稿。",
+    "占位符使用 Python format 写法，例如 {basis_docs_phrase}。",
+    "本素材库只给出可审查的草稿表达，最终权属、登记和限制状况仍以委托方资料、不动产登记资料及估价师核验结果为准。"
+  ],
+  "registration_nature": {
+    "new_grant": "国有储备用地，现拟办理出让手续。",
+    "registered_complete": "国有已登记建设用地。",
+    "historical_unregistered": "国有划拨用地，现拟办理出让手续。"
+  },
+  "registration_evolution": {
+    "new_grant": {
+      "residential": "{basis_docs_phrase}，估价对象已纳入{asset_use_label}供应或完善手续办理范围；经{approval_authority}批准或确认，规划用途为{asset_use_label}，拟{transfer_purpose_action}。至估价期日，宗地{transfer_part}已完成或正在履行前期权属、收储、规划和供应准备程序；本次评估以委托方确认的权属、面积、用途和规划条件为依据，不预设除已披露事项外的权利负担。",
+      "industrial": "{basis_docs_phrase}，估价对象已纳入{asset_use_label}供应或完善手续办理范围；经{approval_authority}批准或确认，规划用途为{asset_use_label}，拟{transfer_purpose_action}。至估价期日，宗地{transfer_part}已完成或正在履行前期权属、收储、规划和供应准备程序；本次评估以委托方确认的权属、面积、用途和规划条件为依据，不预设除已披露事项外的权利负担。",
+      "commercial": "{basis_docs_phrase}，估价对象已纳入{asset_use_label}供应或完善手续办理范围；经{approval_authority}批准或确认，规划用途为{asset_use_label}，拟{transfer_purpose_action}。至估价期日，宗地{transfer_part}已完成或正在履行前期权属、收储、规划和供应准备程序；本次评估以委托方确认的权属、面积、用途和规划条件为依据，不预设除已披露事项外的权利负担。",
+      "public": "{basis_docs_phrase}，估价对象已纳入{asset_use_label}供应或完善手续办理范围；经{approval_authority}批准或确认，规划用途为{asset_use_label}，拟按规定办理国有建设用地使用权供应或使用手续。至估价期日，宗地{transfer_part}已完成或正在履行前期权属、收储、规划和供应准备程序；本次评估以委托方确认的权属、面积、用途和规划条件为依据，不预设除已披露事项外的权利负担。",
+      "default": "{basis_docs_phrase}，估价对象已纳入国有建设用地供应或完善手续办理范围；经{approval_authority}批准或确认，规划用途为{asset_use_label}，拟{transfer_purpose_action}。至估价期日，宗地{transfer_part}已完成或正在履行前期权属、收储、规划和供应准备程序；本次评估以委托方确认的权属、面积、用途和规划条件为依据，不预设除已披露事项外的权利负担。"
+    },
+    "registered_complete": "{basis_docs_phrase}，估价对象已依法办理土地使用权首次登记、变更登记或不动产统一登记手续，并取得相应权利证明材料。登记资料载明的土地权利人、宗地面积、用途、四至界址等要素相对完整；至估价期日，根据委托方提供资料及现场勘查，未发现对估价结果产生重大影响的权属争议。",
+    "historical_unregistered": {
+      "residential": "{basis_docs_phrase}，估价对象位于{room_location}，建筑面积{building_area}平方米，分摊土地使用权面积{land_area}平方米，委托方拟按{valuation_condition_type}利用条件为其办理土地使用权出让手续。估价对象土地使用者为{land_user}{user_identity_part}，根据相关政策于{buy_year_text}购得位于{room_location}住房一套，房屋权属证明号为{house_cert_no_text}，房屋登记面积{registered_house_area}平方米。其房屋分摊土地使用权类型为{registered_right_type}，因历史遗留问题，土地暂未办理土地权属登记。",
+      "default": "{basis_docs_phrase}，该宗地历史演变及实际使用权源较长。经结合历史批复文件、建设用地红线图、证照资料、委托方说明及估价人员现场勘查综合分析，该土地长期由实际使用人占有和使用。因历史遗留的权属界限、宗地落图或登记资料衔接等原因，至估价期日土地暂未完成最终的国有土地使用权登记或证书换发，需在后续手续办理中逐步补齐相关权属凭证。"
+    }
+  },
+  "use_status": {
+    "residential": {
+      "default": "估价对象现状为住宅及其配套用地相关使用，分摊土地使用权面积为{land_area}平方米，建筑面积为{building_area}平方米。"
+    },
+    "commercial": {
+      "new_grant": "估价对象现状为拟供应或待开发商业服务业建设用地，土地面积{land_area}平方米。",
+      "default": "估价对象现状为商业服务业用地，土地面积{land_area}平方米。"
+    },
+    "industrial": {
+      "new_grant": "估价对象现状为拟供应或待开发工业建设用地，土地面积{land_area}平方米。",
+      "default": "估价对象现状为工业用途建设用地，土地面积{land_area}平方米。"
+    },
+    "public": {
+      "new_grant": "估价对象现状为拟供应或待完善手续的公共管理与公共服务建设用地，土地面积{land_area}平方米。",
+      "default": "估价对象现状为公共管理与公共服务用途建设用地，土地面积{land_area}平方米。"
+    },
+    "other": {
+      "default": "估价对象现状与{asset_use_label}相关，土地面积{land_area}平方米。"
+    }
+  },
+  "risk_note_library": {
+    "historical_registration": "估价对象权属登记资料存在历史衔接事项，相关登记结果应以不动产登记机构最终核定为准。",
+    "new_grant_supply": "估价对象尚处于供应或完善手续办理阶段，最终权利人、宗地登记信息及供应条件应以有权机关批准文件、出让结果或登记结果为准。",
+    "registered_change": "若后续登记信息或权利限制发生变化，应由估价师结合变化内容判断是否需要复核估价结果。"
+  },
+  "land_use_status": {
+    "new_grant": "本次评估设定土地使用权类型为{right_type}，使用权人待供应程序完成或登记结果确定后确认；至估价期日，尚未形成可直接记载的土地使用权人信息。",
+    "registered_complete": "估价对象土地使用权人为{land_user}，登记或设定使用权类型为{land_use_type}；",
+    "historical_unregistered": {
+      "residential": "估价对象房屋分摊土地使用权现由{land_user}使用或享有相关权益，原使用权类型为{registered_right_type}，本次评估设定使用权类型为{right_type}；",
+      "default": "估价对象土地使用权现由{land_user}使用或享有相关权益，原使用权类型为{registered_right_type}，本次评估设定使用权类型为{right_type}；"
+    },
+    "hua_bo_to_chu_rang": "根据委托方提供的{basis_str}，估价对象现状权利类型涉及划拨土地使用权。委托方拟按{valuation_condition_type}条件办理出让或完善手续，设定土地用途为{usage_val}，设定土地使用年期为{term_val}；本次评估在上述设定条件下测算出让土地使用权价格，实际权利状态及年期应以有权机关最终批准和登记结果为准；"
+  },
+  "other_rights_limit": {
+    "no_limit": "根据委托方提供资料及现场勘查，估价对象与相邻宗地界线关系以委托方确认资料为准，未发现地上、地下相邻关系方面对估价结果产生重大影响的权利限制。截至估价期日，估价对象未设置抵押权、担保权、地役权、租赁权等已披露的他项权利限制。",
+    "has_limit_placeholder": "根据委托方提供资料及现场勘查，估价对象存在他项权利限制，具体限制情况为：{other_rights_limit_desc}。"
+  }
+}

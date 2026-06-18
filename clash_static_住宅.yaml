@@ -1,0 +1,67 @@
+mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: info
+external-controller: '127.0.0.1:9090'
+unified-delay: true
+tcp-concurrent: true
+
+dns:
+  enable: true
+  ipv6: false
+  default-nameserver: [223.5.5.5, 119.29.29.29]
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  use-hosts: true
+  nameserver-policy: { +.google.com: 'https://dns.cloudflare.com/dns-query', +.googleapis.com: 'https://dns.cloudflare.com/dns-query', +.googleapis.cn: 'https://dns.cloudflare.com/dns-query', +.googlevideo.com: 'https://dns.cloudflare.com/dns-query', +.gstatic.com: 'https://dns.cloudflare.com/dns-query', +.youtube.com: 'https://dns.cloudflare.com/dns-query', +.youtu.be: 'https://dns.cloudflare.com/dns-query', +.facebook.com: 'https://dns.cloudflare.com/dns-query', +.twitter.com: 'https://dns.cloudflare.com/dns-query', +.x.com: 'https://dns.cloudflare.com/dns-query', +.github.com: 'https://dns.cloudflare.com/dns-query', +.githubusercontent.com: 'https://dns.cloudflare.com/dns-query', +.openai.com: 'https://dns.cloudflare.com/dns-query', +.chatgpt.com: 'https://dns.cloudflare.com/dns-query', +.anthropic.com: 'https://dns.cloudflare.com/dns-query' }
+  nameserver: ['https://doh.pub/dns-query', 'https://dns.alidns.com/dns-query', 'tls://dot.pub:853', 'tls://dns.alidns.com:853']
+  fallback: ['https://dns.cloudflare.com/dns-query', 'https://dns.google/dns-query', 'tls://1.1.1.1:853', 'tls://8.8.8.8:853']
+  fallback-filter: { geoip: true, geoip-code: CN, ipcidr: [0.0.0.0/8, 10.0.0.0/8, 100.64.0.0/10, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12, 192.168.0.0/16, 224.0.0.0/4, 240.0.0.0/4], domain: [+.google.com, +.facebook.com, +.youtube.com, +.githubusercontent.com, +.googlevideo.com, +.googleapis.cn] }
+  fake-ip-filter: ['*.lan', '*.local', '*.localhost', '*.test', localhost.ptlogin2.qq.com, '+.stun.*.*', '+.stun.*.*.*', '+.stun.*.*.*.*', lens.l.google.com, '*.srv.nintendo.net', +.stun.playstation.net, 'xbox.*.*.microsoft.com', '*.*.xboxlive.com', +.msftncsi.com, +.msftconnecttest.com]
+
+proxies:
+  - name: "ProxyCheap-住宅(HTTP)"
+    type: http
+    server: 92.113.114.250
+    port: 42015
+    username: 5jMv89kz2O4esbG
+    password: yOXaJ8J0f9JL4ps
+  - name: "ProxyCheap-住宅(SOCKS5)"
+    type: socks5
+    server: 92.113.114.250
+    port: 42015
+    username: 5jMv89kz2O4esbG
+    password: yOXaJ8J0f9JL4ps
+    udp: true
+
+proxy-groups:
+  - name: "静态住宅"
+    type: select
+    proxies:
+      - "ProxyCheap-住宅(HTTP)"
+      - "ProxyCheap-住宅(SOCKS5)"
+      - "DIRECT"
+
+rules:
+  # 本地回环和局域网直连，防止本地服务被路由到代理端导致 403 报错
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,local,DIRECT
+  - DOMAIN-SUFFIX,lan,DIRECT
+
+  # AI 流量走静态住宅
+  - DOMAIN-SUFFIX,openai.com,静态住宅
+  - DOMAIN-SUFFIX,chatgpt.com,静态住宅
+  - DOMAIN-SUFFIX,anthropic.com,静态住宅
+  - DOMAIN-SUFFIX,claude.ai,静态住宅
+  # 谷歌及 GitHub 流量
+  - DOMAIN-SUFFIX,google.com,静态住宅
+  - DOMAIN-SUFFIX,github.com,静态住宅
+  - DOMAIN-SUFFIX,githubusercontent.com,静态住宅
+  # 国内流量直接连接
+  - GEOIP,CN,DIRECT
+  # 其他流量默认直连，防止 IDE 聊天连接中断及无谓的流量消耗
+  - MATCH,DIRECT

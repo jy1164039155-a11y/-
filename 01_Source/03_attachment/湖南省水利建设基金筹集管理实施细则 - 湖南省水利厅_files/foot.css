@@ -1,0 +1,74 @@
+@charset "utf-8";
+/*CSS reset*/
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,blockquote,th,td,p{margin:0;padding:0; font-family:"微软雅黑"; font-size:14px; cursor:default;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;border:none;}
+ul,li,dl ,dt,dd ,ol,p,img{ list-style: none;border: none;}
+address,caption,cite,code,dfn,em,th,var,optgroup{font-style:normal;font-weight:normal;}
+del,ins{text-decoration:none;}
+caption,th{text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;}
+button,input,select,textarea{font-size:100%;font: inherit;}
+q:before,q:after{content:'';}
+abbr,acronym{border:0;font-variant:normal;}
+sup{vertical-align:baseline;}
+sub{vertical-align:baseline;}
+a{text-decoration:none; outline:none;}
+a:hover{ text-decoration:none;cursor:pointer;}
+a:active{outline: none;star:expression(this.onFocus=this.blur());}
+.clearfix:after { content:"."; display:block; height:0; visibility:hidden; clear:both; }   
+.clearfix { zoom:1; } 
+*{margin:0;padding:0;}
+.fl{float:left;}
+.fr{float: right;}
+
+a {
+    color: #333;
+}
+a * {
+    cursor: pointer;
+}
+
+
+
+/*底部*/
+.friend_link_box{background:#2572b6;border-bottom: 1px solid #84b9ed;height: 79px;}
+.friend_link{ width:1277px; height:80px; margin:0 auto; line-height:80px;}
+.friend_link h2{float:left; width:90px; height:80px; line-height:80px; color:#fff; font-size:16px; text-align:center;font-weight: bold;}
+.friend_link_box .friend_link ul{margin-left:40px; float:left;}
+.friend_link_box .friend_link ul li {float:left; margin-left:10px;}
+.friend_link_box .friend_link ul li select{width:155px; padding:10px; margin:20px 0; color:#666;outline:none}
+.friend_link .link{ float:left; color:#666; margin-right:8px;}
+.friend_link .link:hover{ text-decoration:underline;}
+.zddt{width: 155px;text-align: center;border: 1px solid #bbb;background: #fff;margin-top:20px;height: 38px;line-height:40px;}
+
+.footer{ height:180px; background:#2572b6;}
+.footer_main{ width:1140px; height:180px; margin:0 auto;}
+.footer_main .gov_icon{float: left;padding-left: 235px;width: 229px;height: 100px;}
+.footer_main p{float: left; color: #fff; padding-left: 20px;padding-top: 40px;line-height: 29px;}
+.footer_main .gov_icon img {position: relative;top: 39px;}
+.footer_main .gov_icon #_span_jiucuo img {position: relative;top: 25px;left: 10px;}
+
+
+/*厅局公用无障碍等样式重写*/
+.Hj-EasyRead-Container {
+    margin-left: 730px!important;
+}
+#topSystemBtn_id{
+	background-color:#4e9de0!important;
+	height: 40px!important;
+    line-height: 40px!important;
+	background-position-x: 82px!important;
+    background-position-y: -18px!important;
+	left:50%!important;
+	margin-left:615px;
+}
+#comm_topLink_id{
+	margin-top:6px;
+}
+#div_topSystem_id{
+	background-color:#4e9de0!important;
+}
+
+
+

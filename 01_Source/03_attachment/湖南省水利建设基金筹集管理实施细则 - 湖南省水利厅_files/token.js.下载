@@ -1,0 +1,48 @@
+jQuery.support.cors = true;
+var users = [];
+var token ;
+//var loginUrl='http://home.hunan.gov.cn:8092/account-center/a/login';
+var loginUrl='https://home.hunan.gov.cn:8096/account-center/a/login';
+addEventListener('message',function(ev) {
+    token = ev.data;
+	console.log(token)
+    users.push(token);
+	return users;
+});  
+function clickEnshrine(){ 
+	if(users[4]!=null){ 
+		token = users[4];
+		enshrine();	
+                console.log(token);		
+	}else{;
+		window.location.href=loginUrl;
+	}
+	
+};
+function enshrine(){
+	var url="http://home.hunan.gov.cn:8092/account-center/a/sys/accountSecurity/checkCollection";
+	var suUrl= window.location.href;
+	console.log(suUrl);
+	var manuscriptId = document.getElementById("sc_manuscriptId").innerHTML;
+	console.log(manuscriptId);
+	var title = document.getElementById("sc_title").innerHTML;
+	console.log(title);
+	$.ajax({
+		beforeSend: function (XMLHttpRequest) {
+		XMLHttpRequest.setRequestHeader("token", token);
+		},
+		url: url,
+		data: {
+		"url":suUrl,"manuscriptId":manuscriptId,"sysCollectionType":"1","title":title,"redirect_uri":suUrl
+		},
+		dataType: "json",
+		type: "post",
+		success: function (data) {
+			console.log(data);
+			alert(data.message);
+		},
+		error: function (data) {
+			console.log(data);
+		}
+	});  
+};	

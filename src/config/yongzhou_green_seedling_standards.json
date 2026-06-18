@@ -1,0 +1,32 @@
+{
+  "version": "2026-06-13.1",
+  "policy_name": "永州市人民政府关于印发《永州市集体土地与房屋征收补偿安置办法》的通知",
+  "policy_document_no": "永政发〔2024〕4号",
+  "policy_source_file": "永州市人民政府关于印发《永州市集体土地与房屋征收补偿安置办法》的通知.xlsx",
+  "policy_source_pdf": "永州市人民政府关于印发《永州市集体土地与房屋征收补偿安置办法》的通知.pdf",
+  "county_aliases": ["道县", "道县城区"],
+  "review_status": "verified_partial",
+  "review_note": "附件3 征收土地青苗补偿标准：水田/水浇地2800、旱地2000、成片林地4000元/亩（Excel 结构化）",
+  "standards": [
+    {"key": "paddy", "land_subclasses": ["水田", "水浇地"], "standard_per_mu": "2800", "label": "水田/水浇地", "attachment": "附件3"},
+    {"key": "dryland", "land_subclasses": ["旱地"], "standard_per_mu": "2000", "label": "旱地", "attachment": "附件3"},
+    {"key": "forest_patch", "land_subclasses": ["乔木林地", "竹林地", "灌木林地", "其他林地"], "standard_per_mu": "4000", "label": "成片林地", "attachment": "附件3/5"},
+    {"key": "forest_oil_tea", "land_subclasses": ["油茶"], "standard_per_mu": "2000", "label": "油茶", "attachment": "附件5", "optional": true}
+  ],
+  "policy_files": [
+    {
+      "category": "青苗房屋及附着物",
+      "label": "永政发〔2024〕4号 Excel",
+      "path_key": "local_compensation_xlsx",
+      "counties": ["道县", "道县城区"],
+      "status": "verified_partial"
+    },
+    {
+      "category": "青苗房屋及附着物",
+      "label": "永政发〔2024〕4号 PDF",
+      "path_key": "local_compensation_pdf",
+      "counties": ["道县", "道县城区"],
+      "status": "scan_reference"
+    }
+  ]
+}

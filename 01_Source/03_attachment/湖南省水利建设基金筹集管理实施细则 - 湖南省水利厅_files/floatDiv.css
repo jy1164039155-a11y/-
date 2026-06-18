@@ -1,0 +1,30 @@
+/* CSS Document */
+#topSystemBtn_id {position:absolute;top:0px;display:block;width:85px;height:32px;z-index:99999999;line-height:32px;color:#FFF;font-size:14px;font-family:microsoft yahei;text-align:center; background-image:url(wp_2015zjj_index_slideBtn_02.gif); background-position:80px -22px; background-repeat:no-repeat; padding-right:20px; cursor:pointer;}
+.topSystemBtn_hover {background-position:80px 12px !important;}
+#div_topSystem_id {padding:5px; width:760px; height:500px;position:absolute;z-index:99999999;}
+#div_topSystem_id .topSystem_inner {background-color:#FFF; padding-top:10px; height:490px;}
+#div_topSystem_id .topSystem_inner h3 { display:block;width:100%;height:25px;line-height:25px; font-size:14px; font-family:"microsoft yahei"; background:url(wp_2015zjj_index_titleBg_03.jpg) repeat-x left center; color:#a70001;}
+#div_topSystem_id .topSystem_inner h3 span { display:block; width:85px; text-align:center; height:25px; background-color:#FFF;}
+#div_topSystem_id .topSystem_inner ul { padding:0px; margin:0px; list-style:none; width:100%; display:block; padding-left:20px;}
+#div_topSystem_id .topSystem_inner ul li { display:inline-block; width:22%; margin:0px; padding:0px;float: left;}
+#div_topSystem_id .topSystem_inner ul li a {font-size:14px; font-family:microsoft yahei; text-decoration:none; color:#25659c; line-height:30px; white-space:nowrap;}
+#div_topSystem_id .topSystem_inner ul li.disable a {color: #959595;}
+#div_topSystem_id .topSystem_inner ul li a:hover { text-decoration:underline;}
+
+
+#midSystemBtn_id {display:block;width:230px;height:40px;z-index:99999999;line-height:40px;color:#FFF;font-size:16px; font-weight:bold;font-family:microsoft yahei;text-align:left; background-image:url(wp_2015zjj_index_slideBtn_02.gif); background-position:180px -17px; background-repeat:no-repeat; padding-left:20px; cursor:pointer; margin-right:20px;}
+.midSystemBtn_hover {background-position:180px 17px !important;}
+#div_midSystem_id {padding:5px; width:760px; height:440px;position:absolute;z-index:99999999;}
+#div_midSystem_id .midSystem_inner {background-color:#FFF; padding-top:10px; height:430px;}
+#div_midSystem_id .midSystem_inner h3 { display:block;width:100%;height:25px;line-height:25px; font-size:14px; font-family:"microsoft yahei"; background:url(wp_2015zjj_index_titleBg_03.jpg) repeat-x left center; color:#a70001;}
+#div_midSystem_id .midSystem_inner h3 span { display:block; width:85px; text-align:center; height:25px; background-color:#FFF;}
+#div_midSystem_id .midSystem_inner ul { padding:0px; margin:0px; list-style:none; width:100%; display:block; padding-left:20px;}
+#div_midSystem_id .midSystem_inner ul li { display:inline-block; width:22%; margin:0px; padding:0px;float: left;}
+#div_midSystem_id .midSystem_inner ul li a {font-size:14px; font-family:microsoft yahei; text-decoration:none; color:#25659c; line-height:30px; white-space:nowrap;}
+#div_midSystem_id .midSystem_inner ul li.disable a {cursor:default;color: #C7C7C7;}
+#div_midSystem_id .midSystem_inner ul li.disable a:hover {text-decoration:none;}
+#div_midSystem_id .midSystem_inner ul li a:hover { text-decoration:underline;}
+
+
+.comm_topLink { position:absolute; top:0px; line-height:30px; height:30px;color: #FFF;font-size: 12px; font-family:microsoft yahei;}
+.comm_topLink a { padding:0 5px;color: #FFF;text-decoration: none;}

@@ -1,0 +1,78 @@
+@charset "utf-8";
+/*CSS reset*/
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,blockquote,th,td,p{margin:0;padding:0; font-family:"微软雅黑"; font-size:14px; cursor:default;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;border:none;}
+ul,li,dl ,dt,dd ,ol,p,img{ list-style: none;border: none;}
+address,caption,cite,code,dfn,em,th,var,optgroup{font-style:normal;font-weight:normal;}
+del,ins{text-decoration:none;}
+caption,th{text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;}
+button,input,select,textarea{font-size:100%;font: inherit;}
+q:before,q:after{content:'';}
+abbr,acronym{border:0;font-variant:normal;}
+sup{vertical-align:baseline;}
+sub{vertical-align:baseline;}
+a{text-decoration:none; outline:none;}
+a:hover{ text-decoration:none;cursor:pointer;}
+a:active{outline: none;star:expression(this.onFocus=this.blur());}
+.clearfix:after { content:"."; display:block; height:0; visibility:hidden; clear:both; }   
+.clearfix { zoom:1; } 
+*{margin:0;padding:0;}
+.fl{float:left;}
+.fr{float: right;}
+
+a {
+    color: #333;
+}
+a * {
+    cursor: pointer;
+}
+
+/*头部*/
+.header{background:url(headbg.png) center -30px no-repeat;background-size:100% 100%;    height: 350px;}
+
+.top{ height: 40px; line-height: 40px; background:#0a539f;}
+.top_cont{ width: 1440px; margin:0 auto;}
+.top_cont a{ color:#fff;font-size:12px;}
+.top_cont em { font-style:normal; color:#9dbfe1; margin:0 8px;}
+
+.logo a{width:503px;height:125px;display:block;margin:45px auto}
+.logo img{width:503px;}
+
+.nav{ width:85%;margin:0 auto;height:70px;background:#fff;}
+.nav ul{width:70%;float:left;}
+.nav li{ float: left;width: 14%; padding:0 3%;height:70px;text-align:center; font-size: 17px; font-weight:bold;}
+.nav li a{ display:block; width: 100%;margin-top:5px; height: 70px;line-height:60px;}
+.nav li.current a,.nav li:hover a{ color:#2e71b8;background: url(navhover.png) center 55px no-repeat; }
+
+.search{float: right;border: 2px solid #547898;width: 20%;    margin: 17px 4%;border-radius:5px;}
+.search span.dropselect_box { position:relative;  width:89px; border-right:1px solid #547898; display:inline-block; float:left; height:34px; z-index:99;}
+.search_text{ float:left;border-radius: 5px; border:none;outline:none; width: 80%; height:34px; line-height:34px; color:#333; text-indent:10px;}
+.search_sub{ float:right; border-radius: 5px;width:20%; height:34px; background: url(cx.png) center center no-repeat;border:none; color:#fff; cursor:pointer;}
+.hidden {display:none;}
+
+
+
+/*厅局公用无障碍等样式重写*/
+.Hj-EasyRead-Container {
+    margin-left: 730px!important;
+}
+#topSystemBtn_id{
+	background-color:#4e9de0!important;
+	height: 40px!important;
+    line-height: 40px!important;
+	background-position-x: 82px!important;
+    background-position-y: -18px!important;
+	left:50%!important;
+	margin-left:615px;
+}
+#comm_topLink_id{
+	margin-top:6px;
+}
+#div_topSystem_id{
+	background-color:#4e9de0!important;
+}
+
+
+

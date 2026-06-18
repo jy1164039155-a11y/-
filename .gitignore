@@ -1,0 +1,33 @@
+venv/
+__pycache__/
+*.pyc
+logs/*.log
+03_Result/*
+!03_Result/.gitkeep
+02_Process/mapping_logs/*.json
+!02_Process/mapping_logs/.gitkeep
+.DS_Store
+.idea/
+.vscode/
+data/comparable_library.sqlite3
+data/comparable_evidence/
+
+# Node / frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+*.local
+
+# Bundled heavy tools (do not version third-party binaries)
+tools/
+
+# Scratch / temp working dirs
+tmp/
+scratch/
+.pytest_cache/
+
+# Env
+.env
+.env.*
+

@@ -1,0 +1,30 @@
+---
+description: 前端/文档统一 UTF-8 编码规范，防止 mojibake（乱码）回归；编辑中文源码、Vue 模板、md 文档时必读
+globs: frontend/**/*.{vue,js,ts,jsx,tsx,css,html},**/*.md
+alwaysApply: false
+---
+
+# UTF-8 编码与防乱码规则
+
+> 来源：`frontend/src/App.vue` 19 处 mojibake 修复事件（2026-06-18）。
+> 详细记录见 `02_Process/App.vue乱码修复记录与编码规范.md`。
+
+## 强制要求
+
+1. **统一 UTF-8（无 BOM 优先）**：所有源码、Vue 模板、文档一律 UTF-8。新文件不要写入 BOM；已存在的良性 BOM 可保留。
+2. **终端先切 UTF-8**：在 Windows/PowerShell 执行涉及中文的命令前，先 `chcp 65001`，并确保 `$OutputEncoding` 与 `[Console]::OutputEncoding` 为 UTF-8。
+3. **禁止用 shell 写中文文件**：不要用 `echo`、`>` 重定向、heredoc 写入含中文的源码/文档；一律用编辑器工具按 UTF-8 写入。
+4. **提交前必扫乱码**：对改动文件运行 `node tmp/scan_pollution3.js <file>`（或等效扫描），结果必须 `TOTAL: 0`。广覆盖扫描应包含 U+FFFD、C1 控制符（U+0080–U+009F）、PUA（U+E000–U+F8FF）。
+5. **改动中文/模板后必构建**：`npm run build` 必须通过、SFC 0 错误。
+6. **功能性文本必须运行时复测**：涉及模板插值（如 `图${...}`）、正则（如 `/^图\d+.../`）、toast/提示文案的修改，必须在浏览器实际验证渲染与逻辑。
+
+## 为什么重要
+
+乱码不只是观感问题。当乱码落在**模板插值、正则、提示前缀**中时，会造成运行时逻辑错误（如照片 caption 重排失灵、toast 文案错误）。因此“构建通过”不等于“修复正确”，必须补运行时验证。
+
+## 识别乱码的典型信号
+
+- 中文被替换为 `锛 鐨 鈥 鍥` 等 GBK 误解码字符；
+- 出现 `�`（U+FFFD 替换符）；
+- 出现 C1 控制符或 PUA 区字符；
+- diff 中中文字符莫名变成多字节拉丁字母组合（如 `Ã¢â‚¬`）。
