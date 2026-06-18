@@ -565,3 +565,14 @@
 * 商服从临街/拆分路径切回不临街时，前端同步清理 `is_corner`、相邻两条路线价、正街/旁街派生值、正街/旁街比例和 `Kc`，避免隐藏字段残留。
 * 第二部分联动字段 watcher 改为仅在第五部分基准法视图激活时同步并深拷贝 `benchmarkAnalysis`，降低非基准法场景下的无谓开销；进入基准法或构建 payload 时仍会重新同步第二部分字段。
 * 验证结果：`tests/test_frontend_market_workflow.py tests/test_benchmark_correction.py` 41 passed；`frontend\npm.cmd run build` 通过。
+
+## 2026-06-18 前端 App.vue 字符集乱码专项排查与修复验证
+
+* **乱码故障彻底排查**：在之前的 PowerShell 字符行替换操作中，由于编码配置不匹配，造成 [App.vue](../frontend/src/App.vue) 文件的中文曾出现乱码。现已被用户完全修复。
+* **编码合法性与 Mojibake 特征扫描**：
+  - 文件已成功恢复为规范的 `UTF-8` 编码（含 BOM）。
+  - 经 Python 脚本全量字符流扫描，未检测到任何 Unicode 替换字符 `` (U+FFFD)。
+  - 未检测到任何典型的 `GBK` 混淆 Mojibake 损坏字符（如 `锘`、`锟`、`烫` 等）。
+  - 全文 304 个非常规非 ASCII 字符，经逐个确认均为正常的 Emoji 导航图标及数学公式符号（如 `㎡`、`∑` 等），无任何乱码留存。
+* **打包编译验证**：在 `frontend` 目录下执行 `npm run build`，Vite 编译打包完美成功，无任何语法或模板解析错误，资源输出正常。
+* **后端服务拉起**：确认 API 8001 服务正常启动并处于监听状态（PID: 17864），已无障碍加载最新代码逻辑。

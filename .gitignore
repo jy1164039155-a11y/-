@@ -26,8 +26,9 @@ tools/
 tmp/
 scratch/
 .pytest_cache/
+.playwright-cli/
+output/playwright/
 
 # Env
 .env
 .env.*
-

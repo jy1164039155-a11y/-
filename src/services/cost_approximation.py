@@ -3648,7 +3648,7 @@ def calculate_cost_approximation(
     seedling_amount = attachment_analysis.get("green_seedling_per_sqm")
     attachment_amount = attachment_analysis.get("attachment_compensation_per_sqm")
     for item in result["acquisition_items"]:
-        if item.get("key") == "building_compensation" and item.get("source") != "manual_policy_replacement":
+        if item.get("key") == "building_compensation":
             item["label"] = "地上建筑物补偿"
             item["standard_value"] = attachment_analysis.get("building_compensation_per_person")
             item["standard_unit"] = "元/人"

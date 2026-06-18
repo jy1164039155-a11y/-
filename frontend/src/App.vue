@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="app-wrapper">
     
     <!-- 🧭 顶部导航栏 -->
@@ -4529,6 +4529,13 @@ const FIELD_REGISTRY = {
     scenarios: ['new_grant', 'historical_unregistered', 'registered_complete', 'mixed_manual'],
     attachmentTypes: ['property_cert', 'planning_condition']
   },
+  land_area_mode: {
+    label: '面积口径',
+    tab: 'p2',
+    section: '第二部分：规划条件',
+    scenarios: ['new_grant', 'historical_unregistered', 'registered_complete', 'mixed_manual'],
+    attachmentTypes: ['property_cert', 'planning_condition']
+  },
   building_area: {
     label: '建筑总面积(㎡)',
     tab: 'p2',
@@ -5479,6 +5486,7 @@ const form = reactive({
   county_name: { value: '通道县', origin: 'manual', is_dirty: false },
   local_city: { value: '怀化市', origin: 'manual', is_dirty: false },
   parcel_count: { value: '一宗', origin: 'manual', is_dirty: false },
+  land_area_mode: { value: 'apportioned', origin: 'manual', is_dirty: false },
   land_area: { value: '25.32', origin: 'manual', is_dirty: false },
   building_area: { value: '107', origin: 'manual', is_dirty: false },
   plot_ratio_mode: { value: 'range', origin: 'manual', is_dirty: false },
@@ -7814,6 +7822,7 @@ const onCostPopulationCaseInput = (item) => {
   item.confirmed = false;
   costPopulationPerHa(item);
   recalculateLocalAttachmentAnalysis();
+  scheduleCostInteractiveRecalc();
 };
 
 const recalculateBuildingCompensationRow = (item) => {
@@ -7856,7 +7865,7 @@ const recalculateLocalAttachmentAnalysis = () => {
     attachment_compensation_per_sqm: formatCostNumber(attachmentPerSqm),
   };
   const buildingItem = (costAnalysis.value?.acquisition_items || []).find(entry => entry.key === 'building_compensation');
-  if (buildingItem && buildingItem.source !== 'manual_policy_replacement') {
+  if (buildingItem) {
     buildingItem.standard_value = formatCostNumber(buildingPerPerson);
     buildingItem.standard_unit = '元/人';
     buildingItem.amount_per_sqm = formatCostNumber(buildingPerSqm);
@@ -7875,6 +7884,7 @@ const recalculateLocalAttachmentAnalysis = () => {
     groundItem.amount_per_sqm = formatCostNumber(attachmentPerSqm);
     groundItem.computed_amount_per_sqm = formatCostNumber(attachmentPerSqm);
   }
+  syncCostAnalysisSnapshotToForm();
 };
 
 const costAcquisitionItemAmount = (key) => {
@@ -8029,6 +8039,7 @@ const confirmCostBuildingAddRow = () => {
   costAnalysis.value.building_compensation_rows.push(row);
   costBuildingAddOpen.value = false;
   recalculateLocalAttachmentAnalysis();
+  scheduleCostInteractiveRecalc();
   showToast(`已添加「${row.label}」`, 'success');
 };
 
@@ -8502,12 +8513,14 @@ const onBuildingCompensationGradeChange = (item) => {
   if (option.note) item.note = option.note;
   item.confirmed = false;
   recalculateLocalAttachmentAnalysis();
+  scheduleCostInteractiveRecalc();
 };
 
 const onBuildingCompensationRowInput = (item) => {
   if (!item) return;
   item.confirmed = false;
   recalculateLocalAttachmentAnalysis();
+  scheduleCostInteractiveRecalc();
 };
 
 const costBuildingPopulationMissing = computed(() => {
