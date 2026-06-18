@@ -1,0 +1,4 @@
+interface:
+  display_name: "Encoding Mojibake Guard"
+  short_description: "Safely diagnose and recover Unicode source corruption"
+  default_prompt: "Use $encoding-mojibake-guard to inspect and safely recover this encoding-corrupted source file."

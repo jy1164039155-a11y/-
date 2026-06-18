@@ -1,68 +1,151 @@
 ---
 name: encoding-mojibake-guard
-description: 检测并修复源码/文档中的 mojibake（乱码），并在编辑中文内容时强制 UTF-8 工作流。当用户提到乱码、garbled text、mojibake、编码错误、UTF-8/GBK，或在 Windows 下编辑含中文的 Vue/JS/md 文件时使用。
-user-invocable: true
+description: Prevents, diagnoses, and safely recovers UTF-8/GBK mojibake and encoding-corrupted source files without overwriting good code. Use when Chinese text appears garbled, U+FFFD or literal question marks appear, PowerShell Set-Content/Out-File touched a source file, a large Unicode file needs rewriting, a mixed pre/post-incident patch must be analyzed, or a recovered Vue/JS/Markdown file builds but may still fail at runtime.
 ---
 
-# 防乱码守护（Mojibake Guard）
+# Encoding Mojibake Guard
 
-本技能沉淀自 `frontend/src/App.vue` 的 19 处乱码修复事件，目标是**预防乱码回归**并提供**标准化的检测/修复流程**。
+Protect Unicode source files with a byte-first, candidate-only workflow. Never auto-repair the only copy of a damaged file.
 
-## 何时使用
+## Core Rules
 
-- 用户报告界面或文档出现乱码 / garbled text / `�`；
-- 在 Windows/PowerShell 环境编辑含中文的源码、Vue 模板、md 文档；
-- 提交前需要确认改动文件没有引入乱码。
+1. Treat terminal rendering as evidence, not byte truth.
+2. Stop writing as soon as corruption is suspected.
+3. Preserve the current file, Git state, patches, logs, and timestamps.
+4. Never apply a mixed pre-incident/post-incident patch as one unit.
+5. Never infer lost `?` or U+FFFD characters from mojibake mapping alone.
+6. Recover into a temporary candidate and promote only after the full validation ladder passes.
+7. Build success is insufficient; verify runtime rendering and console errors.
 
-## 工作流
+## Workflow
 
-### 1. 准备：强制 UTF-8 终端
+### 1. Freeze And Preserve
+
+- Stop feature work and automated rewrites.
+- Copy the affected file to a timestamped backup.
+- Record `git status`, `git diff`, the current commit, file size, and hash.
+- Keep patches immutable as recovery evidence.
+
+Do not use `Set-Content`, `Out-File`, redirection, `echo`, or heredocs to rewrite the formal Unicode source.
+
+### 2. Establish Byte Truth
+
+Run the read-only scanner:
 
 ```powershell
-chcp 65001
-$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+node .cursor/skills/encoding-mojibake-guard/scripts/check-text-integrity.mjs frontend/src/App.vue
 ```
 
-### 2. 检测：扫描乱码
+Distinguish:
 
-优先用项目内脚本：
+- invalid UTF-8 bytes;
+- reversible UTF-8-as-GBK mojibake;
+- U+FFFD replacement characters;
+- literal `?` loss;
+- syntax delimiters or whole definitions that disappeared;
+- console-only display corruption.
 
-```bash
-node tmp/scan_pollution3.js frontend/src/App.vue
+If a terminal view and the strict decoder disagree, trust the bytes and decoder.
+
+### 3. Split The Incident Timeline
+
+Classify every source or patch hunk:
+
+- known good before the incident;
+- produced by the damaging write;
+- manual repair after the incident;
+- later valid business changes.
+
+Only pre-incident clean material is an authoritative recovery source. Post-incident edits may contain useful clues but must not be replayed blindly.
+
+### 4. Rank Recovery Sources
+
+Use this order:
+
+1. clean same-version source or checkpoint;
+2. pre-incident patch hunks for new code;
+3. clean source maps or built bundles;
+4. stable code skeleton in the damaged file;
+5. manual semantic reconstruction as a last resort.
+
+When current code contains newer business logic, match by variable names, tags, attributes, indentation, and neighboring statements. Replace damaged text or delimiters without rolling back unrelated logic.
+
+### 5. Build A Candidate
+
+- Work only on a temporary candidate.
+- Use `apply_patch` for small deterministic edits.
+- For bulk recovery, write an explicitly UTF-8 temporary file and compare its diff before promotion.
+- Keep an unresolved list instead of guessing.
+- Repair compiler-reported syntax failures one confirmed location at a time.
+
+Never perform automatic global character replacement on the formal file.
+
+### 6. Run The Validation Ladder
+
+Run every applicable level in order:
+
+1. strict UTF-8 decode and mojibake scan;
+2. parser/SFC/compiler check;
+3. structural contract checks;
+4. production build;
+5. focused regression tests;
+6. real browser smoke test;
+7. browser console must have zero errors;
+8. final Git diff and file-size review.
+
+For this project:
+
+```powershell
+node .cursor/skills/encoding-mojibake-guard/scripts/check-text-integrity.mjs frontend/src/App.vue
+node .cursor/skills/encoding-mojibake-guard/scripts/check-vue-form-contract.mjs frontend/src/App.vue
+node tmp/check_vue_candidate.js frontend/src/App.vue
+npm --prefix frontend run build
 ```
 
-需广覆盖时，扫描以下区段（任一命中即为可疑）：
-- `U+FFFD`（替换符 `�`）
-- C1 控制符 `U+0080–U+009F`
-- PUA `U+E000–U+F8FF`
-- 常见 GBK 误解码引导字 `鍥鍖鐜鈥鉂鎴鍙鐢鏄鐨` 等
+If the affected code participates in first render, open a fresh browser session. A nonblank snapshot and zero console errors are required.
 
-目标：可疑行数 = 0。
+### 7. Promote Safely
 
-### 3. 分类：区分功能性 vs 文案
+- Back up the formal file immediately before replacement.
+- Replace it only after the candidate passes all checks.
+- Re-run the checks against the formal path.
+- Keep recovery artifacts until the Git commit is verified.
+- Document root cause, failed approaches, sources used, and prevention controls.
 
-- **功能性乱码**（高危）：模板插值 `图${...}`、正则 `/^图\d+.../`、toast/提示前缀、key/标识符。修复后必须运行时复测。
-- **可见文案乱码**（低危）：纯展示文字，修复后构建通过即可。
-- **良性项**（不动）：UTF-8 BOM、合法正则量词 `?`。
+## Common Rationalizations
 
-### 4. 修复
+| Rationalization | Reality |
+| --- | --- |
+| "Only emoji and punctuation look wrong." | Full Chinese blocks, quotes, tags, or state definitions may also be damaged. Scan and compile the whole file. |
+| "The patch has everything, so apply it." | A patch spanning the incident boundary mixes valid work and contaminated repairs. Split it first. |
+| "A token map fixed most lines." | Token maps cannot restore literal `?`, U+FFFD, deleted syntax, or missing definitions. |
+| "The build passed." | Vue can still crash on first render because a referenced state field is undefined. |
+| "PowerShell shows mojibake, so the file is corrupt." | The console may be decoding incorrectly. Verify bytes with a strict decoder. |
+| "I will test on the formal file because it is faster." | A second overwrite can destroy the last recoverable evidence. Use a candidate. |
 
-- 用编辑器工具按 UTF-8 写回正确中文，**不要**用 `echo`/重定向/heredoc。
-- 逐处对照上下文恢复语义，避免“看起来像”的错字替换。
+## Red Flags
 
-### 5. 验证（缺一不可）
+- A whole-file Unicode rewrite without an explicit encoding and candidate file;
+- hundreds of unrelated changed lines after a small edit;
+- file size changes unexpectedly;
+- `Set-Content`, `Out-File`, `>` or heredoc appears in the write path;
+- U+FFFD or CJK-adjacent `?`;
+- a mixed patch is described as directly reversible;
+- verification stops after a build;
+- the page is not opened after recovering first-render Vue state.
 
-1. 重跑扫描 → `TOTAL: 0`；
-2. `npm run build` 通过、SFC 0 错误；
-3. 功能性改动：浏览器实际复测（caption 重排、toast 显示等）。
+## Verification
 
-## 反模式（禁止）
+- [ ] Evidence and timestamped backup preserved
+- [ ] Incident boundary identified
+- [ ] Recovery sources ranked
+- [ ] Formal file not modified during exploration
+- [ ] Strict UTF-8 scan passes
+- [ ] Suspicious markers are explained or removed
+- [ ] Parser/compiler passes
+- [ ] Structural reference checks pass
+- [ ] Build and focused tests pass
+- [ ] Browser renders and console has zero errors
+- [ ] Final diff contains only intended changes
 
-- 用 `echo "中文" > file` 写中文文件（会按终端编码污染）。
-- 只看构建通过就认定修复完成（功能性乱码可能潜伏）。
-- 把合法 BOM / 正则量词误判为乱码并“修复”。
-
-## 相关文档
-
-- `02_Process/App.vue乱码修复记录与编码规范.md`
-- `.cursor/rules/encoding-utf8.mdc`
+Read `02_Process/App.vue乱码修复记录与编码规范.md` for the full project incident record.
